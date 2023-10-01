@@ -1,31 +1,51 @@
 import styled from "styled-components";
 import { Pixel } from "./Pixel"
 
-const CanvasElem = styled.div<{ $size?: string; }>`
+const CanvasElem = styled.div`
     display: grid;
-    grid-template-columns: repeat(${props => props.width}, 60px);
+    grid-template-columns: repeat(${props => props.width}, 1fr);
     background-color: #2196F3;
-    height: min-content;
-    width: min-content;
+    aspect-ratio: ${props => props.width} / ${props => props.height};
+    ${props => props.size};
+`;
+
+const PixelElem = styled.div`
+    background-color: ${props => props.color};
+    aspect-ratio: 1/1;
+    border: 1px solid black;
 `;
 
 interface MyCanvasProps {
     canvasInfo: any;
     currentFrame: any;
+    colorTable: Array;
 }
 
-export function Canvas({ canvasInfo, currentFrame }: MyCanvasProps) {
-        //grid-template-columns: repeat(${canvasInfo.width}, ${pixelWidth});
-
-
+export function Canvas({ canvasInfo, currentFrame, colorTable }: MyCanvasProps) {
+    let widthInPixels = canvasInfo.width;
+    let heightInPixels = canvasInfo.height;
+    
+    let canvasSizeControl;
+    if (widthInPixels > heightInPixels) {
+        canvasSizeControl = "width: 50vw";
+    } else {
+        canvasSizeControl = "height: min(100%, 80vw);";
+    }
+    let list = [];
     return (
         <>
-        <CanvasElem width={canvasInfo.width}>
+        <CanvasElem size={canvasSizeControl} width={canvasInfo.width} height={canvasInfo.height}>
         {
-        [...Array(canvasInfo.height)].map((value1, index1) => {
+        [...Array(canvasInfo.height)].map((_, i) => {
             return (
-                [...Array(canvasInfo.width)].map((value2, index2) => {
-                    return (<Pixel id={index2 + 1} key={index2} pixelColor={'#FFFFFF'} />)
+                [...Array(canvasInfo.width)].map((_, j) => {
+                    try {
+                        console.log()
+                        return (<PixelElem id={(i * canvasInfo.width) + j} key={crypto.randomUUID()} color={colorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]} />)
+                    } catch (e) {
+                        console.log(e);
+                        return (<PixelElem key={crypto.randomUUID()} color={"#000000"} />)
+                    }
                 })
             )
         })

@@ -1,22 +1,65 @@
 body {
+    margin: 0px;
     background-color: beige;
 }
 
 .tempflex {
     margin: 0px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     width: 100vw;
     height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.mainContent {
+    flex-basis: 80%;
+    width: 100vw;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2vw;
+}
+
+.colorTable {
+    flex-grow: 0;
+    background-color: grey;
+    width: 50px;
+    height: 100%;
 }
 
 .head {
-    height: 10vh;
+    flex-basis: 10%;
     width: 100vw;
 }
 
-.foot {
-    height: 10vh;
-    width: 100vw;
+
+
+
+
+/* scrollbar */
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+  
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
