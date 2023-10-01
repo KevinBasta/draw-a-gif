@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 interface MyFramePickerProps {
     frames: any;
+    addFrame: any;
+    displayFrame: any;
 }
 
 const FramePickerElem = styled.div`

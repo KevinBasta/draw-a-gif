@@ -1,17 +1,27 @@
-interface MyPixelProps {
-    
+import styled from "styled-components";
+
+
+interface PixelElemProps {
+    color: string;
 }
 
-export function Pixel({ pixelColor }) {
-    //console.log(pixelColor);
-    const pixelStyle = {
-        backgroundColor: `${pixelColor}`,
-        width: '60px',
-        height: '60px',
-        border: "1px solid black",
-    }
+const PixelElem = styled.div<PixelElemProps>`
+    background-color: ${props => props.color};
+    aspect-ratio: 1/1;
+    height: ${props => props.height == null ? "auto" : props.height};
+`;
+//border: 1px solid black;
 
+
+
+interface PixelProps {
+    color: string;
+    height: string;
+}
+
+export function Pixel({ color, height}: PixelProps) {
+    //console.log(pixelColor);
     return (
-        <div style={pixelStyle}></div>
+        <PixelElem color={color} height={height}/>
     )
 }

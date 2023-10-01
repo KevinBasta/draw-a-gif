@@ -2,14 +2,16 @@ import { useEffect, useState } from "react"
 import { Canvas } from "./Canvas";
 import "./styles.css"
 import { FramePicker } from "./FramePicker";
+import { ColorTable } from "./ColorTable";
 export default function App() {
   const [canvasInfo, setCanvasInfo] = useState({ width: 10, height: 10 });
-  const [globalColorTable, setGlobalColorTable] = useState(['rgba(226, 226, 226, 0.99)', 'rgba(255, 255, 255, 0.99)']);
-  
+  const [globalColorTable, setGlobalColorTable] = useState([]);
+  const [currentColorTable, setCurrentColorTable] =  useState(globalColorTable);
+
   // create a checkers background
   const [emptyFrame, setEmptyFrame] = useState({
     key: crypto.randomUUID(),
-    localColorTable: null,
+    localColorTable: ['rgba(226, 226, 226, 0.99)', 'rgba(255, 255, 255, 0.99)'],
     indexStream: Array.from(
       {length: canvasInfo.width * canvasInfo.height},
       (_, i) => {
@@ -20,11 +22,9 @@ export default function App() {
         }
       })
   });
-
-  console.log(emptyFrame.indexStream)
   const [frames, setFrames] = useState([]);
-
   const [currentFrame, setCurrentFrame] = useState(emptyFrame);
+
 
   function addFrame() {
     setFrames((currentFrames) => {
@@ -32,7 +32,7 @@ export default function App() {
         ...currentFrames,
         {
           key: crypto.randomUUID(),
-          localColorTable: false,
+          localColorTable: null,
           indexStream: Array.from(
             {length: canvasInfo.width * canvasInfo.height},
             (_, i) => 1),
@@ -41,16 +41,16 @@ export default function App() {
     });
   }
 
-  function displayFrame(frame) {
+  function displayFrame(frame: any) {
     setCurrentFrame(() => {return frame;});
   }
+
 
   return (
   <>
   <div className="tempflex">
-    <div className="head"></div>
+    <ColorTable clrTable={currentColorTable}/>
     <div className="mainContent">
-      <div className="colorTable"></div>
       <Canvas canvasInfo={canvasInfo} currentFrame={currentFrame} colorTable={globalColorTable}/>
     </div>
     <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>

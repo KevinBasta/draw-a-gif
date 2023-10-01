@@ -26,13 +26,6 @@ body {
     gap: 2vw;
 }
 
-.colorTable {
-    flex-grow: 0;
-    background-color: grey;
-    width: 50px;
-    height: 100%;
-}
-
 .head {
     flex-basis: 10%;
     width: 100vw;
