@@ -3,6 +3,7 @@ import { Canvas } from "./Canvas";
 import "./styles.css"
 import { FramePicker } from "./FramePicker";
 import { ColorTable } from "./ColorTable";
+import { CanvasTest } from "./CanvasTest";
 export default function App() {
   const [canvasInfo, setCanvasInfo] = useState({ width: 10, height: 10 });
   const [globalColorTable, setGlobalColorTable] = useState([]);
@@ -51,7 +52,7 @@ export default function App() {
   <div className="tempflex">
     <ColorTable clrTable={currentColorTable}/>
     <div className="mainContent">
-      <Canvas canvasInfo={canvasInfo} currentFrame={currentFrame} colorTable={globalColorTable}/>
+      <CanvasTest canvasInfo={canvasInfo} currentFrame={currentFrame} colorTable={globalColorTable}/>
     </div>
     <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
   </div>

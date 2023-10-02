@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 interface PixelElemProps {
     color: string;
+    height: string;
 }
 
 const PixelElem = styled.div<PixelElemProps>`
@@ -19,9 +20,9 @@ interface PixelProps {
     height: string;
 }
 
-export function Pixel({ color, height}: PixelProps) {
+export function Pixel({ color, height }: PixelProps) {
     //console.log(pixelColor);
     return (
-        <PixelElem color={color} height={height}/>
+        <PixelElem color={color} height={height} />
     )
 }

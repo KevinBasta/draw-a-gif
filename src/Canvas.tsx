@@ -47,13 +47,13 @@ export function Canvas({ canvasInfo, currentFrame, colorTable }: MyCanvasProps) 
                     try {
                         console.log()
                         if (currentFrame.localColorTable != null) {
-                            return (<Pixel key={crypto.randomUUID()} color={currentFrame.localColorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]} />)
+                            return (<Pixel key={crypto.randomUUID()} height={null} color={currentFrame.localColorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]} />)
                         } else {
-                            return (<Pixel key={crypto.randomUUID()} color={colorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]} />)
+                            return (<Pixel key={crypto.randomUUID()} height={null} color={colorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]} />)
                         }
                     } catch (e) {
                         console.log(e);
-                        return (<Pixel key={crypto.randomUUID()} color={"#000000"} />)
+                        return (<Pixel key={crypto.randomUUID()} height={null} color={"#000000"} />)
                     }
                 })
             )
