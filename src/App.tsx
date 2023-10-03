@@ -5,7 +5,7 @@ import { FramePicker } from "./FramePicker";
 import { ColorTable } from "./ColorTable";
 import { CanvasTest } from "./CanvasTest";
 export default function App() {
-  const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 10 });
+  const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 100 });
   const [globalColorTable, setGlobalColorTable] = useState([]);
   const [currentColorTable, setCurrentColorTable] =  useState(globalColorTable);
 

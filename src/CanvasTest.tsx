@@ -15,6 +15,13 @@ const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
     border: 3px solid black;
     aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
     ${props => props.size};
+
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 `;
 
 
@@ -31,7 +38,14 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
     const canvasElemMounted = useRef(null);
     const [canvasElem, setCanvasElem] = useState(null);
     
-    
+    var mouseDown = 0;
+    document.body.onmousedown = function() { 
+    ++mouseDown;
+    }
+    document.body.onmouseup = function() {
+    --mouseDown;
+    }
+
     let widthInPixels = canvasInfo.width;
     let heightInPixels = canvasInfo.height;
     
@@ -63,10 +77,25 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
         waitForCanvas();
     }, []);
 
-    function drawPixel(x: number, y: number, color: string) {
-        let canvasElemWidth = canvasInfo.width * htmlCanvasSizeMultiplier;
-        let canvasElemHeight = canvasInfo.height * htmlCanvasSizeMultiplier;
+    function drawFrameDataPixel(x: number, y: number, color: string) {
+        let canvas;
+        let context;
 
+        try {
+            canvas = canvasElem;
+            context = canvas.getContext("2d");
+            context.fillStyle = color;
+            context.fillRect(x * htmlCanvasSizeMultiplier,
+                             y * htmlCanvasSizeMultiplier,
+                             1 * htmlCanvasSizeMultiplier,
+                             1 * htmlCanvasSizeMultiplier);
+        } catch (e) {
+            console.log(e);
+            return;
+        }
+    }
+
+    function drawUserInputPixel(x: number, y: number, color: string) {
         let canvas;
         let context;
 
@@ -74,10 +103,10 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
             canvas = canvasElem;
 
             const rect = canvas.getBoundingClientRect();
-            let mpx = x - rect.left;
-            let mpy = y - rect.top;
-            let mappedX = Math.round(((mpx - (mpx % canvasInfo.width)) / htmlCanvasSizeMultiplier) * canvas.width / rect.width);
-            let mappedY = Math.round(((mpy - (mpy % canvasInfo.height)) / htmlCanvasSizeMultiplier) * canvas.width / rect.width);
+            let mpx = (x - rect.left) * canvas.width / rect.width;
+            let mpy = (y - rect.top) * canvas.height / rect.height;
+            let mappedX = Math.round(((mpx - (mpx % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
+            let mappedY = Math.round(((mpy - (mpy % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
             console.log(x, mappedX, y, mappedY)
 
             context = canvas.getContext("2d");
@@ -92,19 +121,19 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
         }
     }
 
-    function drawCanvas() {
+    function drawFrameOnCanvas() {
         [...Array(canvasInfo.height)].map((_, i) => {
             return (
                 [...Array(canvasInfo.width)].map((_, j) => {
                     try {
                         if (currentFrame.localColorTable != null) {
-                            drawPixel(i, j, currentFrame.localColorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]);
+                            drawFrameDataPixel(i, j, currentFrame.localColorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]);
                         } else {
-                            drawPixel(i, j, colorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]);
+                            drawFrameDataPixel(i, j, colorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]);
                         }
                     } catch (e) {
                         console.log(e);
-                        drawPixel(i, j, "#000000");
+                        drawFrameDataPixel(i, j, "#000000");
                     }
                 })
             )
@@ -114,8 +143,8 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
     return (
         <>
         <CanvasWrapper ref={canvasElemMounted} 
-                       onClick={(e) => drawPixel(e.clientX, e.clientY, "#000000")}
-                       onLoad={() => drawCanvas()}
+                       onMouseMove={(e) => {if (mouseDown == 1) {drawUserInputPixel(e.clientX, e.clientY, "#000000")}}}
+                       onClick={() => drawFrameOnCanvas()}
                        size={canvasSizeControl}
                        width={canvasInfo.width * htmlCanvasSizeMultiplier}
                        height={canvasInfo.height * htmlCanvasSizeMultiplier}
