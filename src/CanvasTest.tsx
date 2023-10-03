@@ -5,15 +5,15 @@ import { Pixel } from "./Pixel"
 
 
 interface CanvasWrapperProps {
-    width: number;
-    height: number;
+    $ratiowidth: number;
+    $ratioheight: number;
     size: string;
 }
 
-const CanvasWrapper = styled.div<CanvasWrapperProps>`
+const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
     background-color: #3f7cae;
     border: 3px solid black;
-    aspect-ratio: ${props => props.width} / ${props => props.height};
+    aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
     ${props => props.size};
 `;
 
@@ -27,7 +27,7 @@ interface MyCanvasProps {
 }
 
 export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasProps) {
-    const htmlCanvasSizeMultiplier = 100;
+    const htmlCanvasSizeMultiplier = 50;
     const canvasElemMounted = useRef(null);
     const [canvasElem, setCanvasElem] = useState(null);
     
@@ -64,45 +64,39 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
     }, []);
 
     function drawPixel(x: number, y: number, color: string) {
+        let canvasElemWidth = canvasInfo.width * htmlCanvasSizeMultiplier;
+        let canvasElemHeight = canvasInfo.height * htmlCanvasSizeMultiplier;
+
         let canvas;
         let context;
 
         try {
-            if (canvasElem != null) {
-                canvas = canvasElem;
-                context = canvas.getContext("2d");
-                context.fillStyle = color;
-                context.fillRect(x * htmlCanvasSizeMultiplier,
-                                 y * htmlCanvasSizeMultiplier,
-                                 1 * htmlCanvasSizeMultiplier,
-                                 1 * htmlCanvasSizeMultiplier);
-            } else {
-                waitForCanvas().then(() => {
-                    canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
-                    context = canvas.getContext("2d");
-                    context.fillStyle = color;
-                    context.fillRect(x * htmlCanvasSizeMultiplier,
-                                     y * htmlCanvasSizeMultiplier,
-                                     1 * htmlCanvasSizeMultiplier,
-                                     1 * htmlCanvasSizeMultiplier);
-                });
-            }
+            canvas = canvasElem;
+
+            const rect = canvas.getBoundingClientRect();
+            let mpx = x - rect.left;
+            let mpy = y - rect.top;
+            let mappedX = Math.round(((mpx - (mpx % canvasInfo.width)) / htmlCanvasSizeMultiplier) * canvas.width / rect.width);
+            let mappedY = Math.round(((mpy - (mpy % canvasInfo.height)) / htmlCanvasSizeMultiplier) * canvas.width / rect.width);
+            console.log(x, mappedX, y, mappedY)
+
+            context = canvas.getContext("2d");
+            context.fillStyle = color;
+            context.fillRect(mappedX * htmlCanvasSizeMultiplier,
+                             mappedY * htmlCanvasSizeMultiplier,
+                             1 * htmlCanvasSizeMultiplier,
+                             1 * htmlCanvasSizeMultiplier);
         } catch (e) {
             console.log(e);
             return;
         }
     }
 
-    return (
-        <>
-        <CanvasWrapper onClick={() => drawPixel(8, 7, "#000000")} size={canvasSizeControl} width={canvasInfo.width} height={canvasInfo.height}>
-        <canvas ref={canvasElemMounted} className="htmlCanvas" width={canvasInfo.width * htmlCanvasSizeMultiplier} height={canvasInfo.height * htmlCanvasSizeMultiplier}></canvas>
-        {
+    function drawCanvas() {
         [...Array(canvasInfo.height)].map((_, i) => {
             return (
                 [...Array(canvasInfo.width)].map((_, j) => {
                     try {
-                        console.log()
                         if (currentFrame.localColorTable != null) {
                             drawPixel(i, j, currentFrame.localColorTable[currentFrame.indexStream[(i * canvasInfo.width) + j]]);
                         } else {
@@ -115,8 +109,18 @@ export function CanvasTest({ canvasInfo, currentFrame, colorTable }: MyCanvasPro
                 })
             )
         })
-        }
-        </CanvasWrapper>
+    }
+
+    return (
+        <>
+        <CanvasWrapper ref={canvasElemMounted} 
+                       onClick={(e) => drawPixel(e.clientX, e.clientY, "#000000")}
+                       onLoad={() => drawCanvas()}
+                       size={canvasSizeControl}
+                       width={canvasInfo.width * htmlCanvasSizeMultiplier}
+                       height={canvasInfo.height * htmlCanvasSizeMultiplier}
+                       $ratiowidth={canvasInfo.width}
+                       $ratioheight={canvasInfo.height} />
         </>
     )
 }

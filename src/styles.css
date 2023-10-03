@@ -16,8 +16,9 @@ body {
 }
 
 .mainContent {
-    flex-basis: 80%;
+    flex-basis: 50%;
     width: 100vw;
+    height: 80%;
 
     display: flex;
     flex-direction: row;
@@ -31,10 +32,6 @@ body {
     width: 100vw;
 }
 
-.htmlCanvas {
-  width: 100%;
-  height: 100%;
-}
 
 
 
