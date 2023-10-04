@@ -1,43 +1,63 @@
 import { useEffect, useState } from "react"
-import { Canvas } from "./Canvas";
-import "./styles.css"
+import { createGlobalStyle } from "styled-components";
 import { FramePicker } from "./FramePicker";
 import { ColorTable } from "./ColorTable";
-import { CanvasTest } from "./CanvasTest";
+import { Canvas } from "./Canvas";
+import "./styles.css"
+
+
+const GlobalStyles = createGlobalStyle`
+  :root {
+    --standard-gap-size: min(2vw, 20px);
+    --color-table-item-width: min(4vw, 30px);
+    --color-table-icon-width: min(3vw, 22px);
+  }
+`;
+
 export default function App() {
-  const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 100 });
-  const [globalColorTable, setGlobalColorTable] = useState([]);
-  const [currentColorTable, setCurrentColorTable] =  useState(globalColorTable);
-
-  // create a checkers background
-  const [emptyFrame, setEmptyFrame] = useState({
-    key: crypto.randomUUID(),
-    localColorTable: ['rgba(226, 226, 226, 0.99)', 'rgba(255, 255, 255, 0.99)'],
-    indexStream: Array.from(
-      {length: canvasInfo.width * canvasInfo.height},
-      (_, i) => {
-        if (canvasInfo.width % 2 == 0) {
-          return Math.floor(i / canvasInfo.width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
-        } else {
-          return (i % 2 == 0) ? 1 : 0;
-        }
-      })
-  });
-
+  //
+  // Full app state variables
+  // 
+  const [canvasInfo, setCanvasInfo] = useState({ width: 10, height: 10 });
   const [frames, setFrames] = useState([]);
-  const [currentFrame, setCurrentFrame] = useState(emptyFrame);
+  
+  const [globalColorTable, setGlobalColorTable] = useState(['rgba(0, 0, 0, 0.99)', 'rgba(53, 45, 212, 0.99)']);
+  
+  const [transparentBackground, setTransparentBackground] = useState({});
+  const [currentFrame, setCurrentFrame]                   = useState([]);
+  const [currentColorTable, setCurrentColorTable]         = useState([]);
 
+
+  //
+  // create a checkered trasparent background
+  //
+  function createTransparentBackgroundFrame() {
+    return {
+      key: crypto.randomUUID(),
+      localColorTable: ['rgba(226, 226, 226, 0.99)', 'rgba(255, 255, 255, 0.99)'],
+      indexStream: Array.from(
+        {length: canvasInfo.width * canvasInfo.height},
+        (_, i) => {
+          if (canvasInfo.width % 2 == 0) {
+            return Math.floor(i / canvasInfo.width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
+          } else {
+            return (i % 2 == 0) ? 1 : 0;
+          }
+        }
+      )
+    }
+  }
 
   function addFrame() {
-    setFrames((currentFrames) => {
+    setFrames((frames) => {
       return [
-        ...currentFrames,
+        ...frames,
         {
           key: crypto.randomUUID(),
           localColorTable: null,
           indexStream: Array.from(
             {length: canvasInfo.width * canvasInfo.height},
-            (_, i) => 1),
+            (_, i) => 0),
         }
       ]
     });
@@ -47,16 +67,25 @@ export default function App() {
     setCurrentFrame(() => {return frame;});
   }
 
+  //
+  // useEffect hooks
+  //
+  useEffect(() => {
+	  // Set initial states
+    setTransparentBackground(() => {return createTransparentBackgroundFrame()});
+    setCurrentColorTable(() => {return globalColorTable});
+  }, []);
 
   return (
-  <>
-  <div className="tempflex">
-    <ColorTable clrTable={currentColorTable}/>
-    <div className="mainContent">
-      <CanvasTest canvasInfo={canvasInfo} currentFrame={emptyFrame} colorTable={globalColorTable}/>
-    </div>
-    <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
-  </div>
-  </>
+    <>
+      <GlobalStyles />
+      <div className="tempflex">
+        <ColorTable clrTable={currentColorTable}/>
+        <div className="mainContent">
+          <Canvas canvasInfo={canvasInfo} transparentBackground={transparentBackground} currentFrame={currentFrame} colorTable={globalColorTable}/>
+        </div>
+        <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
+      </div>
+    </>
   )
 }
