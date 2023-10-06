@@ -3,8 +3,8 @@ import { createGlobalStyle } from "styled-components";
 import { FramePicker } from "./FramePicker";
 import { ColorTable } from "./ColorTable";
 import { Canvas } from "./Canvas";
+import { PaintTool } from "./const";
 import "./styles.css"
-
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -18,15 +18,16 @@ export default function App() {
   //
   // Full app state variables
   // 
-  const [canvasInfo, setCanvasInfo] = useState({ width: 10, height: 10 });
+  const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 100 });
   const [frames, setFrames] = useState([]);
   
   const [globalColorTable, setGlobalColorTable] = useState(['rgba(0, 0, 0, 0.99)', 'rgba(53, 45, 212, 0.99)']);
-  
   const [transparentBackground, setTransparentBackground] = useState({});
+  
   const [currentFrame, setCurrentFrame]                   = useState([]);
   const [currentColorTable, setCurrentColorTable]         = useState([]);
-
+  const [currentTool, setCurrentTool]                     = useState(PaintTool.pencil);
+  const [currentColor, setCurrentColor]                   = useState(null);
 
   //
   // create a checkered trasparent background
@@ -34,6 +35,7 @@ export default function App() {
   function createTransparentBackgroundFrame() {
     return {
       key: crypto.randomUUID(),
+      useLocalColorTable: true,
       localColorTable: ['rgba(226, 226, 226, 0.99)', 'rgba(255, 255, 255, 0.99)'],
       indexStream: Array.from(
         {length: canvasInfo.width * canvasInfo.height},
@@ -54,6 +56,7 @@ export default function App() {
         ...frames,
         {
           key: crypto.randomUUID(),
+          useLocalColorTable: false,
           localColorTable: null,
           indexStream: Array.from(
             {length: canvasInfo.width * canvasInfo.height},
@@ -80,7 +83,7 @@ export default function App() {
     <>
       <GlobalStyles />
       <div className="tempflex">
-        <ColorTable clrTable={currentColorTable}/>
+        <ColorTable clrTable={currentColorTable} currentTool={currentTool} currentColor={currentColor}/>
         <div className="mainContent">
           <Canvas canvasInfo={canvasInfo} transparentBackground={transparentBackground} currentFrame={currentFrame} colorTable={globalColorTable}/>
         </div>

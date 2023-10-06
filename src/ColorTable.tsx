@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Pixel } from "./Pixel";
+import { useState } from "react";
 
 const ColorTableWrapper = styled.div`
     flex-basis: 10%;
@@ -48,7 +49,14 @@ const Tool = styled.div<{ $icon?: string; }>`
     }
 `;
 
-const ColorPicker = styled.input`
+const Color = styled.div<{ $color?: string; }>`
+    aspect-ratio: 1 / 1;
+    width: var(--color-table-item-width);
+    background-color: ${props => props.$color};
+    margin: 0px var(--standard-gap-size);
+`;
+
+const ColorManager = styled.div`
     aspect-ratio: 1 / 1;
     width: var(--color-table-item-width);
     background-color: green;
@@ -59,21 +67,15 @@ const ColorPicker = styled.input`
     justify-content: space-evenly;
 `;
 
-
-const Color = styled.div<{ $color?: string; }>`
-    aspect-ratio: 1 / 1;
-    width: var(--color-table-item-width);
-    background-color: ${props => props.$color};
-    margin: 0px var(--standard-gap-size);
-`;
-
-
 interface MyColorTableProps {
     clrTable: Array<string>;
+    currentTool: any;
+    currentColor: any;
 }
 
-export function ColorTable({ clrTable }: MyColorTableProps) {
+export function ColorTable({ clrTable, currentTool, currentColor }: MyColorTableProps) {
 
+    const [clickData, setClickData] = useState(null);
     
     function addNewColor() {
 
@@ -81,10 +83,18 @@ export function ColorTable({ clrTable }: MyColorTableProps) {
 
     function renderAddButton() {
         if (clrTable.length < 255) {
-            return <ColorPicker key={crypto.randomUUID()} type="color" value="#ffA0A0" />
+            return <Tool key={crypto.randomUUID()} $icon={"+"} />
         }
     }
 
+    function doSomething(e: any) {
+        let leftclick = (e.button == 0);
+        let rightclick = (e.button == 2);
+
+        if (leftclick) {
+            currentColor = clickData;
+        }
+    }
 
     return (
         <>
@@ -97,7 +107,7 @@ export function ColorTable({ clrTable }: MyColorTableProps) {
             <Colors>
             {   
                 clrTable.map((entry) => {
-                    return <Color key={crypto.randomUUID()} $color={entry} />
+                    return <Color key={crypto.randomUUID()} $color={entry} onMouseDown={(e) => {setClickData(entry)}} />
                 })
             }
             {

@@ -3,6 +3,15 @@ import styled from "styled-components";
 import { Pixel } from "./Pixel"
 
 
+var mouseDown = 0;
+
+document.body.onmousedown = function() { 
+mouseDown = 1;
+}
+
+document.body.onmouseup = function() {
+mouseDown = 0;
+}
 
 interface CanvasWrapperProps {
     $ratiowidth: number;
@@ -35,7 +44,14 @@ interface MyCanvasProps {
 }
 
 export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorTable }: MyCanvasProps) {
-    const htmlCanvasSizeMultiplier = 50;
+    let htmlCanvasSizeMultiplier = 1;
+    if (canvasInfo.width < 100 || canvasInfo.height < 100) {
+        htmlCanvasSizeMultiplier = 50;
+    } else if (canvasInfo.width < 250 || canvasInfo.height < 250) {
+        htmlCanvasSizeMultiplier = 25;
+    } else if (canvasInfo.width < 550 || canvasInfo.height < 550) {
+        htmlCanvasSizeMultiplier = 10;
+    }
     const canvasElemMounted = useRef(null);
     const [canvasElem, setCanvasElem] = useState(null);
 
@@ -89,6 +105,10 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorT
     }
 
     function drawUserInputPixel(x: number, y: number) {
+        if (mouseDown == 0) {
+            return;
+        }
+
         if (currentFrame == transparentBackground) {
             return;
         }
