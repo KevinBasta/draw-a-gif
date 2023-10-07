@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 import { Pixel } from "./Pixel"
-
+import { frame, color } from "./formats"
 
 var mouseDown = 0;
 
@@ -38,12 +38,13 @@ const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
 
 interface MyCanvasProps {
     canvasInfo: any;
-    transparentBackground: any;
-    currentFrame: any;
-    colorTable: Array<string>;
+    transparentBackground: frame;
+    currentFrame: frame;
+    colorTable: Array<color>;
+    pickedColorIndex: number;
 }
 
-export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorTable }: MyCanvasProps) {
+export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorTable, pickedColorIndex }: MyCanvasProps) {
     let htmlCanvasSizeMultiplier = 1;
     if (canvasInfo.width < 100 || canvasInfo.height < 100) {
         htmlCanvasSizeMultiplier = 50;
@@ -104,6 +105,17 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorT
         }
     }
 
+    function getColorString(clr: color, indexStreamIndex: number) {
+        if (clr.transparent === true) {
+            let indexStreamColorTableIndex: number = transparentBackground.indexStream[indexStreamIndex];
+            let colorTableColor: color = transparentBackground.localColorTable[indexStreamColorTableIndex];
+            console.log(colorTableColor);
+            return "rgba(" + colorTableColor.red + ", " + colorTableColor.green + ", " + colorTableColor.blue + ", 0.99)"
+        }
+        
+        return "rgb(" + clr.red + ", " + clr.green + ", " + clr.blue + ")"
+    }
+
     function drawUserInputPixel(x: number, y: number) {
         if (mouseDown == 0) {
             return;
@@ -124,10 +136,10 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorT
             let dataMappedX = Math.round(((contextX - (contextX % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
             let dataMappedY = Math.round(((contextY - (contextY % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
             console.log(x, dataMappedX, y, dataMappedY);
-            currentFrame.indexStream[(canvasInfo.width * dataMappedY) + dataMappedX] = 1;
-            console.log((canvasInfo.width * dataMappedY) + dataMappedX)
-            console.log(currentFrame);
-            drawFrameDataPixel(dataMappedX, dataMappedY, "#000000");
+            let indexStreamIndex = (canvasInfo.width * dataMappedY) + dataMappedX;
+            console.log(pickedColorIndex);
+            currentFrame.indexStream[indexStreamIndex] = pickedColorIndex;
+            drawFrameDataPixel(dataMappedX, dataMappedY, getColorString(colorTable[pickedColorIndex], indexStreamIndex));
         } catch (e) {
             console.log(e);
             return;
@@ -184,7 +196,11 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, colorT
 
     useEffect(() => {
         drawFrameOnCanvas();
-    }, [ currentFrame.indexStream ]);
+    }, [ currentFrame ]);
+
+    useEffect(() => {
+        console.log(pickedColorIndex);
+    }, [ pickedColorIndex ]);
 
     return (
         <>

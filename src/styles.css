@@ -16,9 +16,9 @@ body {
 }
 
 .mainContent {
-    flex-basis: 80%;
+    flex-basis: 70%;
     width: 100vw;
-    height: 80%;
+    height: 70%;
 
     display: flex;
     flex-direction: row;
@@ -28,6 +28,7 @@ body {
 }
 
 .head {
+    height: 10%;
     flex-basis: 10%;
     width: 100vw;
 }

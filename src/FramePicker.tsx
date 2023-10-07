@@ -9,6 +9,7 @@ interface MyFramePickerProps {
 const FramePickerElem = styled.div`
     flex-basis: 10%;
     width: 100vw;
+    height: 10%;
 
     background-color: #758acb;
     display: flex;

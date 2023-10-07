@@ -4,6 +4,7 @@ import { FramePicker } from "./FramePicker";
 import { ColorTable } from "./ColorTable";
 import { Canvas } from "./Canvas";
 import { PaintTool } from "./const";
+import { frame, color } from "./formats"
 import "./styles.css"
 
 const GlobalStyles = createGlobalStyle`
@@ -21,13 +22,15 @@ export default function App() {
   const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 100 });
   const [frames, setFrames] = useState([]);
   
-  const [globalColorTable, setGlobalColorTable] = useState(['rgba(0, 0, 0, 0.99)', 'rgba(53, 45, 212, 0.99)']);
+  const [globalColorTable, setGlobalColorTable] = useState([{index: 0, transparent: true, red: 0, green: 0, blue: 0}, 
+                                                            {index: 1, transparent: false, red: 53, green: 45, blue: 212}]);
   const [transparentBackground, setTransparentBackground] = useState({});
   
   const [currentFrame, setCurrentFrame]                   = useState([]);
   const [currentColorTable, setCurrentColorTable]         = useState([]);
   const [currentTool, setCurrentTool]                     = useState(PaintTool.pencil);
   const [currentColor, setCurrentColor]                   = useState(null);
+  const [pickedColorIndex, setPickedColorIndex] = useState(0);
 
   //
   // create a checkered trasparent background
@@ -51,6 +54,7 @@ export default function App() {
   }
 
   function addFrame() {
+    console.log(globalColorTable);
     setFrames((frames) => {
       return [
         ...frames,
@@ -83,9 +87,19 @@ export default function App() {
     <>
       <GlobalStyles />
       <div className="tempflex">
-        <ColorTable clrTable={currentColorTable} currentTool={currentTool} currentColor={currentColor}/>
+        
+        <ColorTable clrTable={currentColorTable}
+                    pickedColorIndex={pickedColorIndex} 
+                    setPickedColorIndex={setPickedColorIndex} 
+                    currentTool={currentTool} 
+                    setCurrentColorTable={setCurrentColorTable} />
+        
         <div className="mainContent">
-          <Canvas canvasInfo={canvasInfo} transparentBackground={transparentBackground} currentFrame={currentFrame} colorTable={globalColorTable}/>
+          <Canvas canvasInfo={canvasInfo}
+                  transparentBackground={transparentBackground}
+                  currentFrame={currentFrame} 
+                  pickedColorIndex={pickedColorIndex}  
+                  colorTable={globalColorTable}/>
         </div>
         <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
       </div>
