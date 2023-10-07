@@ -39,7 +39,8 @@ export default function App() {
     return {
       key: crypto.randomUUID(),
       useLocalColorTable: true,
-      localColorTable: ['rgba(226, 226, 226, 0.99)', 'rgba(255, 255, 255, 0.99)'],
+      localColorTable: [{index: 0, transparent: false, red: 226, green: 226, blue: 226},
+                        {index: 0, transparent: false, red: 255, green: 255, blue: 255}],
       indexStream: Array.from(
         {length: canvasInfo.width * canvasInfo.height},
         (_, i) => {
@@ -99,7 +100,7 @@ export default function App() {
                   transparentBackground={transparentBackground}
                   currentFrame={currentFrame} 
                   pickedColorIndex={pickedColorIndex}  
-                  colorTable={globalColorTable}/>
+                  clrTable={currentColorTable}/>
         </div>
         <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
       </div>

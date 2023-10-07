@@ -87,12 +87,17 @@ interface MyColorTableProps {
 export function ColorTable({ clrTable, setCurrentColorTable, currentTool, pickedColorIndex, setPickedColorIndex }: MyColorTableProps) {
     
     function addNewColor() {
-
+        setCurrentColorTable((colorTable: Array<color>) => {
+            return [
+                ...colorTable,
+                {index: colorTable.length, transparent: false, red: 255, green: 255, blue: 255}
+            ]
+        });
     }
 
     function renderAddButton() {
         if (clrTable.length < 255) {
-            return <Tool key={crypto.randomUUID()} $icon={"+"} />
+            return <Tool key={crypto.randomUUID()} $icon={"+"} onClick={() => {addNewColor()}}/>
         }
     }
 
