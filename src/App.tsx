@@ -9,7 +9,19 @@ import "./styles.css"
 
 const GlobalStyles = createGlobalStyle`
   :root {
-    --standard-gap-size: min(2vw, 20px);
+    --background-color: #686868;
+    --primary-color: #2D5D7B;
+    --secondary-color: #457EAC; //#758acb
+    --tertiary-color: #E0E2DB; // A1D2CE F3DE8A E1D89F B4C4AE D4B483 E4DFDA
+    --quaternary-color: ;
+    --quinary-color: ;
+    --senary-color: ;
+
+    --scroll-background-color: #E0E2DB;
+    --scroll-handle-color: #686868;
+    --scroll-hover-color: #555;
+
+    --standard-gap-size: min(1vw, 20px);
     --color-table-item-width: min(4vw, 30px);
     --color-table-icon-width: min(3vw, 22px);
   }
@@ -22,8 +34,8 @@ export default function App() {
   const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 100 });
   const [frames, setFrames] = useState([]);
   
-  const [globalColorTable, setGlobalColorTable] = useState([{index: 0, transparent: true, red: 0, green: 0, blue: 0}, 
-                                                            {index: 1, transparent: false, red: 53, green: 45, blue: 212}]);
+  const [globalColorTable, setGlobalColorTable] = useState([{transparent: true, red: 0, green: 0, blue: 0}, 
+                                                            {transparent: false, red: 53, green: 45, blue: 212}]);
   const [transparentBackground, setTransparentBackground] = useState({});
   
   const [currentFrame, setCurrentFrame]                   = useState([]);
@@ -39,8 +51,8 @@ export default function App() {
     return {
       key: crypto.randomUUID(),
       useLocalColorTable: true,
-      localColorTable: [{index: 0, transparent: false, red: 226, green: 226, blue: 226},
-                        {index: 0, transparent: false, red: 255, green: 255, blue: 255}],
+      localColorTable: [{transparent: false, red: 226, green: 226, blue: 226},
+                        {transparent: false, red: 255, green: 255, blue: 255}],
       indexStream: Array.from(
         {length: canvasInfo.width * canvasInfo.height},
         (_, i) => {
@@ -88,21 +100,26 @@ export default function App() {
     <>
       <GlobalStyles />
       <div className="tempflex">
-        
-        <ColorTable clrTable={currentColorTable}
-                    pickedColorIndex={pickedColorIndex} 
-                    setPickedColorIndex={setPickedColorIndex} 
-                    currentTool={currentTool} 
-                    setCurrentColorTable={setCurrentColorTable} />
-        
+        <div className="header">
+          <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
+        </div>
         <div className="mainContent">
           <Canvas canvasInfo={canvasInfo}
                   transparentBackground={transparentBackground}
                   currentFrame={currentFrame} 
+                  currentTool={currentTool}
                   pickedColorIndex={pickedColorIndex}  
                   clrTable={currentColorTable}/>
         </div>
-        <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
+        <div className="footer">
+          <ColorTable clrTable={currentColorTable}
+                      pickedColorIndex={pickedColorIndex} 
+                      setPickedColorIndex={setPickedColorIndex} 
+                      currentTool={currentTool} 
+                      setCurrentTool={setCurrentTool}
+                      setCurrentColorTable={setCurrentColorTable} />
+        </div>
+        
       </div>
     </>
   )

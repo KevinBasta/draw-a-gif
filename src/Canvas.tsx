@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 import { Pixel } from "./Pixel"
 import { frame, color } from "./formats"
+import { ColorTable } from './ColorTable';
+import { PaintTool } from './const';
 
 var mouseDown = 0;
 
@@ -20,7 +22,7 @@ interface CanvasWrapperProps {
 }
 
 const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
-    background-color: #3f7cae;
+    background-color: var(--primary-color);
     border: 3px solid black;
     aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
     ${props => props.size};
@@ -40,12 +42,30 @@ interface MyCanvasProps {
     canvasInfo: any;
     transparentBackground: frame;
     currentFrame: frame;
+    currentTool: PaintTool;
     clrTable: Array<color>;
     pickedColorIndex: number;
 }
 
-export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTable, pickedColorIndex }: MyCanvasProps) {
+export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTable, pickedColorIndex, currentTool }: MyCanvasProps) {
     let htmlCanvasSizeMultiplier = 1;
+    let brushSize = 0;
+
+    function fillContext(context: any, x: number, y: number) {
+        if (currentTool != PaintTool.bucket) {
+            let paintWidth = 1;
+            if (currentTool == PaintTool.brush) {
+                paintWidth = 10;
+            }
+
+            context.fillRect(x * htmlCanvasSizeMultiplier,
+                             y * htmlCanvasSizeMultiplier,
+                             paintWidth * htmlCanvasSizeMultiplier,
+                             paintWidth * htmlCanvasSizeMultiplier);
+        }
+    }
+
+
     if (canvasInfo.width < 100 || canvasInfo.height < 100) {
         htmlCanvasSizeMultiplier = 50;
     } else if (canvasInfo.width < 250 || canvasInfo.height < 250) {
@@ -95,10 +115,7 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
             canvas = canvasElem;
             context = canvas.getContext("2d");
             context.fillStyle = color;
-            context.fillRect(x * htmlCanvasSizeMultiplier,
-                             y * htmlCanvasSizeMultiplier,
-                             1 * htmlCanvasSizeMultiplier,
-                             1 * htmlCanvasSizeMultiplier);
+            fillContext(context, x, y);
         } catch (e) {
             console.log(e);
             return;
@@ -106,6 +123,7 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
     }
 
     function getColorString(clr: color, indexStreamIndex: number) {
+
         if (clr.transparent === true) {
             let indexStreamColorTableIndex: number = transparentBackground.indexStream[indexStreamIndex];
             let colorTableColor: color = transparentBackground.localColorTable[indexStreamColorTableIndex];
@@ -172,16 +190,17 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
                         let indexStreamIndex = (j * canvasInfo.width) + i;
                         let colorTableIndex = frame.indexStream[indexStreamIndex];
 
-                        if (frame.localColorTable != null) {
-                            context.fillStyle = getColorString(frame.localColorTable[colorTableIndex], indexStreamIndex);
+                        if (colorTableIndex < clrTable.length) {
+                            if (frame.localColorTable != null) {
+                                context.fillStyle = getColorString(frame.localColorTable[colorTableIndex], indexStreamIndex);
+                            } else {
+                                context.fillStyle = getColorString(clrTable[colorTableIndex], indexStreamIndex);
+                            }
+                            
+                            fillContext(context, i, j);
                         } else {
-                            context.fillStyle = getColorString(clrTable[colorTableIndex], indexStreamIndex);
+                            currentFrame.indexStream[indexStreamIndex] = 0;
                         }
-                        
-                        context.fillRect(i * htmlCanvasSizeMultiplier,
-                                         j * htmlCanvasSizeMultiplier,
-                                         1 * htmlCanvasSizeMultiplier,
-                                         1 * htmlCanvasSizeMultiplier);
                     } catch (e) {
                         console.log(e);
                         drawFrameDataPixel(i, j, "#000000");

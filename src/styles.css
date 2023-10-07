@@ -1,6 +1,6 @@
 body {
     margin: 0px;
-    background-color: beige;
+    background-color: var(--background-color);
 }
 
 .tempflex {
@@ -11,30 +11,32 @@ body {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
+
+.header {
+  width: 100vw;
+  max-height: 20vh;
+}
+
 .mainContent {
-    flex-basis: 70%;
     width: 100vw;
-    height: 70%;
+    max-height: 70vh;
 
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 2vw;
+    margin: 1vh 0px 3vh 0px;
 }
 
-.head {
-    height: 10%;
-    flex-basis: 10%;
-    width: 100vw;
+.footer {
+  width: 100vw;
+  max-height: 20vh;
 }
-
-
-
 
 
 /* scrollbar */
@@ -46,15 +48,15 @@ body {
   
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--scroll-background-color);
 }
   
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--scroll-handle-color);
 }
   
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--scroll-hover-color);
 }

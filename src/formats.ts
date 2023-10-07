@@ -7,7 +7,6 @@ export interface frame {
 };
 
 export interface color {
-    index: number,
     transparent: boolean,
     red: number,
     green: number,

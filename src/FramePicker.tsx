@@ -7,16 +7,17 @@ interface MyFramePickerProps {
 }
 
 const FramePickerElem = styled.div`
-    flex-basis: 10%;
-    width: 100vw;
-    height: 10%;
+    height: 10vh;
 
-    background-color: #758acb;
+    background-color: var(--secondary-color);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-start;
+    gap: min(3vw, 40px);
+
+    padding: 0px 1vw;
 
     overflow-x: scroll;
 `;
@@ -24,8 +25,7 @@ const FramePickerElem = styled.div`
 const FramePreview = styled.div`
     aspect-ratio: 1 / 1;
     height: 70%;
-    background-color: green;
-    margin: 0px min(2vw, 20px);
+    background-color: var(--tertiary-color);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -35,8 +35,7 @@ const FramePreview = styled.div`
 const FrameAdder = styled.div`
     aspect-ratio: 1 / 1;
     height: 70%;
-    background-color: green;
-    margin: 0px min(2vw, 20px);
+    background-color: var(--tertiary-color);
     display: flex;
     flex-direction: row;
     align-items: center;

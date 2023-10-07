@@ -2,46 +2,43 @@ import styled from "styled-components";
 import { Pixel } from "./Pixel";
 import { useState } from "react";
 import { color } from "./formats"
+import { PaintTool } from "./const";
+
 const ColorTableWrapper = styled.div`
-    flex-basis: 20%;
-    width: 100vw;
-    height: min-content;
+    width: inherit;
+    height: inherit;
+    height: 10vh;
     background-color: grey;
-    padding: var(--standard-gap-size) 0;
 
     display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: var(--standard-gap-size);
+    flex-direction: row;
+    flex-wrap: nowrap;
 `;
 
+
+
+
 const Tools = styled.div`
-    width: inherit;
-    background-color: "#215693";
+    width: 10%;    
+    padding: var(--standard-gap-size) 1vw;
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-`
-
-const Colors = styled.div`
-    width: 100%;
-    background-color: "#6693c7";
-
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 5px;
+    
+    background-color: var(--secondary-color);
 `
 
 const Tool = styled.div<{ $icon?: string; }>`
     aspect-ratio: 1 / 1;
     width: var(--color-table-item-width);
-    background-color: green;
-    margin: 0px var(--standard-gap-size);
-    
+    background-color: var(--tertiary-color);
+    place-self: center;
+
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    cursor: pointer;
 
     &:after {
         content: "${props => props.$icon}";
@@ -49,55 +46,143 @@ const Tool = styled.div<{ $icon?: string; }>`
     }
 `;
 
-const Color = styled.div<{ $color?: string; }>`
-    aspect-ratio: 1 / 1;
-    width: var(--color-table-item-width);
-    background-color: ${props => props.$color};
-    margin: 0px var(--standard-gap-size);
-`;
 
-const ColorManager = styled.div`
-    width: min(20vw, 300px);
-    height: 60px;
-    background-color: green;
-    margin: 0px var(--standard-gap-size);
-    
+
+const Colors = styled.div`
+    width: 70%;
+    background-color: "#6693c7";
+    overflow-y: scroll;
+    padding: var(--standard-gap-size) 0;
+    background-color: var(--scroll-background-color);
+    border: 5px solid var(--primary-color);
+
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+`
+
+const Color = styled.div<{ $color?: string; }>`
+    aspect-ratio: 1 / 1;
+    height: var(--color-table-item-width);
+    background-color: ${props => props.$color};
+    margin: 0px 12px 1vh 12px;
+    cursor: pointer;
+`;
+
+
+
+
+const ColorOptions = styled.div`
+    width: 20%;
+    background-color: var(--secondary-color);
+    padding: var(--standard-gap-size) 2vw;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    
+    gap: 0.2vw;
 `;
 
 const ColorPicker = styled.input`
+    background-color: transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+    border: none;
+    
+    &::-webkit-color-swatch {
+        transition-duration: 0.2s;
+        border-radius: 2px;
+        padding: 5px;
+        border: 5px solid var(--tertiary-color);
+    }
+    
+    &::-moz-color-swatch {
+        transition-duration: 0.2s;
+        border-radius: 2px;
+        padding: 5px;
+        border: 5px solid var(--tertiary-color);
+    }
 
+    &:hover {
+        &::-webkit-color-swatch {
+            border: 5px solid #555555;
+        }
+
+        &::-moz-color-swatch {
+            border: 5px solid #555555;
+        }
+    }
 `;
 
-const SetButton = styled.button`
+const ButtonManager = styled.div`
+    width: 50%;
+    padding: 10px;
+    background-color: var(--primary-color);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     
+    gap: 0.5vh;
+`;
+
+const Button = styled.button`
+    background-color: var(--tertiary-color);
+    color: black;
+    border: 2px solid #555555;
+
+    border: none;
+    width: 100%;
+    
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: large;
+    transition-duration: 0.2s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #555555;
+        color: white;
+    }
 `;
 
 
 interface MyColorTableProps {
     clrTable: Array<color>;
     setCurrentColorTable: Function;
-    currentTool: any;
+    currentTool: PaintTool;
+    setCurrentTool: Function;
     pickedColorIndex: number;
     setPickedColorIndex: Function;
 }
 
-export function ColorTable({ clrTable, setCurrentColorTable, currentTool, pickedColorIndex, setPickedColorIndex }: MyColorTableProps) {
+export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCurrentTool, pickedColorIndex, setPickedColorIndex }: MyColorTableProps) {
     
     function addNewColor() {
+        let [r, g, b] = getColorPickerValues();
+
         setCurrentColorTable((colorTable: Array<color>) => {
             return [
                 ...colorTable,
-                {index: colorTable.length, transparent: false, red: 255, green: 255, blue: 255}
+                {transparent: false, red: r, green: g, blue: b}
             ]
         });
     }
 
     function renderAddButton() {
         if (clrTable.length < 255) {
-            return <Tool key={crypto.randomUUID()} $icon={"+"} onClick={() => {addNewColor()}}/>
+            return <Button key={crypto.randomUUID()} onClick={() => {addNewColor()}}> Add </Button>
         }
     }
 
@@ -118,7 +203,7 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, picked
         return "rgb(" + clr.red + ", " + clr.green + ", " + clr.blue + ")"
     }
 
-    function setClr() {
+    function getColorPickerValues() {
         let hexInputColor = document.getElementById("favcolor").value;
         
         let r: string, g: string, b: string;
@@ -131,13 +216,19 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, picked
             g = "0x" + hexInputColor[3] + hexInputColor[4];
             b = "0x" + hexInputColor[5] + hexInputColor[6];
         }
-        
+
+        return [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)]
+    }
+
+    function setClr() {
+        let [r, g, b] = getColorPickerValues();
+
         setCurrentColorTable((colorTable) => {
-            return colorTable.map((colorObject: color) => {
-                if (colorObject.index == pickedColorIndex) {
-                    colorObject.red    = parseInt(r, 16);
-                    colorObject.green  = parseInt(g, 16);
-                    colorObject.blue   = parseInt(b, 16);
+            return colorTable.map((colorObject: color, i) => {
+                if (i == pickedColorIndex) {
+                    colorObject.red    = r;
+                    colorObject.green  = g;
+                    colorObject.blue   = b;
                 }
                 
                 console.log(colorTable);
@@ -147,10 +238,24 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, picked
 
     }
 
-    function removeClr(entry: color) {
+    function removeClr() {
         setCurrentColorTable((colors: Array<color>) => {
-            return colors.filter((clr) => {return clr != entry});
+            return colors.filter((clr, i) => {return i != pickedColorIndex});
         });
+    }
+
+    function colorTableColorClicked(i: number) {
+        setPickedColorIndex(() => {return i});
+
+        let r = clrTable[i].red.toString(16);
+        let g = clrTable[i].green.toString(16);
+        let b = clrTable[i].blue.toString(16);
+
+        if (r.length < 2) {r = '0' + r}
+        if (g.length < 2) {g = '0' + g}
+        if (b.length < 2) {b = '0' + b}
+
+        //document.getElementById("colorInput").value = ("#" + r + g + b);
     }
 
     function updateCurrentColor() {
@@ -158,29 +263,38 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, picked
         //currentColor.red = newColor
     }
 
+    function setTool(tool: PaintTool) {
+        setCurrentTool(() => {
+            return tool;
+        });
+    }
+
     return (
         <>
         <ColorTableWrapper>
             <Tools>
-                <Tool key={crypto.randomUUID()} $icon={"✏️"}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"🖌️"}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"🪣"}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"P"}  onClick={(e) => {setTool(PaintTool.pencil)}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"B"}  onClick={(e) => {setTool(PaintTool.brush)}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"Bu"} onClick={(e) => {setTool(PaintTool.bucket)}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {setTool(PaintTool.eraser)}}></Tool>
             </Tools>
             <Colors>
             {   
-                clrTable.map((entry) => {
-                    return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {setPickedColorIndex(() => {return entry.index})}} />
+                clrTable.map((entry, i) => {
+                    return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {setPickedColorIndex(() => {return i})}} />
                 })
             }
-            {
-                renderAddButton()
-            }
             </Colors>
-            <ColorManager>
+            <ColorOptions>
                 <ColorPicker type="color" id="favcolor" name="favcolor"></ColorPicker>
-                <SetButton onClick={() => setClr()}/>
-                <SetButton onClick={() => removeClr()}/>
-            </ColorManager>
+                <ButtonManager>
+                    <Button onClick={() => setClr()}> Set </Button>
+                    <Button onClick={() => removeClr()}> Remove </Button>
+                    {
+                        renderAddButton()
+                    }
+                </ButtonManager>
+            </ColorOptions>
         </ColorTableWrapper>
         </>
     );
