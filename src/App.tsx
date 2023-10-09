@@ -31,7 +31,7 @@ export default function App() {
   //
   // Full app state variables
   // 
-  const [canvasInfo, setCanvasInfo] = useState({ width: 100, height: 100 });
+  const [canvasInfo, setCanvasInfo] = useState({ width: 10, height: 10 });
   const [frames, setFrames] = useState([]);
   
   const [globalColorTable, setGlobalColorTable] = useState([{transparent: true, red: 0, green: 0, blue: 0}, 

@@ -51,21 +51,6 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
     let htmlCanvasSizeMultiplier = 1;
     let brushSize = 0;
 
-    function fillContext(context: any, x: number, y: number) {
-        if (currentTool != PaintTool.bucket) {
-            let paintWidth = 1;
-            if (currentTool == PaintTool.brush) {
-                paintWidth = 10;
-            }
-
-            context.fillRect(x * htmlCanvasSizeMultiplier,
-                             y * htmlCanvasSizeMultiplier,
-                             paintWidth * htmlCanvasSizeMultiplier,
-                             paintWidth * htmlCanvasSizeMultiplier);
-        }
-    }
-
-
     if (canvasInfo.width < 100 || canvasInfo.height < 100) {
         htmlCanvasSizeMultiplier = 50;
     } else if (canvasInfo.width < 250 || canvasInfo.height < 250) {
@@ -107,6 +92,157 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
         waitForCanvas();
     }, []);
 
+
+    function drawCanvasAndSaveData(x: number, y: number) {
+        let topRightIndexStreamIndex = (canvasInfo.width * y) + x;
+
+        saveFrameDataPixel(x, y, topRightIndexStreamIndex);
+        drawFrameDataPixel(x, y, getColorString(clrTable[pickedColorIndex], topRightIndexStreamIndex));
+    }
+
+    let visited: Array<number> = [];
+    function populateVisited() {
+        visited = [];
+        for (let i = 0; i < canvasInfo.width; i++) {
+            for (let j = 0; j < canvasInfo.height; j++) {
+                visited.push(0);
+            }
+        }
+    }
+
+    function getIndexStreamIndex(x: number, y: number) {
+        return (x + (canvasInfo.width * y));
+    }
+
+
+    function setNeighbors(x: number, y: number, colorIndexValue: number) {
+        //console.log("set neightboors called");
+        //console.log(currentFrame.indexStream);
+        // let currentIndex = x + (canvasInfo.width * y);
+        
+        /* if (x < 0 || x > canvasInfo.width ||
+            y < 0 || y > canvasInfo.height || 
+            visited.includes(currentIndex) || 
+            currentFrame.indexStream[currentIndex] != colorIndexValue) {
+            return;
+        } */
+        let n = 0;
+        let pixelsSetInIter = 0;
+        let edges = [[x, y]];
+
+        do {
+            let newEdges = [];
+            let adjacent = [];
+            pixelsSetInIter = 0;
+
+            for (let i = 0; i < edges.length; i++) {
+                let edgeX = edges[i][0];
+                let edgeY = edges[i][1];
+
+                adjacent.push([getIndexStreamIndex(edgeX - 1, edgeY), edgeX - 1, edgeY]);
+                adjacent.push([getIndexStreamIndex(edgeX + 1, edgeY), edgeX + 1, edgeY]);
+                adjacent.push([getIndexStreamIndex(edgeX, edgeY - 1), edgeX, edgeY - 1]);
+                adjacent.push([getIndexStreamIndex(edgeX, edgeY + 1), edgeX, edgeY + 1]);
+            }
+
+            for (let j = 0; j < adjacent.length; j++) {
+                let currentIndex = adjacent[j][0];
+                let currentX = adjacent[j][1];
+                let currentY = adjacent[j][2];
+                
+                if (currentX < 0 || currentX >= canvasInfo.width ||
+                    currentY < 0 || currentY >= canvasInfo.height) {
+                    continue;
+                }
+
+                if (currentFrame.indexStream[currentIndex] == colorIndexValue) {
+                    visited[currentIndex] = pickedColorIndex;
+                    newEdges.push([currentX, currentY]);
+                    pixelsSetInIter++;
+                }
+            }
+
+            for (let i = 0; i < visited.length; i++) {
+                if (visited[i] == pickedColorIndex) {
+                    currentFrame.indexStream[i] = pickedColorIndex;
+                }
+            }
+            
+            edges = [];
+            edges = newEdges.slice();
+            n++;
+            /* console.log(n)
+            console.log(pixelsSetInIter)
+            console.log(edges); */
+        } while (pixelsSetInIter > 0);
+        alert("done");
+        console.log(n);
+/*         for (let i = y; i < canvasInfo.height; i++) {
+            for (let j = x; j >= 0; j--) {
+                let currentIndex = j + (canvasInfo.width * i);
+                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
+                    break;
+                } else {
+                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
+                }
+            }
+
+            for (let j = x; j < canvasInfo.width; j++) {
+                let currentIndex = j + (canvasInfo.width * i);
+                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
+                    break;
+                } else {
+                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
+                }
+            }
+        } */
+        
+/*         for (let i = y; i >= 0; i--) {
+            for (let j = x; j >= 0; j--) {
+                let currentIndex = j + (canvasInfo.width * i);
+                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
+                    break;
+                } else {
+                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
+                }
+            }
+            
+            for (let j = x; j < canvasInfo.width; j++) {
+                let currentIndex = j + (canvasInfo.width * i);
+                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
+                    break;
+                } else {
+                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
+                }
+            }
+        } */
+
+    }
+
+    function saveFrameDataPixel(x: number, y: number, topRightIndexStreamIndex: number) {
+        if (currentTool != PaintTool.bucket) {
+            let paintWidth = 1;
+            if (currentTool == PaintTool.brush) {
+                paintWidth = 10;
+            }
+
+            currentFrame.indexStream[topRightIndexStreamIndex] = pickedColorIndex;
+            for (let i = 0; i < paintWidth; i++) {
+                for (let j = 0; j < paintWidth; j++) {
+                    currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasInfo.width * j)] = pickedColorIndex;
+                }
+            }
+        } else {
+            mouseDown = 0;
+            let replacingColorIndex =  currentFrame.indexStream[topRightIndexStreamIndex];
+            populateVisited();
+            visited[x + (canvasInfo.width * y)] = pickedColorIndex;
+            
+            setNeighbors(x, y, replacingColorIndex);
+            drawFrameOnCanvas();
+        }
+    }
+
     function drawFrameDataPixel(x: number, y: number, color: string) {
         let canvas;
         let context;
@@ -121,6 +257,14 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
             return;
         }
     }
+
+    function fillContext(context: any, x: number, y: number) {
+        context.fillRect((x) * htmlCanvasSizeMultiplier,
+                         (y) * htmlCanvasSizeMultiplier,
+                         1 * htmlCanvasSizeMultiplier,
+                         1 * htmlCanvasSizeMultiplier);
+    }
+
 
     function getColorString(clr: color, indexStreamIndex: number) {
 
@@ -153,10 +297,7 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
             let dataMappedX = Math.round(((contextX - (contextX % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
             let dataMappedY = Math.round(((contextY - (contextY % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
             //console.log(x, dataMappedX, y, dataMappedY);
-            let indexStreamIndex = (canvasInfo.width * dataMappedY) + dataMappedX;
-            //console.log(pickedColorIndex);
-            currentFrame.indexStream[indexStreamIndex] = pickedColorIndex;
-            drawFrameDataPixel(dataMappedX, dataMappedY, getColorString(clrTable[pickedColorIndex], indexStreamIndex));
+            drawCanvasAndSaveData(dataMappedX, dataMappedY);
         } catch (e) {
             console.log(e);
             return;
@@ -212,7 +353,7 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
 
     useEffect(() => {
         drawFrameOnCanvas();
-    }, [ currentFrame, clrTable ]);
+    }, [ currentFrame, currentFrame.indexStream, clrTable ]);
 
     useEffect(() => {
         console.log(pickedColorIndex);
