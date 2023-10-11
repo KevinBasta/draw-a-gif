@@ -3,20 +3,22 @@ import { createGlobalStyle } from "styled-components";
 import { FramePicker } from "./FramePicker";
 import { ColorTable } from "./ColorTable";
 import { Canvas } from "./Canvas";
-import { PaintTool } from "./const";
-import { frame, color } from "./formats"
+import { canvasType, frameType, toolType, toolData, colorType, colorTableType } from "./formats"
 import "./styles.css"
 
 const GlobalStyles = createGlobalStyle`
   :root {
+    
+    // Canvas Color Palette
+    // Other Matching Colors: A1D2CE F3DE8A E1D89F B4C4AE D4B483 E4DFDA 758acb
     --background-color: #686868;
     --primary-color: #2D5D7B;
-    --secondary-color: #457EAC; //#758acb
-    --tertiary-color: #E0E2DB; // A1D2CE F3DE8A E1D89F B4C4AE D4B483 E4DFDA
+    --secondary-color: #457EAC;
+    --tertiary-color: #E0E2DB; 
     --quaternary-color: ;
     --quinary-color: ;
     --senary-color: ;
-
+    
     --scroll-background-color: #E0E2DB;
     --scroll-handle-color: #686868;
     --scroll-hover-color: #555;
@@ -28,31 +30,41 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 export default function App() {
-  //
-  // Full app state variables
-  // 
-  const [canvasInfo, setCanvasInfo] = useState({ width: 10, height: 10 });
-  const [frames, setFrames] = useState([]);
-  
-  const [globalColorTable, setGlobalColorTable] = useState([{transparent: true, red: 0, green: 0, blue: 0}, 
-                                                            {transparent: false, red: 53, green: 45, blue: 212}]);
-  const [transparentBackground, setTransparentBackground] = useState({});
-  
-  const [currentFrame, setCurrentFrame]                   = useState([]);
-  const [currentColorTable, setCurrentColorTable]         = useState([]);
-  const [currentTool, setCurrentTool]                     = useState(PaintTool.pencil);
-  const [currentColor, setCurrentColor]                   = useState(null);
-  const [pickedColorIndex, setPickedColorIndex] = useState(0);
 
-  //
+  const [canvasInfo, setCanvasInfo] = useState<canvasType>({ width: 100, height: 100 });
+  const [frames, setFrames] = useState<Array<frameType>>([]);
+  
+  // Initializing color table with two colors
+  // First is for "erase" functionality
+  // Second is for the first user color
+  const [globalColorTable, setGlobalColorTable] = useState<colorTableType>(
+    {
+      transparentColorIndex: 0,
+      items: [
+        {red: 0, green: 0, blue: 0}, 
+        {red: 0, green: 0, blue: 0}
+      ],
+    }
+  );
+  
+  //{key: NaN, useLocalColorTable: null, localColorTable: null, indexStream: null}
+  const [currentFrame, setCurrentFrame]                   = useState<frameType>(null);
+  const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(null);
+  const [currentColorIndex, setCurrentColorIndex]         = useState(1);
+  const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
+  
   // create a checkered trasparent background
-  //
-  function createTransparentBackgroundFrame() {
-    return {
+  const [transparentBackground, setTransparentBackground] = useState<frameType>(
+    {
       key: crypto.randomUUID(),
       useLocalColorTable: true,
-      localColorTable: [{transparent: false, red: 226, green: 226, blue: 226},
-                        {transparent: false, red: 255, green: 255, blue: 255}],
+      localColorTable: {
+        transparentColorIndex: NaN,
+        items: [
+          {red: 226, green: 226, blue: 226},
+          {red: 255, green: 255, blue: 255}
+        ],
+      },
       indexStream: Array.from(
         {length: canvasInfo.width * canvasInfo.height},
         (_, i) => {
@@ -62,13 +74,17 @@ export default function App() {
             return (i % 2 == 0) ? 1 : 0;
           }
         }
-      )
+      ),
     }
+  );
+
+
+  function displayFrame(frame: frameType): void {
+    setCurrentFrame(() => {return frame;});
   }
 
-  function addFrame() {
-    console.log(globalColorTable);
-    setFrames((frames) => {
+  function addFrame(): void {
+    setFrames((frames: Array<frameType>) => {
       return [
         ...frames,
         {
@@ -77,47 +93,49 @@ export default function App() {
           localColorTable: null,
           indexStream: Array.from(
             {length: canvasInfo.width * canvasInfo.height},
-            (_, i) => 0),
+            (_, i) => 0
+          ),
         }
       ]
     });
   }
 
-  function displayFrame(frame: any) {
-    setCurrentFrame(() => {return frame;});
-  }
-
-  //
-  // useEffect hooks
-  //
+  // Set initial states
   useEffect(() => {
-	  // Set initial states
-    setTransparentBackground(() => {return createTransparentBackgroundFrame()});
     setCurrentColorTable(() => {return globalColorTable});
   }, []);
 
   return (
     <>
       <GlobalStyles />
+
       <div className="tempflex">
         <div className="header">
           <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
         </div>
+        
         <div className="mainContent">
           <Canvas canvasInfo={canvasInfo}
                   transparentBackground={transparentBackground}
-                  currentFrame={currentFrame} 
-                  currentTool={currentTool}
-                  pickedColorIndex={pickedColorIndex}  
-                  clrTable={currentColorTable}/>
+                  
+                  currentFrame={currentFrame}
+                  setCurrentFrame={setCurrentFrame}
+                  
+                  currentTool={currentTool} 
+                  
+                  currentColorTable={currentColorTable}
+                  currentColorIndex={currentColorIndex} />
         </div>
+        
         <div className="footer">
-          <ColorTable clrTable={currentColorTable}
-                      pickedColorIndex={pickedColorIndex} 
-                      setPickedColorIndex={setPickedColorIndex} 
+          <ColorTable currentColorTable={currentColorTable}
+                      setCurrentColorTable={setCurrentColorTable}
+                      
+                      currentColorIndex={currentColorIndex} 
+                      setCurrentColorIndex={setCurrentColorIndex} 
+                      
                       currentTool={currentTool} 
-                      setCurrentTool={setCurrentTool}
-                      setCurrentColorTable={setCurrentColorTable} />
+                      setCurrentTool={setCurrentTool} />
         </div>
         
       </div>

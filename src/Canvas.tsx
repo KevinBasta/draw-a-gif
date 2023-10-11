@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 import { Pixel } from "./Pixel"
-import { frame, color } from "./formats"
+import { frame, color, currentTool, PaintTool } from "./formats"
 import { ColorTable } from './ColorTable';
-import { PaintTool } from './const';
 
 var mouseDown = 0;
 
@@ -42,12 +41,13 @@ interface MyCanvasProps {
     canvasInfo: any;
     transparentBackground: frame;
     currentFrame: frame;
-    currentTool: PaintTool;
+    setCurrentFrame: Function;
+    currentTool: currentTool;
     clrTable: Array<color>;
     pickedColorIndex: number;
 }
 
-export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTable, pickedColorIndex, currentTool }: MyCanvasProps) {
+export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCurrentFrame, clrTable, pickedColorIndex, currentTool }: MyCanvasProps) {
     let htmlCanvasSizeMultiplier = 1;
     let brushSize = 0;
 
@@ -116,20 +116,12 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
 
 
     function setNeighbors(x: number, y: number, colorIndexValue: number) {
-        //console.log("set neightboors called");
-        //console.log(currentFrame.indexStream);
-        // let currentIndex = x + (canvasInfo.width * y);
-        
-        /* if (x < 0 || x > canvasInfo.width ||
-            y < 0 || y > canvasInfo.height || 
-            visited.includes(currentIndex) || 
-            currentFrame.indexStream[currentIndex] != colorIndexValue) {
-            return;
-        } */
         let n = 0;
         let pixelsSetInIter = 0;
         let edges = [[x, y]];
 
+        // This is too slow for larger canvases
+        // recursive (even tail recursive sol) attempted but is too expensive
         do {
             let newEdges = [];
             let adjacent = [];
@@ -171,67 +163,34 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, clrTab
             edges = [];
             edges = newEdges.slice();
             n++;
-            /* console.log(n)
-            console.log(pixelsSetInIter)
-            console.log(edges); */
-        } while (pixelsSetInIter > 0);
+        } while (pixelsSetInIter > 0 && edges.length > 0);
         alert("done");
         console.log(n);
-/*         for (let i = y; i < canvasInfo.height; i++) {
-            for (let j = x; j >= 0; j--) {
-                let currentIndex = j + (canvasInfo.width * i);
-                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
-                    break;
-                } else {
-                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
-                }
-            }
-
-            for (let j = x; j < canvasInfo.width; j++) {
-                let currentIndex = j + (canvasInfo.width * i);
-                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
-                    break;
-                } else {
-                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
-                }
-            }
-        } */
-        
-/*         for (let i = y; i >= 0; i--) {
-            for (let j = x; j >= 0; j--) {
-                let currentIndex = j + (canvasInfo.width * i);
-                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
-                    break;
-                } else {
-                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
-                }
-            }
-            
-            for (let j = x; j < canvasInfo.width; j++) {
-                let currentIndex = j + (canvasInfo.width * i);
-                if (currentFrame.indexStream[currentIndex] != colorIndexValue) {
-                    break;
-                } else {
-                    currentFrame.indexStream[currentIndex] = pickedColorIndex;
-                }
-            }
-        } */
-
     }
 
     function saveFrameDataPixel(x: number, y: number, topRightIndexStreamIndex: number) {
-        if (currentTool != PaintTool.bucket) {
-            let paintWidth = 1;
-            if (currentTool == PaintTool.brush) {
-                paintWidth = 10;
-            }
+        if (currentTool.tool != PaintTool.bucket) {
+            let paintWidth = currentTool.size;
+            console.log("paint with: " + currentTool.size)
 
             currentFrame.indexStream[topRightIndexStreamIndex] = pickedColorIndex;
             for (let i = 0; i < paintWidth; i++) {
                 for (let j = 0; j < paintWidth; j++) {
+                    // avoid wrapping to next line
+                    if ((topRightIndexStreamIndex % canvasInfo.width) + i + 1 > canvasInfo.width) {
+                        break;
+                    }
+
                     currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasInfo.width * j)] = pickedColorIndex;
                 }
             }
+
+            setCurrentFrame((current: frame) => {
+                return {key: current.key, 
+                        useLocalColorTable: current.useLocalColorTable,
+                        localColorTable: current.localColorTable,
+                        indexStream: current.indexStream}
+            });
         } else {
             mouseDown = 0;
             let replacingColorIndex =  currentFrame.indexStream[topRightIndexStreamIndex];

@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { Pixel } from "./Pixel";
 import { useState } from "react";
-import { color } from "./formats"
-import { PaintTool } from "./const";
+import { color, currentTool, PaintTool } from "./formats"
 
 const ColorTableWrapper = styled.div`
     width: inherit;
@@ -158,17 +157,57 @@ const Button = styled.button`
 `;
 
 
+
+const SizeInput = styled.input`
+    aspect-ratio: 1 / 1;
+    width: var(--color-table-item-width);
+    background-color: var(--tertiary-color);
+    place-self: center;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    cursor: text;
+
+    &:hover {
+        background-color: #555555;
+        color: white;
+    }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    &[type=number] {
+        -moz-appearance: textfield;
+    }
+`;
+
+
+/* function onInputMouseUp(e: Event) {
+    console.log(e)
+}
+
+function onInputMouseMove(e: Event) {
+    console.log(e)
+}
+
+function setInputDragEvents(e: HTMLElement) {
+    e.addEventListener('mosueup', onInputMouseUp);
+    e.addEventListener('mousemove', onInputMouseMove); 
+}*/
+
 interface MyColorTableProps {
     clrTable: Array<color>;
     setCurrentColorTable: Function;
-    currentTool: PaintTool;
+    currentTool: currentTool;
     setCurrentTool: Function;
     pickedColorIndex: number;
     setPickedColorIndex: Function;
 }
 
 export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCurrentTool, pickedColorIndex, setPickedColorIndex }: MyColorTableProps) {
-    
     function addNewColor() {
         let [r, g, b] = getColorPickerValues();
 
@@ -183,6 +222,8 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
     function renderAddButton() {
         if (clrTable.length < 255) {
             return <Button key={crypto.randomUUID()} onClick={() => {addNewColor()}}> Add </Button>
+        } else {
+            return <Button key={crypto.randomUUID()} style={{  opacity: 0.6, cursor: "not-allowed", }}> Add </Button>
         }
     }
 
@@ -263,25 +304,56 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
         //currentColor.red = newColor
     }
 
-    function setTool(tool: PaintTool) {
-        setCurrentTool(() => {
-            return tool;
+    function updateTool(tool: PaintTool) {
+        setCurrentTool((current) => {
+            return {key: current.key, tool: tool, size: current.size};
         });
     }
 
+    function updateToolSize(e: any) {
+        let value = e.target.value;
+        
+        let valueInt = parseInt(value);
+        
+        if (valueInt > 100) {
+            e.key = (100).toString();
+            value = (e.key).toString();
+        }
+        
+        if (valueInt < 1) {
+            e.key = (0).toString();
+            value = (e.key).toString();
+        }
+        
+        setCurrentTool((current: currentTool) => {
+            return {key: current.key, tool: current.tool, size: value};
+        });
+        
+        console.log(currentTool.size);
+        console.log(e.target.value);
+    }
+    
     return (
         <>
         <ColorTableWrapper>
             <Tools>
-                <Tool key={crypto.randomUUID()} $icon={"P"}  onClick={(e) => {setTool(PaintTool.pencil)}}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"B"}  onClick={(e) => {setTool(PaintTool.brush)}}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"Bu"} onClick={(e) => {setTool(PaintTool.bucket)}}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {setTool(PaintTool.eraser)}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"P"}  onClick={(e) => {updateTool(PaintTool.brush)}}></Tool>
+                <SizeInput key={currentTool.key} 
+                           type="number"
+                           min="1"
+                           max="100"
+                           value={currentTool.size}
+                           onMouseOver={e => e.target.focus()}
+                           onChange={e => updateToolSize(e)}></SizeInput>
+                <Tool key={crypto.randomUUID()} $icon={"B"} onClick={(e) => {updateTool(PaintTool.bucket)}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {updateTool(PaintTool.eraser); setPickedColorIndex(() => {return 0})}}></Tool>
             </Tools>
             <Colors>
             {   
                 clrTable.map((entry, i) => {
-                    return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {setPickedColorIndex(() => {return i})}} />
+                    if (i != 0) {
+                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {setPickedColorIndex(() => {return i})}} />
+                    }
                 })
             }
             </Colors>
