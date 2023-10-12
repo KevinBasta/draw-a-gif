@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { Pixel } from "./Pixel";
 import { useState } from "react";
-import { color, currentTool, PaintTool } from "./formats"
+import styled from "styled-components";
+
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./formats"
 
 const ColorTableWrapper = styled.div`
     width: inherit;
@@ -199,28 +199,33 @@ function setInputDragEvents(e: HTMLElement) {
 }*/
 
 interface MyColorTableProps {
-    clrTable: Array<color>;
+    currentColorTable: colorTableType;
     setCurrentColorTable: Function;
-    currentTool: currentTool;
+
+    currentColorIndex: number;
+    setCurrentColorIndex: Function;
+    
+    currentTool: toolData;
     setCurrentTool: Function;
-    pickedColorIndex: number;
-    setPickedColorIndex: Function;
 }
 
-export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCurrentTool, pickedColorIndex, setPickedColorIndex }: MyColorTableProps) {
+export function ColorTable(props: MyColorTableProps) {
     function addNewColor() {
         let [r, g, b] = getColorPickerValues();
 
-        setCurrentColorTable((colorTable: Array<color>) => {
-            return [
-                ...colorTable,
-                {transparent: false, red: r, green: g, blue: b}
-            ]
+        props.setCurrentColorTable((table: colorTableType) => {
+            return {
+                transparentColorIndex: table.transparentColorIndex,
+                items: [
+                    ...table.items,
+                    {transparent: false, red: r, green: g, blue: b}
+                ],
+            }
         });
     }
 
     function renderAddButton() {
-        if (clrTable.length < 255) {
+        if (props.currentColorTable.items.length < 255) {
             return <Button key={crypto.randomUUID()} onClick={() => {addNewColor()}}> Add </Button>
         } else {
             return <Button key={crypto.randomUUID()} style={{  opacity: 0.6, cursor: "not-allowed", }}> Add </Button>
@@ -236,12 +241,8 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
         }
     }
 
-    function getColorString(clr: color) {
-        if (clr.transparent == true) {
-            return "rgb(70, 70, 70)"
-        }
-
-        return "rgb(" + clr.red + ", " + clr.green + ", " + clr.blue + ")"
+    function getColorString(object: colorType) {
+        return "rgb(" + object.red + ", " + object.green + ", " + object.blue + ")"
     }
 
     function getColorPickerValues() {
@@ -264,33 +265,39 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
     function setClr() {
         let [r, g, b] = getColorPickerValues();
 
-        setCurrentColorTable((colorTable) => {
-            return colorTable.map((colorObject: color, i) => {
-                if (i == pickedColorIndex) {
-                    colorObject.red    = r;
-                    colorObject.green  = g;
-                    colorObject.blue   = b;
-                }
-                
-                console.log(colorTable);
-                return colorObject;
-            })
-        });
+        props.setCurrentColorTable((object: colorTableType) => {
+            return {
+                transparentColorIndex: object.transparentColorIndex,
+                items: object.items.map((colorObject: colorType, i: number) => {
+                    if (i == props.currentColorIndex) {
+                        colorObject.red    = r;
+                        colorObject.green  = g;
+                        colorObject.blue   = b;
+                    }
+                    
+                    console.log(object);
+                    return colorObject;
+                })
 
+            }
+        });
     }
 
     function removeClr() {
-        setCurrentColorTable((colors: Array<color>) => {
-            return colors.filter((clr, i) => {return i != pickedColorIndex});
+        props.setCurrentColorTable((object: colorTableType) => {
+            return {
+                transparentColorIndex: object.transparentColorIndex,
+                items: object.items.filter((_, i) => {return i != props.currentColorIndex}),
+            }
         });
     }
 
     function colorTableColorClicked(i: number) {
-        setPickedColorIndex(() => {return i});
+        props.setCurrentColorIndex(() => {return i});
 
-        let r = clrTable[i].red.toString(16);
-        let g = clrTable[i].green.toString(16);
-        let b = clrTable[i].blue.toString(16);
+        let r = props.currentColorTable.items[i].red.toString(16);
+        let g = props.currentColorTable.items[i].green.toString(16);
+        let b = props.currentColorTable.items[i].blue.toString(16);
 
         if (r.length < 2) {r = '0' + r}
         if (g.length < 2) {g = '0' + g}
@@ -304,9 +311,9 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
         //currentColor.red = newColor
     }
 
-    function updateTool(tool: PaintTool) {
-        setCurrentTool((current) => {
-            return {key: current.key, tool: tool, size: current.size};
+    function updateTool(newTool: toolType) {
+        props.setCurrentTool((object: toolData) => {
+            return {key: object.key, tool: newTool, size: object.size};
         });
     }
 
@@ -325,11 +332,11 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
             value = (e.key).toString();
         }
         
-        setCurrentTool((current: currentTool) => {
-            return {key: current.key, tool: current.tool, size: value};
+        props.setCurrentTool((object: toolData) => {
+            return {key: object.key, tool: object.tool, size: value};
         });
         
-        console.log(currentTool.size);
+        console.log(props.currentTool.size);
         console.log(e.target.value);
     }
     
@@ -337,22 +344,22 @@ export function ColorTable({ clrTable, setCurrentColorTable, currentTool, setCur
         <>
         <ColorTableWrapper>
             <Tools>
-                <Tool key={crypto.randomUUID()} $icon={"P"}  onClick={(e) => {updateTool(PaintTool.brush)}}></Tool>
-                <SizeInput key={currentTool.key} 
+                <Tool key={crypto.randomUUID()} $icon={"P"}  onClick={(e) => {updateTool(toolType.brush)}}></Tool>
+                <SizeInput key={props.currentTool.key} 
                            type="number"
                            min="1"
                            max="100"
-                           value={currentTool.size}
+                           value={props.currentTool.size}
                            onMouseOver={e => e.target.focus()}
                            onChange={e => updateToolSize(e)}></SizeInput>
-                <Tool key={crypto.randomUUID()} $icon={"B"} onClick={(e) => {updateTool(PaintTool.bucket)}}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {updateTool(PaintTool.eraser); setPickedColorIndex(() => {return 0})}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"B"} onClick={(e) => {updateTool(toolType.bucket)}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {updateTool(toolType.eraser); props.setCurrentColorIndex(() => {return 0})}}></Tool>
             </Tools>
             <Colors>
             {   
-                clrTable.map((entry, i) => {
+                props.currentColorTable.items.map((entry, i) => {
                     if (i != 0) {
-                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {setPickedColorIndex(() => {return i})}} />
+                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {props.setCurrentColorIndex(() => {return i})}} />
                     }
                 })
             }

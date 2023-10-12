@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
-import { Pixel } from "./Pixel"
-import { frame, color, currentTool, PaintTool } from "./formats"
-import { ColorTable } from './ColorTable';
 
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./formats"
+
+// For detecting clicks on canvas
 var mouseDown = 0;
 
 document.body.onmousedown = function() { 
-mouseDown = 1;
+    mouseDown = 1;
 }
 
 document.body.onmouseup = function() {
-mouseDown = 0;
+    mouseDown = 0;
 }
+
+
 
 interface CanvasWrapperProps {
     $ratiowidth: number;
@@ -36,82 +38,94 @@ const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
 
 
 
+interface CanvasProps {
+    canvas: canvasType;
+    transparentBackground: frameType;
 
-interface MyCanvasProps {
-    canvasInfo: any;
-    transparentBackground: frame;
-    currentFrame: frame;
+    currentFrame: frameType;
     setCurrentFrame: Function;
-    currentTool: currentTool;
-    clrTable: Array<color>;
-    pickedColorIndex: number;
+    
+    currentTool: toolData;
+    
+    currentColorTable: colorTableType;
+    currentColorIndex: number;
 }
 
-export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCurrentFrame, clrTable, pickedColorIndex, currentTool }: MyCanvasProps) {
-    let htmlCanvasSizeMultiplier = 1;
-    let brushSize = 0;
-
-    if (canvasInfo.width < 100 || canvasInfo.height < 100) {
-        htmlCanvasSizeMultiplier = 50;
-    } else if (canvasInfo.width < 250 || canvasInfo.height < 250) {
-        htmlCanvasSizeMultiplier = 25;
-    } else if (canvasInfo.width < 550 || canvasInfo.height < 550) {
-        htmlCanvasSizeMultiplier = 10;
-    }
-    const canvasElemMounted = useRef(null);
-    const [canvasElem, setCanvasElem] = useState(null);
-
-    let widthInPixels = canvasInfo.width;
-    let heightInPixels = canvasInfo.height;
+export function Canvas(props: CanvasProps) {
+    let canvasWidthInPixels = props.canvas.width;
+    let canvasHeightInPixels = props.canvas.height;
     
+    // Set width/height css property directly depending on width/height ratio
     let canvasSizeControl;
-    if (widthInPixels > heightInPixels) {
+    if (canvasWidthInPixels > canvasHeightInPixels) {
         canvasSizeControl = "width: 90vw";
     } else {
         canvasSizeControl = "height: min(100%, 90vw);";
     }
 
-    function saveCanvasElem() {
-        setCanvasElem(() => {
-            return document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
-        })
+    // Set the factor to multiply canvas by to make frames sharper
+    let qualityMultiplier = 1;
+    if (canvasWidthInPixels < 100 || canvasHeightInPixels < 100) {
+        qualityMultiplier = 50;
+    } else if (canvasWidthInPixels < 250 || canvasHeightInPixels < 250) {
+        qualityMultiplier = 25;
+    } else if (canvasWidthInPixels < 550 || canvasHeightInPixels < 550) {
+        qualityMultiplier = 10;
     }
 
-    function waitForCanvas() {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                if (canvasElemMounted != null) {
-                    saveCanvasElem();
-                    return resolve(canvasElemMounted);
-                }
-            }, 10);
-        });
+
+    function getColorObject(indexStreamIndex: number) {
+        let colorObject: colorType = {red: 0, blue: 0, green: 0};
+        let colorTableIndex: number = props.currentFrame.indexStream[indexStreamIndex];
+        
+        if (colorTableIndex < props.currentColorTable.items.length) {
+            if (colorTableIndex == props.currentColorTable.transparentColorIndex) {
+                let transparentColorTableIndex: number = props.transparentBackground.indexStream[indexStreamIndex];
+                colorObject = props.transparentBackground.localColorTable.items[transparentColorTableIndex];
+            } else {
+                colorObject = props.currentColorTable.items[colorTableIndex];
+            }
+        }
+
+        return colorObject;
     }
 
-    useEffect(() => {
-        waitForCanvas();
-    }, []);
+    /**
+     * Return a string to be used by html color style
+     * @param colorIndex        The index of the color in current color table
+     * @param indexStreamIndex  The index of the pixel in the index stream
+     */
+    function getColorString(colorObject: colorType) {
+        return "rgb(" + colorObject.red + ", " + colorObject.green + ", " + colorObject.blue + ")"
+    }
 
-
-    function drawCanvasAndSaveData(x: number, y: number) {
-        let topRightIndexStreamIndex = (canvasInfo.width * y) + x;
+    /**
+     * Modify the index stream array, and draw the data on canvas.
+     * Both actions are separate. Updating the index stream is not
+     * meant to directly affect the canvas as that would hinder preformance.
+     * @param x     Index Stream array x
+     * @param y     Index Stream array y
+     */
+    function updateFrameDataAndRender(x: number, y: number) {
+        let topRightIndexStreamIndex = (canvasWidthInPixels * y) + x;
 
         saveFrameDataPixel(x, y, topRightIndexStreamIndex);
-        drawFrameDataPixel(x, y, getColorString(clrTable[pickedColorIndex], topRightIndexStreamIndex));
+        drawFrameDataPixel(x, y, topRightIndexStreamIndex);
     }
+
 
     let visited: Array<number> = [];
     function populateVisited() {
         visited = [];
-        for (let i = 0; i < canvasInfo.width; i++) {
-            for (let j = 0; j < canvasInfo.height; j++) {
+        for (let i = 0; i < canvasWidthInPixels; i++) {
+            for (let j = 0; j < canvasHeightInPixels; j++) {
                 visited.push(0);
             }
         }
     }
 
     function getIndexStreamIndex(x: number, y: number) {
-        return (x + (canvasInfo.width * y));
+        return (x + (props.canvas.width * y));
     }
 
 
@@ -142,21 +156,21 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCur
                 let currentX = adjacent[j][1];
                 let currentY = adjacent[j][2];
                 
-                if (currentX < 0 || currentX >= canvasInfo.width ||
-                    currentY < 0 || currentY >= canvasInfo.height) {
+                if (currentX < 0 || currentX >= canvasWidthInPixels ||
+                    currentY < 0 || currentY >= canvasHeightInPixels) {
                     continue;
                 }
 
-                if (currentFrame.indexStream[currentIndex] == colorIndexValue) {
-                    visited[currentIndex] = pickedColorIndex;
+                if (props.currentFrame.indexStream[currentIndex] == colorIndexValue) {
+                    visited[currentIndex] = props.currentColorIndex;
                     newEdges.push([currentX, currentY]);
                     pixelsSetInIter++;
                 }
             }
 
             for (let i = 0; i < visited.length; i++) {
-                if (visited[i] == pickedColorIndex) {
-                    currentFrame.indexStream[i] = pickedColorIndex;
+                if (visited[i] == props.currentColorIndex) {
+                    props.currentFrame.indexStream[i] = props.currentColorIndex;
                 }
             }
             
@@ -168,72 +182,84 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCur
         console.log(n);
     }
 
+    /**
+     * 
+     * @param x 
+     * @param y 
+     * @param topRightIndexStreamIndex 
+     */
     function saveFrameDataPixel(x: number, y: number, topRightIndexStreamIndex: number) {
-        if (currentTool.tool != PaintTool.bucket) {
-            let paintWidth = currentTool.size;
-            console.log("paint with: " + currentTool.size)
+        let tool: toolType = props.currentTool.tool;
+        let toolSize: string = props.currentTool.size;
 
-            currentFrame.indexStream[topRightIndexStreamIndex] = pickedColorIndex;
+        if (tool == toolType.brush || tool == toolType.eraser) {
+            let paintWidth = parseInt(toolSize);
+
+            props.currentFrame.indexStream[topRightIndexStreamIndex] = props.currentColorIndex;
             for (let i = 0; i < paintWidth; i++) {
                 for (let j = 0; j < paintWidth; j++) {
                     // avoid wrapping to next line
-                    if ((topRightIndexStreamIndex % canvasInfo.width) + i + 1 > canvasInfo.width) {
+                    if ((topRightIndexStreamIndex % canvasWidthInPixels) + i + 1 > canvasWidthInPixels) {
                         break;
                     }
 
-                    currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasInfo.width * j)] = pickedColorIndex;
+                    props.currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasWidthInPixels * j)] = props.currentColorIndex;
                 }
             }
 
-            setCurrentFrame((current: frame) => {
+            // REMOVE AND FIX ../ next func call
+            /* props.setCurrentFrame((current: frameType) => {
                 return {key: current.key, 
                         useLocalColorTable: current.useLocalColorTable,
                         localColorTable: current.localColorTable,
                         indexStream: current.indexStream}
-            });
-        } else {
+            }); */
+        }
+        else if (tool == toolType.bucket) {
             mouseDown = 0;
-            let replacingColorIndex =  currentFrame.indexStream[topRightIndexStreamIndex];
+            let replacingColorIndex =  props.currentFrame.indexStream[topRightIndexStreamIndex];
             populateVisited();
-            visited[x + (canvasInfo.width * y)] = pickedColorIndex;
+            visited[x + (canvasWidthInPixels * y)] = props.currentColorIndex;
             
             setNeighbors(x, y, replacingColorIndex);
             drawFrameOnCanvas();
         }
     }
 
-    function drawFrameDataPixel(x: number, y: number, color: string) {
+    function drawFrameDataPixel(x: number, y: number, topRightIndexStreamIndex: number) {
         let canvas;
         let context;
 
         try {
-            canvas = canvasElem;
+            canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
             context = canvas.getContext("2d");
-            context.fillStyle = color;
-            fillContext(context, x, y);
+            
+            let colorTableIndex: number = props.currentFrame.indexStream[topRightIndexStreamIndex];
+            
+            if (colorTableIndex == props.currentColorTable.transparentColorIndex) {
+                for (let i = 0; i < parseInt(props.currentTool.size) && (y + (canvasWidthInPixels * i) < canvasHeightInPixels); i++) {
+                    for (let j = 0; j < parseInt(props.currentTool.size) && (x + j < canvasWidthInPixels); j++) {
+                        let currentX = x + j;
+                        let currentY = y + (canvasWidthInPixels * i);
+                        context.fillStyle = getColorString(getColorObject(getIndexStreamIndex(currentX, currentY)));
+                        fillContext(context, currentX, currentY, 1);
+                    }
+                }
+            } else {
+                context.fillStyle = getColorString(getColorObject(topRightIndexStreamIndex));
+                fillContext(context, x, y, parseInt(props.currentTool.size));
+            }
         } catch (e) {
             console.log(e);
             return;
         }
     }
 
-    function fillContext(context: any, x: number, y: number) {
-        context.fillRect((x) * htmlCanvasSizeMultiplier,
-                         (y) * htmlCanvasSizeMultiplier,
-                         1 * htmlCanvasSizeMultiplier,
-                         1 * htmlCanvasSizeMultiplier);
-    }
-
-
-    function getColorString(clr: color, indexStreamIndex: number) {
-
-        if (clr.transparent === true) {
-            let indexStreamColorTableIndex: number = transparentBackground.indexStream[indexStreamIndex];
-            let colorTableColor: color = transparentBackground.localColorTable[indexStreamColorTableIndex];
-            return "rgba(" + colorTableColor.red + ", " + colorTableColor.green + ", " + colorTableColor.blue + ", 0.99)"
-        }
-        
-        return "rgb(" + clr.red + ", " + clr.green + ", " + clr.blue + ")"
+    function fillContext(context: any, x: number, y: number, size: number) {
+        context.fillRect((x) * qualityMultiplier,
+                         (y) * qualityMultiplier,
+                         size * qualityMultiplier,
+                         size * qualityMultiplier);
     }
 
     function drawUserInputPixel(x: number, y: number) {
@@ -241,22 +267,21 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCur
             return;
         }
 
-        if (currentFrame == transparentBackground) {
+        if (props.currentFrame == props.transparentBackground) {
             return;
         }
 
         let canvas;
-        let context;
 
         try {
-            canvas = canvasElem;
+            canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
             const rect = canvas.getBoundingClientRect();
             let contextX = (x - rect.left) * canvas.width / rect.width;
             let contextY = (y - rect.top) * canvas.height / rect.height;
-            let dataMappedX = Math.round(((contextX - (contextX % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
-            let dataMappedY = Math.round(((contextY - (contextY % htmlCanvasSizeMultiplier)) / htmlCanvasSizeMultiplier));
+            let dataMappedX = Math.round(((contextX - (contextX % qualityMultiplier)) / qualityMultiplier));
+            let dataMappedY = Math.round(((contextY - (contextY % qualityMultiplier)) / qualityMultiplier));
             //console.log(x, dataMappedX, y, dataMappedY);
-            drawCanvasAndSaveData(dataMappedX, dataMappedY);
+            updateFrameDataAndRender(dataMappedX, dataMappedY);
         } catch (e) {
             console.log(e);
             return;
@@ -264,43 +289,30 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCur
     }
 
     function drawFrameOnCanvas() {
-        let frame: any;
-        if (currentFrame == null) {
-            if (transparentBackground == null) {
-                throw new Error('No frame or transparentBackground');
-            } else {
-                frame = transparentBackground;
-            }
+        let frame: frameType;
+        
+        if (props.currentFrame == null) {
+            return;
         } else { 
-            frame = currentFrame;
+            frame = props.currentFrame;
         }
 
-        let canvas = canvasElem;
+        let canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
         if (canvas == null) {
             return;
         }
         
         let context = canvas.getContext("2d");
         
-        
-        [...Array(canvasInfo.width)].map((_, i) => {
+        [...Array(canvasWidthInPixels)].map((_, i) => {
             return (
-                [...Array(canvasInfo.height)].map((_, j) => {
+                [...Array(canvasHeightInPixels)].map((_, j) => {
                     try {
-                        let indexStreamIndex = (j * canvasInfo.width) + i;
-                        let colorTableIndex = frame.indexStream[indexStreamIndex];
-
-                        if (colorTableIndex < clrTable.length) {
-                            if (frame.localColorTable != null) {
-                                context.fillStyle = getColorString(frame.localColorTable[colorTableIndex], indexStreamIndex);
-                            } else {
-                                context.fillStyle = getColorString(clrTable[colorTableIndex], indexStreamIndex);
-                            }
-                            
-                            fillContext(context, i, j);
-                        } else {
-                            currentFrame.indexStream[indexStreamIndex] = 0;
-                        }
+                        let indexStreamIndex = (j * canvasWidthInPixels) + i;
+                        
+                        let colorObject: colorType = getColorObject(indexStreamIndex);
+                        context.fillStyle = getColorString(colorObject);
+                        fillContext(context, i, j, 1);
                     } catch (e) {
                         console.log(e);
                         drawFrameDataPixel(i, j, "#000000");
@@ -312,21 +324,17 @@ export function Canvas({ canvasInfo, transparentBackground, currentFrame, setCur
 
     useEffect(() => {
         drawFrameOnCanvas();
-    }, [ currentFrame, currentFrame.indexStream, clrTable ]);
+    }, [ props.currentFrame, props.currentColorTable ]);
 
-    useEffect(() => {
-        console.log(pickedColorIndex);
-    }, [ pickedColorIndex ]);
 
     return (
         <>
-        <CanvasWrapper ref={canvasElemMounted} 
-                       onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY)}}
+        <CanvasWrapper onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY)}}
                        size={canvasSizeControl}
-                       width={canvasInfo.width * htmlCanvasSizeMultiplier}
-                       height={canvasInfo.height * htmlCanvasSizeMultiplier}
-                       $ratiowidth={canvasInfo.width}
-                       $ratioheight={canvasInfo.height} />
+                       width={canvasWidthInPixels * qualityMultiplier}
+                       height={canvasHeightInPixels * qualityMultiplier}
+                       $ratiowidth={canvasWidthInPixels}
+                       $ratioheight={canvasHeightInPixels} />
         </>
     )
 }

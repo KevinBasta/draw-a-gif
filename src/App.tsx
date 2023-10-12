@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import { createGlobalStyle } from "styled-components";
-import { FramePicker } from "./FramePicker";
-import { ColorTable } from "./ColorTable";
+
 import { Canvas } from "./Canvas";
-import { canvasType, frameType, toolType, toolData, colorType, colorTableType } from "./formats"
+import { ColorTable } from "./ColorTable";
+import { FramePicker } from "./FramePicker";
+
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./formats"
 import "./styles.css"
 
 const GlobalStyles = createGlobalStyle`
@@ -31,7 +33,7 @@ const GlobalStyles = createGlobalStyle`
 
 export default function App() {
 
-  const [canvasInfo, setCanvasInfo] = useState<canvasType>({ width: 100, height: 100 });
+  const [canvas, setSanvas] = useState<canvasType>({ width: 10, height: 10 });
   const [frames, setFrames] = useState<Array<frameType>>([]);
   
   // Initializing color table with two colors
@@ -49,8 +51,8 @@ export default function App() {
   
   //{key: NaN, useLocalColorTable: null, localColorTable: null, indexStream: null}
   const [currentFrame, setCurrentFrame]                   = useState<frameType>(null);
-  const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(null);
-  const [currentColorIndex, setCurrentColorIndex]         = useState(1);
+  const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(globalColorTable);
+  const [currentColorIndex, setCurrentColorIndex]         = useState<number>(1);
   const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
   
   // create a checkered trasparent background
@@ -66,10 +68,10 @@ export default function App() {
         ],
       },
       indexStream: Array.from(
-        {length: canvasInfo.width * canvasInfo.height},
+        {length: canvas.width * canvas.height},
         (_, i) => {
-          if (canvasInfo.width % 2 == 0) {
-            return Math.floor(i / canvasInfo.width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
+          if (canvas.width % 2 == 0) {
+            return Math.floor(i / canvas.width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
           } else {
             return (i % 2 == 0) ? 1 : 0;
           }
@@ -83,26 +85,31 @@ export default function App() {
     setCurrentFrame(() => {return frame;});
   }
 
+  function getEmptyFrame(): frameType {
+    return {
+      key: crypto.randomUUID(),
+      useLocalColorTable: false,
+      localColorTable: null,
+      indexStream: Array.from(
+        {length: canvas.width * canvas.height},
+        (_, i) => 0
+      ),
+    }
+  }
+
   function addFrame(): void {
     setFrames((frames: Array<frameType>) => {
       return [
         ...frames,
-        {
-          key: crypto.randomUUID(),
-          useLocalColorTable: false,
-          localColorTable: null,
-          indexStream: Array.from(
-            {length: canvasInfo.width * canvasInfo.height},
-            (_, i) => 0
-          ),
-        }
+        getEmptyFrame(),
       ]
     });
   }
 
   // Set initial states
   useEffect(() => {
-    setCurrentColorTable(() => {return globalColorTable});
+    //addFrame();
+    //displayFrame(frames[0]);
   }, []);
 
   return (
@@ -115,7 +122,7 @@ export default function App() {
         </div>
         
         <div className="mainContent">
-          <Canvas canvasInfo={canvasInfo}
+          <Canvas canvas={canvas}
                   transparentBackground={transparentBackground}
                   
                   currentFrame={currentFrame}
