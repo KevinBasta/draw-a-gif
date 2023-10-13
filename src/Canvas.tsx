@@ -125,7 +125,7 @@ export function Canvas(props: CanvasProps) {
     }
 
     function getIndexStreamIndex(x: number, y: number) {
-        return (x + (props.canvas.width * y));
+        return (x + (canvasWidthInPixels * y));
     }
 
 
@@ -194,8 +194,8 @@ export function Canvas(props: CanvasProps) {
 
         if (tool == toolType.brush || tool == toolType.eraser) {
             let paintWidth = parseInt(toolSize);
+            let paintColor = tool == toolType.eraser ? 0 : props.currentColorIndex;
 
-            props.currentFrame.indexStream[topRightIndexStreamIndex] = props.currentColorIndex;
             for (let i = 0; i < paintWidth; i++) {
                 for (let j = 0; j < paintWidth; j++) {
                     // avoid wrapping to next line
@@ -203,7 +203,7 @@ export function Canvas(props: CanvasProps) {
                         break;
                     }
 
-                    props.currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasWidthInPixels * j)] = props.currentColorIndex;
+                    props.currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasWidthInPixels * j)] = paintColor;
                 }
             }
 
@@ -237,10 +237,10 @@ export function Canvas(props: CanvasProps) {
             let colorTableIndex: number = props.currentFrame.indexStream[topRightIndexStreamIndex];
             
             if (colorTableIndex == props.currentColorTable.transparentColorIndex) {
-                for (let i = 0; i < parseInt(props.currentTool.size) && (y + (canvasWidthInPixels * i) < canvasHeightInPixels); i++) {
-                    for (let j = 0; j < parseInt(props.currentTool.size) && (x + j < canvasWidthInPixels); j++) {
-                        let currentX = x + j;
-                        let currentY = y + (canvasWidthInPixels * i);
+                for (let i = 0; i < parseInt(props.currentTool.size) && (x + i < canvasWidthInPixels); i++) {
+                    for (let j = 0; j < parseInt(props.currentTool.size) && (y + j < canvasHeightInPixels); j++) {
+                        let currentX = x + i;
+                        let currentY = y + j;
                         context.fillStyle = getColorString(getColorObject(getIndexStreamIndex(currentX, currentY)));
                         fillContext(context, currentX, currentY, 1);
                     }

@@ -218,8 +218,8 @@ export function ColorTable(props: MyColorTableProps) {
                 transparentColorIndex: table.transparentColorIndex,
                 items: [
                     ...table.items,
-                    {transparent: false, red: r, green: g, blue: b}
-                ],
+                    {red: r, green: g, blue: b},
+                ]
             }
         });
     }
@@ -284,12 +284,25 @@ export function ColorTable(props: MyColorTableProps) {
     }
 
     function removeClr() {
+        // Don't allow removal of first transparent color
+        if (props.currentColorTable.items.length == 2) {
+            return;
+        }
+
         props.setCurrentColorTable((object: colorTableType) => {
             return {
                 transparentColorIndex: object.transparentColorIndex,
                 items: object.items.filter((_, i) => {return i != props.currentColorIndex}),
             }
         });
+
+        if (props.currentColorIndex > 1) {
+            props.setCurrentColorIndex((currentIndex: number) => {
+                return currentIndex - 1;
+            });
+        }
+
+        console.log(props.currentColorTable);
     }
 
     function colorTableColorClicked(i: number) {
@@ -340,6 +353,22 @@ export function ColorTable(props: MyColorTableProps) {
         console.log(e.target.value);
     }
     
+    function setColorIndexAndTool(i: number) {
+        // Set the color to the clicked color index
+        props.setCurrentColorIndex(() => {return i});
+        
+        // Set tool to brush if it's not brush
+        if (props.currentTool.tool != toolType.brush) {
+            props.setCurrentTool((object: toolData) => {
+                return {
+                    key: object.key,
+                    tool: toolType.brush,
+                    size: object.size,
+                }
+            });
+        }
+    }
+
     return (
         <>
         <ColorTableWrapper>
@@ -353,13 +382,13 @@ export function ColorTable(props: MyColorTableProps) {
                            onMouseOver={e => e.target.focus()}
                            onChange={e => updateToolSize(e)}></SizeInput>
                 <Tool key={crypto.randomUUID()} $icon={"B"} onClick={(e) => {updateTool(toolType.bucket)}}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {updateTool(toolType.eraser); props.setCurrentColorIndex(() => {return 0})}}></Tool>
+                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {updateTool(toolType.eraser)}}></Tool>
             </Tools>
             <Colors>
             {   
                 props.currentColorTable.items.map((entry, i) => {
                     if (i != 0) {
-                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={(e) => {props.setCurrentColorIndex(() => {return i})}} />
+                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={() => setColorIndexAndTool(i)} />
                     }
                 })
             }
