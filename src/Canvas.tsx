@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
 
 // For detecting clicks on canvas
 var mouseDown = 0;
@@ -72,7 +72,6 @@ export function Canvas(props: CanvasProps) {
     } else if (canvasWidthInPixels < 550 || canvasHeightInPixels < 550) {
         qualityMultiplier = 10;
     }
-
 
     function getColorObject(indexStreamIndex: number) {
         let colorObject: colorType = {red: 0, blue: 0, green: 0};
@@ -315,7 +314,7 @@ export function Canvas(props: CanvasProps) {
                         fillContext(context, i, j, 1);
                     } catch (e) {
                         console.log(e);
-                        drawFrameDataPixel(i, j, "#000000");
+                        drawFrameDataPixel(i, j, 1);
                     }
                 })
             )

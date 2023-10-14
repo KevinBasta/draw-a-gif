@@ -5,7 +5,7 @@ import { Canvas } from "./Canvas";
 import { ColorTable } from "./ColorTable";
 import { FramePicker } from "./FramePicker";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
 import "./styles.css"
 
 const GlobalStyles = createGlobalStyle`
@@ -17,7 +17,7 @@ const GlobalStyles = createGlobalStyle`
     --primary-color: #2D5D7B;
     --secondary-color: #457EAC;
     --tertiary-color: #E0E2DB; 
-    --quaternary-color: ;
+    --quaternary-color: #000000;
     --quinary-color: ;
     --senary-color: ;
     
@@ -34,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
 export default function App() {
 
   const [canvas, setSanvas] = useState<canvasType>({ width: 10, height: 10 });
-  const [frames, setFrames] = useState<Array<frameType>>([]);
+  const [frames, setFrames] = useState<Array<frameType>>([getEmptyFrame()]);
   
   // Initializing color table with two colors
   // First is for "erase" functionality
@@ -50,7 +50,7 @@ export default function App() {
   );
   
   //{key: NaN, useLocalColorTable: null, localColorTable: null, indexStream: null}
-  const [currentFrame, setCurrentFrame]                   = useState<frameType>(null);
+  const [currentFrame, setCurrentFrame]                   = useState<frameType>(frames[0]);
   const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(globalColorTable);
   const [currentColorIndex, setCurrentColorIndex]         = useState<number>(1);
   const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
@@ -118,7 +118,7 @@ export default function App() {
 
       <div className="tempflex">
         <div className="header">
-          <FramePicker frames={frames} addFrame={addFrame} displayFrame={displayFrame}/>
+          <FramePicker frames={frames} currentFrame={currentFrame} addFrame={addFrame} displayFrame={displayFrame}/>
         </div>
         
         <div className="mainContent">

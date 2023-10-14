@@ -1,3 +1,5 @@
+import { getColorString } from "./ColorUtil";
+import { colorType } from "./Formats";
 
 class CanvasObject {
     #width: number;
@@ -35,5 +37,25 @@ class CanvasObject {
     drawRectangle(color: string, x: number, y: number, size: number) {
         this.#context.fillStyle = color;
         this.fillContext(x, y, size);
+    }
+
+    drawFrame(getColorObject: Function) {
+        [...Array(this.#width)].map((_, i) => {
+            return (
+                [...Array(this.#height)].map((_, j) => {
+                    try {
+                        let indexStreamIndex = (j * this.#width) + i;
+                        
+                        let colorObject: colorType = getColorObject(indexStreamIndex);
+                        this.#context.fillStyle = getColorString(colorObject);
+                        this.fillContext(i, j, 1);
+                    } catch (e) {
+                        console.log(e);
+                        this.#context.fillStyle = "#000000";
+                        this.fillContext(i, j, 1);
+                    }
+                })
+            )
+        })
     }
 }

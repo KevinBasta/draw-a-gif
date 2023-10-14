@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
 
 const ColorTableWrapper = styled.div`
     width: inherit;
@@ -28,7 +28,7 @@ const Tools = styled.div`
     background-color: var(--secondary-color);
 `
 
-const Tool = styled.div<{ $icon?: string; }>`
+const Tool = styled.div<{ $icon?: string; $selected?: boolean; }>`
     aspect-ratio: 1 / 1;
     width: var(--color-table-item-width);
     background-color: var(--tertiary-color);
@@ -37,6 +37,10 @@ const Tool = styled.div<{ $icon?: string; }>`
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+
+    box-shadow: ${props => props.$selected ? "-1px 1px var(--quaternary-color);" : "-4px 4px var(--quaternary-color);"};
+    transform: ${props => props.$selected ? "translate(-3px, 3px);" : "translate(0px, 0px);"};
+    
     cursor: pointer;
 
     &:after {
@@ -62,11 +66,15 @@ const Colors = styled.div`
     flex-wrap: wrap;
 `
 
-const Color = styled.div<{ $color?: string; }>`
+const Color = styled.div<{ $color?: string; $selected?: boolean; }>`
     aspect-ratio: 1 / 1;
     height: var(--color-table-item-width);
     background-color: ${props => props.$color};
     margin: 0px 12px 1vh 12px;
+    border: 1px solid white;
+    box-shadow: ${props => props.$selected ? "0px 0px var(--tertiary-color);" : "-4px 4px var(--quaternary-color);"};
+    transform: ${props => props.$selected ? "translate(-4px, 4px);" : "translate(0px, 0px);"};
+
     cursor: pointer;
 `;
 
@@ -135,7 +143,7 @@ const ButtonManager = styled.div`
     gap: 0.5vh;
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ $disabled?: boolean; }>`
     background-color: var(--tertiary-color);
     color: black;
     border: 2px solid #555555;
@@ -147,13 +155,19 @@ const Button = styled.button`
     text-decoration: none;
     display: inline-block;
     font-size: large;
-    transition-duration: 0.2s;
-    cursor: pointer;
+    
+    ${props => props.$disabled ? 
+     `opacity: 0.6;
+      cursor: not-allowed;`:
+     `cursor: pointer;`};
 
     &:hover {
-        background-color: #555555;
-        color: white;
-    }
+        ${props => props.$disabled ?
+        `` :
+        `background-color: #555555;
+         color: white;`};
+      }
+
 `;
 
 
@@ -225,11 +239,9 @@ export function ColorTable(props: MyColorTableProps) {
     }
 
     function renderAddButton() {
-        if (props.currentColorTable.items.length < 255) {
-            return <Button key={crypto.randomUUID()} onClick={() => {addNewColor()}}> Add </Button>
-        } else {
-            return <Button key={crypto.randomUUID()} style={{  opacity: 0.6, cursor: "not-allowed", }}> Add </Button>
-        }
+        return <Button key={crypto.randomUUID()}
+                       $disabled={props.currentColorTable.items.length >= 255}
+                       onClick={() => {addNewColor()}}> Add </Button>
     }
 
     function doSomething(e: any) {
@@ -246,7 +258,7 @@ export function ColorTable(props: MyColorTableProps) {
     }
 
     function getColorPickerValues() {
-        let hexInputColor = document.getElementById("favcolor").value;
+        let hexInputColor = document.getElementById("colorpicker").value;
         
         let r: string, g: string, b: string;
         if (hexInputColor.length == 4) {
@@ -357,8 +369,8 @@ export function ColorTable(props: MyColorTableProps) {
         // Set the color to the clicked color index
         props.setCurrentColorIndex(() => {return i});
         
-        // Set tool to brush if it's not brush
-        if (props.currentTool.tool != toolType.brush) {
+        // Set tool to brush if it's currently an eraser
+        if (props.currentTool.tool == toolType.eraser) {
             props.setCurrentTool((object: toolData) => {
                 return {
                     key: object.key,
@@ -373,7 +385,11 @@ export function ColorTable(props: MyColorTableProps) {
         <>
         <ColorTableWrapper>
             <Tools>
-                <Tool key={crypto.randomUUID()} $icon={"P"}  onClick={(e) => {updateTool(toolType.brush)}}></Tool>
+                <Tool key={crypto.randomUUID()}
+                      $icon={"P"}
+                      $selected={props.currentTool.tool == toolType.brush}
+                      onClick={(e) => {updateTool(toolType.brush)}}></Tool>
+                
                 <SizeInput key={props.currentTool.key} 
                            type="number"
                            min="1"
@@ -381,23 +397,31 @@ export function ColorTable(props: MyColorTableProps) {
                            value={props.currentTool.size}
                            onMouseOver={e => e.target.focus()}
                            onChange={e => updateToolSize(e)}></SizeInput>
-                <Tool key={crypto.randomUUID()} $icon={"B"} onClick={(e) => {updateTool(toolType.bucket)}}></Tool>
-                <Tool key={crypto.randomUUID()} $icon={"E"}  onClick={(e) => {updateTool(toolType.eraser)}}></Tool>
+
+                <Tool key={crypto.randomUUID()}
+                      $icon={"B"}
+                      $selected={props.currentTool.tool == toolType.bucket}
+                      onClick={(e) => {updateTool(toolType.bucket)}}></Tool>
+                
+                <Tool key={crypto.randomUUID()}
+                      $icon={"E"}
+                      $selected={props.currentTool.tool == toolType.eraser}
+                      onClick={(e) => {updateTool(toolType.eraser)}}></Tool>
             </Tools>
             <Colors>
             {   
                 props.currentColorTable.items.map((entry, i) => {
                     if (i != 0) {
-                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} onClick={() => setColorIndexAndTool(i)} />
+                        return <Color key={crypto.randomUUID()} $color={getColorString(entry)} $selected={i == props.currentColorIndex} onClick={() => setColorIndexAndTool(i)} />
                     }
                 })
             }
             </Colors>
             <ColorOptions>
-                <ColorPicker type="color" id="favcolor" name="favcolor"></ColorPicker>
+                <ColorPicker type="color" id="colorpicker" name="colorpicker"></ColorPicker>
                 <ButtonManager>
                     <Button onClick={() => setClr()}> Set </Button>
-                    <Button onClick={() => removeClr()}> Remove </Button>
+                    <Button $disabled={props.currentColorTable.items.length <= 2} onClick={() => removeClr()}> Remove </Button>
                     {
                         renderAddButton()
                     }

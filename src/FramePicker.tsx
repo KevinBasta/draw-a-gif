@@ -1,10 +1,6 @@
 import styled from "styled-components";
+import { frameType } from "./Formats";
 
-interface MyFramePickerProps {
-    frames: any;
-    addFrame: any;
-    displayFrame: any;
-}
 
 const FramePickerElem = styled.div`
     height: 10vh;
@@ -22,7 +18,7 @@ const FramePickerElem = styled.div`
     overflow-x: scroll;
 `;
 
-const FramePreview = styled.div`
+const FramePreview = styled.div<{ $selected?: boolean; }>`
     aspect-ratio: 1 / 1;
     height: 70%;
     background-color: var(--tertiary-color);
@@ -30,6 +26,11 @@ const FramePreview = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    
+    box-shadow: ${props => props.$selected ? "2px 1px var(--tertiary-color);" : "-4px 4px var(--quaternary-color);"};
+    transform: ${props => props.$selected ? "translate(0px, 0px);" : "translate(4px, -4px);"};
+    
+    cursor: pointer;
 `;
 
 const FrameAdder = styled.div`
@@ -40,6 +41,13 @@ const FrameAdder = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+
+    transition: 0.2s;
+    
+    &:hover {
+        background-color: var(--background-color);
+    }
     
     &:after {
         content: "+";
@@ -47,15 +55,22 @@ const FrameAdder = styled.div`
     }
 `;
 
-export function FramePicker({ frames, addFrame, displayFrame }: MyFramePickerProps) {
+interface MyFramePickerProps {
+    frames: Array<frameType>;
+    currentFrame: frameType;
+    addFrame: Function;
+    displayFrame: Function;
+}
+
+export function FramePicker(props: MyFramePickerProps) {
     return (
         <FramePickerElem>
         {
-            [...Array(frames.length)].map((_, i) => {
-                return <FramePreview key={frames[i].key} onClick={() => displayFrame(frames[i])} />
+            [...Array(props.frames.length)].map((_, i) => {
+                return <FramePreview key={props.frames[i].key} $selected={props.frames[i] == props.currentFrame} onClick={() => props.displayFrame(props.frames[i])} />
             })
         }
-        <FrameAdder onClick={() => addFrame()} />
+        <FrameAdder onClick={() => props.addFrame()} />
         </FramePickerElem>
     );
 }
