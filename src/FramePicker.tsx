@@ -27,8 +27,21 @@ const FramePreview = styled.div<{ $selected?: boolean; }>`
     align-items: center;
     justify-content: center;
     
-    box-shadow: ${props => props.$selected ? "0px 0px var(--tertiary-color);" : "-4px 4px var(--quaternary-color);"};
-    transform: ${props => props.$selected ? "translate(0px, 0px);" : "translate(4px, -4px);"};
+    transition: 0.2s;
+
+    ${props => props.$selected ?
+        `
+        box-shadow: var(--button-shadow-active);
+        transform: var(--button-transform-active);
+        `
+        : 
+        `
+        box-shadow: var(--button-shadow);
+        transform: var(--button-transform);
+        &:hover {
+            background-color: var(--tertiary-color-active);
+        }
+        `};
     
     cursor: pointer;
 `;
@@ -43,10 +56,18 @@ const FrameAdder = styled.div`
     justify-content: center;
     cursor: pointer;
 
-    transition: 0.2s;
+    box-shadow: var(--button-shadow);
+    transform: var(--button-transform);
+    
+    transition: 0.01s;
     
     &:hover {
-        background-color: var(--background-color);
+        background-color: var(--tertiary-color-active);
+    }
+
+    &:active {
+        box-shadow: var(--button-shadow-active);
+        transform: var(--button-transform-active);
     }
     
     &:after {

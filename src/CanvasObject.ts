@@ -1,6 +1,3 @@
-import { getColorString } from "./ColorUtil";
-import { colorType } from "./Formats";
-
 export class CanvasObject {
     #width: number;
     #height: number;
@@ -27,7 +24,15 @@ export class CanvasObject {
         this.#context = object.getContext("2d");
     }
 
+    getQualityMultiplier() {
+        return this.#qualityMultiplier;
+    }
+    
     getDataMappedXY(x: number, y: number) {
+        if (this.#element == null) {
+            return [0, 0];
+        }
+
         const rect = this.#element.getBoundingClientRect();
         let contextX = (x - rect.left) * this.#element.width / rect.width;
         let contextY = (y - rect.top) * this.#element.height / rect.height;
@@ -38,6 +43,10 @@ export class CanvasObject {
     }
 
     fillContext(x: number, y: number, size: number) {
+        if (this.#context == null) {
+            return;
+        }
+
         this.#context.fillRect((x) * this.#qualityMultiplier,
                                (y) * this.#qualityMultiplier,
                                size * this.#qualityMultiplier,
@@ -45,27 +54,11 @@ export class CanvasObject {
     }
 
     drawRectangle(color: string, x: number, y: number, size: number) {
+        if (this.#context == null) {
+            return;
+        }
+
         this.#context.fillStyle = color;
         this.fillContext(x, y, size);
-    }
-
-    drawFrame(getColorObject: Function) {
-        [...Array(this.#width)].map((_, i) => {
-            return (
-                [...Array(this.#height)].map((_, j) => {
-                    try {
-                        let indexStreamIndex = (j * this.#width) + i;
-                        
-                        let colorObject: colorType = getColorObject(indexStreamIndex);
-                        this.#context.fillStyle = getColorString(colorObject);
-                        this.fillContext(i, j, 1);
-                    } catch (e) {
-                        console.log(e);
-                        this.#context.fillStyle = "#000000";
-                        this.fillContext(i, j, 1);
-                    }
-                })
-            )
-        })
     }
 }

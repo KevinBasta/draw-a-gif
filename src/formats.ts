@@ -1,3 +1,4 @@
+import { CanvasObject } from "./CanvasObject";
 
 export enum toolType {
     brush = 1,
@@ -12,6 +13,7 @@ export interface toolData {
 };
 
 export interface colorType {
+    key: string,
     red: number,
     green: number,
     blue: number,
@@ -30,6 +32,7 @@ export interface frameType {
 };
 
 export interface canvasType {
+    canvasElement: CanvasObject,
     width: number, 
     height: number,
 };

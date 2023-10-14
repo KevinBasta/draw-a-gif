@@ -7,6 +7,7 @@ import { FramePicker } from "./FramePicker";
 
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
 import "./styles.css"
+import { CanvasObject } from "./CanvasObject";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -17,6 +18,7 @@ const GlobalStyles = createGlobalStyle`
     --primary-color: #2D5D7B;
     --secondary-color: #457EAC;
     --tertiary-color: #E0E2DB; 
+    --tertiary-color-active: #cacbc5; 
     --quaternary-color: #000000;
     --quinary-color: ;
     --senary-color: ;
@@ -24,6 +26,18 @@ const GlobalStyles = createGlobalStyle`
     --scroll-background-color: #E0E2DB;
     --scroll-handle-color: #686868;
     --scroll-hover-color: #555;
+
+    --button-shadow: -4px 4px var(--quaternary-color);
+    --button-shadow-active: 0px 0px var(--quaternary-color);
+
+    --button-transform: translate(4px, -4px);
+    --button-transform-active: translate(0px, 0px);
+
+    --button-shadow-small: -2px 2px var(--quaternary-color);
+    --button-shadow-small-active: 0px 0px var(--quaternary-color);
+
+    --button-transform-small: translate(2px, -2px);
+    --button-transform-small-active: translate(0px, 0px);
 
     --standard-gap-size: min(1vw, 20px);
     --color-table-item-width: min(4vw, 30px);
@@ -33,7 +47,7 @@ const GlobalStyles = createGlobalStyle`
 
 export default function App() {
 
-  const [canvas, setSanvas] = useState<canvasType>({ width: 10, height: 10 });
+  const [canvas, setSanvas] = useState<canvasType>({ canvasElement: new CanvasObject(10, 10), width: 10, height: 10 });
   const [frames, setFrames] = useState<Array<frameType>>([getEmptyFrame()]);
   
   // Initializing color table with two colors
@@ -43,8 +57,8 @@ export default function App() {
     {
       transparentColorIndex: 0,
       items: [
-        {red: 0, green: 0, blue: 0}, 
-        {red: 0, green: 0, blue: 0}
+        {key: crypto.randomUUID(),red: 0, green: 0, blue: 0}, 
+        {key: crypto.randomUUID(), red: 0, green: 0, blue: 0}
       ],
     }
   );
@@ -63,8 +77,8 @@ export default function App() {
       localColorTable: {
         transparentColorIndex: NaN,
         items: [
-          {red: 226, green: 226, blue: 226},
-          {red: 255, green: 255, blue: 255}
+          {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
+          {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
         ],
       },
       indexStream: Array.from(
