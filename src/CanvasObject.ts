@@ -1,7 +1,7 @@
 import { getColorString } from "./ColorUtil";
 import { colorType } from "./Formats";
 
-class CanvasObject {
+export class CanvasObject {
     #width: number;
     #height: number;
     #qualityMultiplier: number = 1;
@@ -25,6 +25,16 @@ class CanvasObject {
     setElement(object: HTMLCanvasElement) {
         this.#element = object;
         this.#context = object.getContext("2d");
+    }
+
+    getDataMappedXY(x: number, y: number) {
+        const rect = this.#element.getBoundingClientRect();
+        let contextX = (x - rect.left) * this.#element.width / rect.width;
+        let contextY = (y - rect.top) * this.#element.height / rect.height;
+        let dataMappedX = Math.round(((contextX - (contextX % this.#qualityMultiplier)) / this.#qualityMultiplier));
+        let dataMappedY = Math.round(((contextY - (contextY % this.#qualityMultiplier)) / this.#qualityMultiplier));
+
+        return [dataMappedX, dataMappedY];
     }
 
     fillContext(x: number, y: number, size: number) {

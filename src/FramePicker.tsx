@@ -27,7 +27,7 @@ const FramePreview = styled.div<{ $selected?: boolean; }>`
     align-items: center;
     justify-content: center;
     
-    box-shadow: ${props => props.$selected ? "2px 1px var(--tertiary-color);" : "-4px 4px var(--quaternary-color);"};
+    box-shadow: ${props => props.$selected ? "0px 0px var(--tertiary-color);" : "-4px 4px var(--quaternary-color);"};
     transform: ${props => props.$selected ? "translate(0px, 0px);" : "translate(4px, -4px);"};
     
     cursor: pointer;

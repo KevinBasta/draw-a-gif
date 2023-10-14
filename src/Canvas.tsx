@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
+import { CanvasObject } from './CanvasObject';
+import { getColorString } from './ColorUtil';
 
 // For detecting clicks on canvas
 var mouseDown = 0;
@@ -51,6 +53,7 @@ interface CanvasProps {
     currentColorIndex: number;
 }
 
+let canvasElement: CanvasObject = null;
 export function Canvas(props: CanvasProps) {
     let canvasWidthInPixels = props.canvas.width;
     let canvasHeightInPixels = props.canvas.height;
@@ -88,30 +91,6 @@ export function Canvas(props: CanvasProps) {
 
         return colorObject;
     }
-
-    /**
-     * Return a string to be used by html color style
-     * @param colorIndex        The index of the color in current color table
-     * @param indexStreamIndex  The index of the pixel in the index stream
-     */
-    function getColorString(colorObject: colorType) {
-        return "rgb(" + colorObject.red + ", " + colorObject.green + ", " + colorObject.blue + ")"
-    }
-
-    /**
-     * Modify the index stream array, and draw the data on canvas.
-     * Both actions are separate. Updating the index stream is not
-     * meant to directly affect the canvas as that would hinder preformance.
-     * @param x     Index Stream array x
-     * @param y     Index Stream array y
-     */
-    function updateFrameDataAndRender(x: number, y: number) {
-        let topRightIndexStreamIndex = (canvasWidthInPixels * y) + x;
-
-        saveFrameDataPixel(x, y, topRightIndexStreamIndex);
-        drawFrameDataPixel(x, y, topRightIndexStreamIndex);
-    }
-
 
     let visited: Array<number> = [];
     function populateVisited() {
@@ -187,7 +166,7 @@ export function Canvas(props: CanvasProps) {
      * @param y 
      * @param topRightIndexStreamIndex 
      */
-    function saveFrameDataPixel(x: number, y: number, topRightIndexStreamIndex: number) {
+    function saveUserDrawInput(x: number, y: number, topRightIndexStreamIndex: number) {
         let tool: toolType = props.currentTool.tool;
         let toolSize: string = props.currentTool.size;
 
@@ -205,14 +184,6 @@ export function Canvas(props: CanvasProps) {
                     props.currentFrame.indexStream[topRightIndexStreamIndex + i + (canvasWidthInPixels * j)] = paintColor;
                 }
             }
-
-            // REMOVE AND FIX ../ next func call
-            /* props.setCurrentFrame((current: frameType) => {
-                return {key: current.key, 
-                        useLocalColorTable: current.useLocalColorTable,
-                        localColorTable: current.localColorTable,
-                        indexStream: current.indexStream}
-            }); */
         }
         else if (tool == toolType.bucket) {
             mouseDown = 0;
@@ -225,102 +196,73 @@ export function Canvas(props: CanvasProps) {
         }
     }
 
-    function drawFrameDataPixel(x: number, y: number, topRightIndexStreamIndex: number) {
-        let canvas;
-        let context;
-
-        try {
-            canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
-            context = canvas.getContext("2d");
-            
-            let colorTableIndex: number = props.currentFrame.indexStream[topRightIndexStreamIndex];
-            
-            if (colorTableIndex == props.currentColorTable.transparentColorIndex) {
-                for (let i = 0; i < parseInt(props.currentTool.size) && (x + i < canvasWidthInPixels); i++) {
-                    for (let j = 0; j < parseInt(props.currentTool.size) && (y + j < canvasHeightInPixels); j++) {
-                        let currentX = x + i;
-                        let currentY = y + j;
-                        context.fillStyle = getColorString(getColorObject(getIndexStreamIndex(currentX, currentY)));
-                        fillContext(context, currentX, currentY, 1);
-                    }
+    function renderUserDrawInput(x: number, y: number, topRightIndexStreamIndex: number) {
+        let tool = props.currentTool.tool;
+        let toolSize = parseInt(props.currentTool.size);
+        
+        if (tool == toolType.brush) {
+            // Using top right index value to avoid possible
+            // color change in between calls
+            let color: string = getColorString(getColorObject(topRightIndexStreamIndex));
+            canvasElement.drawRectangle(color, x, y, toolSize);
+        } 
+        else if (tool == toolType.eraser) {
+            // Need to get the transparent color values of each pixel
+            for (let i = 0; i < parseInt(props.currentTool.size) && (x + i < canvasWidthInPixels); i++) {
+                for (let j = 0; j < parseInt(props.currentTool.size) && (y + j < canvasHeightInPixels); j++) {
+                    let currentX = x + i;
+                    let currentY = y + j;
+                    let color: string = getColorString(getColorObject(getIndexStreamIndex(currentX, currentY)));
+                    canvasElement.drawRectangle(color, currentX, currentY, 1);
                 }
-            } else {
-                context.fillStyle = getColorString(getColorObject(topRightIndexStreamIndex));
-                fillContext(context, x, y, parseInt(props.currentTool.size));
             }
-        } catch (e) {
-            console.log(e);
-            return;
         }
     }
 
-    function fillContext(context: any, x: number, y: number, size: number) {
-        context.fillRect((x) * qualityMultiplier,
-                         (y) * qualityMultiplier,
-                         size * qualityMultiplier,
-                         size * qualityMultiplier);
-    }
-
+    /**
+     * Modify the index stream array, and draw the data on canvas.
+     * Both actions are separate. Updating the index stream is not
+     * meant to directly affect the canvas as that would hinder preformance.
+     * @param x     Index Stream array x
+     * @param y     Index Stream array y
+     */
     function drawUserInputPixel(x: number, y: number) {
         if (mouseDown == 0) {
             return;
         }
 
-        if (props.currentFrame == props.transparentBackground) {
-            return;
-        }
+        let [cx, cy] = canvasElement.getDataMappedXY(x, y);
+        let topRightIndexStreamIndex = (canvasWidthInPixels * cy) + cx;
 
-        let canvas;
-
-        try {
-            canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
-            const rect = canvas.getBoundingClientRect();
-            let contextX = (x - rect.left) * canvas.width / rect.width;
-            let contextY = (y - rect.top) * canvas.height / rect.height;
-            let dataMappedX = Math.round(((contextX - (contextX % qualityMultiplier)) / qualityMultiplier));
-            let dataMappedY = Math.round(((contextY - (contextY % qualityMultiplier)) / qualityMultiplier));
-            //console.log(x, dataMappedX, y, dataMappedY);
-            updateFrameDataAndRender(dataMappedX, dataMappedY);
-        } catch (e) {
-            console.log(e);
-            return;
-        }
+        saveUserDrawInput(cx, cy, topRightIndexStreamIndex);
+        renderUserDrawInput(cx, cy, topRightIndexStreamIndex);
     }
 
+    /**
+     * Draw a full frame on canvas from
+     * the current index stream
+     */
     function drawFrameOnCanvas() {
         let frame: frameType;
         
         if (props.currentFrame == null) {
             return;
-        } else { 
+        } else {
             frame = props.currentFrame;
         }
 
-        let canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
-        if (canvas == null) {
-            return;
-        }
-        
-        let context = canvas.getContext("2d");
-        
-        [...Array(canvasWidthInPixels)].map((_, i) => {
-            return (
-                [...Array(canvasHeightInPixels)].map((_, j) => {
-                    try {
-                        let indexStreamIndex = (j * canvasWidthInPixels) + i;
-                        
-                        let colorObject: colorType = getColorObject(indexStreamIndex);
-                        context.fillStyle = getColorString(colorObject);
-                        fillContext(context, i, j, 1);
-                    } catch (e) {
-                        console.log(e);
-                        drawFrameDataPixel(i, j, 1);
-                    }
-                })
-            )
-        })
+        canvasElement.drawFrame(getColorObject);
     }
 
+
+    
+    useEffect(() => {
+        canvasElement = new CanvasObject(props.canvas.width, props.canvas.height);
+        canvasElement.setElement(document.getElementsByTagName("canvas")[0] as HTMLCanvasElement);
+    }, []);
+
+    // Redraw the html canvas each time the current 
+    // frame or color table change
     useEffect(() => {
         drawFrameOnCanvas();
     }, [ props.currentFrame, props.currentColorTable ]);
