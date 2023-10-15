@@ -74,7 +74,7 @@ const Button = styled.button<{ $disabled?: boolean; }>`
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: large;
+    font-size: var(--font-size-small);
     
     box-shadow: var(--button-shadow-small);
     transform: var(--button-transform-small);

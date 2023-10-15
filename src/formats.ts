@@ -4,7 +4,13 @@ export enum toolType {
     brush = 1,
     eraser,
     bucket,
-}
+};
+
+export enum disposalMethodType {
+    keep = 1,
+    restoreToBackgroundColor,
+    restoreToPreviousState,
+};
 
 export interface toolData {
     key: string,
@@ -26,12 +32,15 @@ export interface colorTableType {
 
 export interface frameType {
     key: string,
+    disposalMethod: disposalMethodType,
+    delayTime: number;
     useLocalColorTable: boolean,
     localColorTable: colorTableType,
     indexStream: Array<number>,
 };
 
 export interface canvasType {
+    key: string,
     canvasElement: CanvasObject,
     width: number, 
     height: number,

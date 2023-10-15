@@ -5,9 +5,10 @@ import { Canvas } from "./Canvas";
 import { ColorTable } from "./ColorTable";
 import { FramePicker } from "./FramePicker";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, disposalMethodType } from "./Formats"
 import "./styles.css"
 import { CanvasObject } from "./CanvasObject";
+import { CanvaseOptions } from "./CanvasOptions";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -41,13 +42,29 @@ const GlobalStyles = createGlobalStyle`
 
     --standard-gap-size: min(1vw, 20px);
     --color-table-item-width: min(4vw, 30px);
-    --color-table-icon-width: min(3vw, 22px);
+    --tool-item-width: min(3vw, 3vh);
+
+    --font-size-small: min(1.5vw, 1.5vh);
+    --font-size-sm: min(2vw, 2vh);
+    --font-size-medium: min(2.5vw, 2.5vh);
+    --font-size-ml: min(3vw, 3vh);
+    --font-size-large: min(3.5vw, 3.5vh);
+
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 `;
 
+
+//let Module = require('./wasm/gifencoder.js');
+
 export default function App() {
 
-  const [canvas, setSanvas] = useState<canvasType>({ canvasElement: new CanvasObject(10, 10), width: 10, height: 10 });
+  const [canvas, setSanvas] = useState<canvasType>({ key: crypto.randomUUID(), canvasElement: new CanvasObject(10, 10), width: 10, height: 10 });
   const [frames, setFrames] = useState<Array<frameType>>([getEmptyFrame()]);
   
   // Initializing color table with two colors
@@ -64,7 +81,7 @@ export default function App() {
   );
   
   //{key: NaN, useLocalColorTable: null, localColorTable: null, indexStream: null}
-  const [currentFrame, setCurrentFrame]                   = useState<frameType>(frames[0]);
+  const [currentFrameIndex, setCurrentFrameIndex]         = useState<number>(0);
   const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(globalColorTable);
   const [currentColorIndex, setCurrentColorIndex]         = useState<number>(1);
   const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
@@ -73,6 +90,8 @@ export default function App() {
   const [transparentBackground, setTransparentBackground] = useState<frameType>(
     {
       key: crypto.randomUUID(),
+      disposalMethod: disposalMethodType.restoreToBackgroundColor,
+      delayTime: 0,
       useLocalColorTable: true,
       localColorTable: {
         transparentColorIndex: NaN,
@@ -94,14 +113,11 @@ export default function App() {
     }
   );
 
-
-  function displayFrame(frame: frameType): void {
-    setCurrentFrame(() => {return frame;});
-  }
-
   function getEmptyFrame(): frameType {
     return {
       key: crypto.randomUUID(),
+      disposalMethod: disposalMethodType.restoreToBackgroundColor,
+      delayTime: 0,
       useLocalColorTable: false,
       localColorTable: null,
       indexStream: Array.from(
@@ -111,14 +127,94 @@ export default function App() {
     }
   }
 
-  function addFrame(): void {
-    setFrames((frames: Array<frameType>) => {
-      return [
-        ...frames,
-        getEmptyFrame(),
-      ]
-    });
-  }
+/*   function encodeGIF() {
+    let status;
+    const ccanvas = Module.ccall(
+      "gif_canvasCreate",
+      Int32Array,
+      Int32Array,
+      [canvas.width, canvas.height],
+    );
+
+    status = Module.ccall(
+      "gif_canvasCreateGlobalColorTable",
+      Int32Array,
+      Int32Array,
+      [ccanvas],
+    );
+
+    for (let i = 0; i < currentColorTable.items.length; i++) {
+      let currentColor: colorType = currentColorTable.items[i];
+      
+      status = Module.ccall(
+          "gif_canvasAddColorToColorTable",
+          Int32Array,
+          Int32Array,
+          [ccanvas, currentColor.red, currentColor.green, currentColor.blue],
+      );
+    }
+
+    for (let i = 0; i < frames.length; i++) {
+      let jsframe: frameType = frames[i];
+
+      const cframe = Module.ccall(
+        "gif_frameCreate",
+        Int32Array,
+        Int32Array,
+        [canvas.width, canvas.height, 0, 0],
+      );
+
+      status = Module.ccall(
+        "gif_frameCreateIndexStream",
+        Int32Array,
+        Int32Array,
+        [cframe, jsframe.indexStream.length],
+      );
+
+      for (let i = 0; i < jsframe.indexStream.length; i++) {
+        status = Module.ccall(
+            "gif_frameAppendToIndexStream",
+            Int32Array,
+            Int32Array,
+            [cframe, jsframe.indexStream[i]],
+        );
+      }
+
+      status = Module.ccall(
+        "gif_canvasAddFrame",
+        Int32Array,
+        Int32Array,
+        [ccanvas, cframe],
+      );
+
+    }
+
+    status = Module.ccall(
+      "gif_expandCanvas",
+      Int32Array,
+      Int32Array,
+      [ccanvas, 50, 50],
+    );
+
+    status = Module.ccall(
+      "gif_createGIF",
+      Int32Array,
+      Int32Array,
+      [ccanvas, true, true],
+    );
+
+    FS.readdir("/");
+
+    var data = FS.readFile("output.gif", MEMFS);
+
+    var img2 = document.createElement("img");
+    document.body.appendChild(img2).src = URL.createObjectURL(
+      new Blob([data.buffer], { type: 'image/gif' });
+    );
+    var src = document.body;
+    src.appendChild(img2);
+
+  }*/
 
   // Set initial states
   useEffect(() => {
@@ -132,20 +228,39 @@ export default function App() {
 
       <div className="tempflex">
         <div className="header">
-          <FramePicker frames={frames} currentFrame={currentFrame} addFrame={addFrame} displayFrame={displayFrame}/>
+          <FramePicker frames={frames}
+                       setFrames={setFrames}
+
+                       currentFrameIndex={currentFrameIndex}
+                       setCurrentFrameIndex={setCurrentFrameIndex}
+                       
+                       getEmptyFrame={getEmptyFrame}/>
         </div>
         
-        <div className="mainContent">
-          <Canvas canvas={canvas}
-                  transparentBackground={transparentBackground}
-                  
-                  currentFrame={currentFrame}
-                  setCurrentFrame={setCurrentFrame}
-                  
-                  currentTool={currentTool} 
-                  
-                  currentColorTable={currentColorTable}
-                  currentColorIndex={currentColorIndex} />
+        <div className="canvasMenueWrapper">
+          <div className="mainContent">
+            <Canvas canvas={canvas}
+                    transparentBackground={transparentBackground}
+                    
+                    frames={frames}
+                    setFrames={setFrames}
+                    
+                    currentFrameIndex={currentFrameIndex}
+                    setCurrentFrameIndex={setCurrentFrameIndex}
+                    
+                    currentTool={currentTool} 
+                    
+                    currentColorTable={currentColorTable}
+                    currentColorIndex={currentColorIndex} />
+          </div>
+          
+          <CanvaseOptions frames={frames}
+                          setFrames={setFrames}
+
+                          currentFrameIndex={currentFrameIndex}
+                          setCurrentFrameIndex={setCurrentFrameIndex}
+                          
+                          /* encodeGIF={encodeGIF} *//>
         </div>
         
         <div className="footer">
@@ -160,6 +275,7 @@ export default function App() {
         </div>
         
       </div>
+      
     </>
   )
 }

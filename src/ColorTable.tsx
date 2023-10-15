@@ -23,7 +23,7 @@ const Colors = styled.div`
     overflow-y: scroll;
     padding: var(--standard-gap-size) 0;
     background-color: var(--scroll-background-color);
-    border: 5px solid var(--primary-color);
+    border: 5px solid var(--secondary-color);
 
     display: flex;
     flex-direction: row;

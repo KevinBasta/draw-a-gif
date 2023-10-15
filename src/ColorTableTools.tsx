@@ -14,7 +14,7 @@ const Tools = styled.div`
 
 const Tool = styled.div<{ $icon?: string; $selected?: boolean; }>`
     aspect-ratio: 1 / 1;
-    width: var(--color-table-item-width);
+    width: var(--tool-item-width);
     background-color: var(--tertiary-color);
     place-self: center;
 
@@ -39,19 +39,21 @@ const Tool = styled.div<{ $icon?: string; $selected?: boolean; }>`
 
     &:after {
         content: "${props => props.$icon}";
-        font-size: var(--color-table-icon-width);
+        font-size: var(--font-size-small);
     }
 `;
 
 const SizeInput = styled.input`
     aspect-ratio: 1 / 1;
-    width: var(--color-table-item-width);
+    width: var(--tool-item-width);
     background-color: var(--tertiary-color);
     place-self: center;
 
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    margin: 0px;
+    padding: 0px;
     cursor: text;
 
     &:hover {
@@ -86,7 +88,6 @@ export function ColorTableTools(props: MyColorTableToolsProps) {
 
     function updateToolSize(e: any) {
         let value = e.target.value;
-        
         let valueInt = parseInt(value);
         
         if (valueInt > 100) {
@@ -95,7 +96,7 @@ export function ColorTableTools(props: MyColorTableToolsProps) {
         }
         
         if (valueInt < 1) {
-            e.key = (0).toString();
+            e.key = (1).toString();
             value = (e.key).toString();
         }
         

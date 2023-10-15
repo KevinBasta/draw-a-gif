@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { frameType } from "./Formats";
 
-
 const FramePickerElem = styled.div`
     height: 10vh;
 
@@ -72,26 +71,45 @@ const FrameAdder = styled.div`
     
     &:after {
         content: "+";
-        font-size: 3cqw;
+        font-size: var(--font-size-medium);
     }
 `;
 
 interface MyFramePickerProps {
     frames: Array<frameType>;
-    currentFrame: frameType;
-    addFrame: Function;
-    displayFrame: Function;
+    setFrames: Function;
+
+    currentFrameIndex: number;
+    setCurrentFrameIndex: Function;
+    
+    getEmptyFrame: Function;
 }
 
 export function FramePicker(props: MyFramePickerProps) {
+    
+    function addFrame(): void {
+        props.setFrames((frames: Array<frameType>) => {
+            return [
+                ...frames,
+                props.getEmptyFrame(),
+            ]
+        });
+    }
+    
+    function displayFrame(index: number): void {
+        props.setCurrentFrameIndex(() => {return index;});
+    }
+
     return (
         <FramePickerElem>
         {
             [...Array(props.frames.length)].map((_, i) => {
-                return <FramePreview key={props.frames[i].key} $selected={props.frames[i] == props.currentFrame} onClick={() => props.displayFrame(props.frames[i])} />
+                return <FramePreview key={props.frames[i].key}
+                                     $selected={i == props.currentFrameIndex}
+                                     onClick={() => displayFrame(i)} />
             })
         }
-        <FrameAdder onClick={() => props.addFrame()} />
+        <FrameAdder onClick={() => addFrame()} />
         </FramePickerElem>
     );
 }

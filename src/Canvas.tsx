@@ -27,6 +27,7 @@ const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
     background-color: var(--primary-color);
     border: 3px solid black;
     aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
+    position: relative;
     ${props => props.size};
 
     user-drag: none;
@@ -43,8 +44,11 @@ interface CanvasProps {
     canvas: canvasType;
     transparentBackground: frameType;
 
-    currentFrame: frameType;
-    setCurrentFrame: Function;
+    frames: Array<frameType>;
+    setFrames: Function;
+
+    currentFrameIndex: number;
+    setCurrentFrameIndex: Function;
     
     currentTool: toolData;
     
@@ -61,7 +65,7 @@ export function Canvas(props: CanvasProps) {
     if (canvasWidthInPixels > canvasHeightInPixels) {
         canvasSizeControl = "width: 90vw";
     } else {
-        canvasSizeControl = "height: min(100%, 90vw);";
+        canvasSizeControl = "max-height: inherit; max-width: 90%;";
     }
 
     function getIndexStreamIndex(x: number, y: number) {
@@ -76,7 +80,7 @@ export function Canvas(props: CanvasProps) {
      */
     function getColorObject(indexStreamIndex: number) {
         let colorObject: colorType;
-        let colorTableIndex: number = props.currentFrame.indexStream[indexStreamIndex];
+        let colorTableIndex: number = props.frames[props.currentFrameIndex].indexStream[indexStreamIndex];
         
         if (colorTableIndex < props.currentColorTable.items.length) {
             if (colorTableIndex == props.currentColorTable.transparentColorIndex) {
@@ -131,7 +135,7 @@ export function Canvas(props: CanvasProps) {
                         break;
                     }
 
-                    props.currentFrame.indexStream[topRightIndex + i + (canvasWidthInPixels * j)] = paintColor;
+                    props.frames[props.currentFrameIndex].indexStream[topRightIndex + i + (canvasWidthInPixels * j)] = paintColor;
                 }
             }
         }
@@ -208,11 +212,12 @@ export function Canvas(props: CanvasProps) {
     // current frame or color table change
     useEffect(() => {
         drawFrameOnCanvas();
-    }, [ props.currentFrame, props.currentColorTable ]);
+    }, [ props.currentFrameIndex, props.currentColorTable ]);
 
     return (
         <>
-        <CanvasWrapper onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY)}}
+        <CanvasWrapper key={props.canvas.key}
+                       onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY)}}
                        size={canvasSizeControl}
                        width={canvasWidthInPixels * props.canvas.canvasElement.getQualityMultiplier()}
                        height={canvasHeightInPixels * props.canvas.canvasElement.getQualityMultiplier()}
