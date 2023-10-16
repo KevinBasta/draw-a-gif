@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { createGlobalStyle } from "styled-components";
+import "./styles.css"
 
 import { Canvas } from "./Canvas";
 import { ColorTable } from "./ColorTable";
 import { FramePicker } from "./FramePicker";
 
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData, disposalMethodType } from "./Formats"
-import "./styles.css"
 import { CanvasObject } from "./CanvasObject";
 import { CanvaseOptions } from "./CanvasOptions";
 
@@ -61,6 +61,8 @@ const GlobalStyles = createGlobalStyle`
 
 
 //let Module = require('./wasm/gifencoder.js');
+/* const gifModule = await require([['./wasm/gifEncoder.js']]);
+const gif = gifModule; */
 
 export default function App() {
 
@@ -127,94 +129,110 @@ export default function App() {
     }
   }
 
-/*   function encodeGIF() {
-    let status;
-    const ccanvas = Module.ccall(
-      "gif_canvasCreate",
-      Int32Array,
-      Int32Array,
-      [canvas.width, canvas.height],
-    );
-
-    status = Module.ccall(
-      "gif_canvasCreateGlobalColorTable",
-      Int32Array,
-      Int32Array,
-      [ccanvas],
-    );
-
-    for (let i = 0; i < currentColorTable.items.length; i++) {
-      let currentColor: colorType = currentColorTable.items[i];
-      
-      status = Module.ccall(
-          "gif_canvasAddColorToColorTable",
+  function encodeGIF() {
+    require(['/src/gifEncoder.js'], function(func: Function) {
+      let status;
+      let loadModule = func();
+      loadModule.then(Module => {
+        const ccanvas = Module.ccall(
+          "gif_canvasCreate",
           Int32Array,
           Int32Array,
-          [ccanvas, currentColor.red, currentColor.green, currentColor.blue],
-      );
-    }
-
-    for (let i = 0; i < frames.length; i++) {
-      let jsframe: frameType = frames[i];
-
-      const cframe = Module.ccall(
-        "gif_frameCreate",
-        Int32Array,
-        Int32Array,
-        [canvas.width, canvas.height, 0, 0],
-      );
-
-      status = Module.ccall(
-        "gif_frameCreateIndexStream",
-        Int32Array,
-        Int32Array,
-        [cframe, jsframe.indexStream.length],
-      );
-
-      for (let i = 0; i < jsframe.indexStream.length; i++) {
-        status = Module.ccall(
-            "gif_frameAppendToIndexStream",
-            Int32Array,
-            Int32Array,
-            [cframe, jsframe.indexStream[i]],
+          [canvas.width, canvas.height],
         );
-      }
 
-      status = Module.ccall(
-        "gif_canvasAddFrame",
-        Int32Array,
-        Int32Array,
-        [ccanvas, cframe],
-      );
+        status = Module.ccall(
+          "gif_canvasCreateGlobalColorTable",
+          Int32Array,
+          Int32Array,
+          [ccanvas],
+        );
 
-    }
+        for (let i = 0; i < currentColorTable.items.length; i++) {
+          let currentColor: colorType = currentColorTable.items[i];
+          
+          status = Module.ccall(
+              "gif_canvasAddColorToColorTable",
+              Int32Array,
+              Int32Array,
+              [ccanvas, currentColor.red, currentColor.green, currentColor.blue],
+          );
+        }
+  
+        for (let i = 0; i < frames.length; i++) {
+          let jsframe: frameType = frames[i];
+  
+          const cframe = Module.ccall(
+            "gif_frameCreate",
+            Int32Array,
+            Int32Array,
+            [canvas.width, canvas.height, 0, 0],
+          );
+  
+          status = Module.ccall(
+            "gif_frameCreateIndexStream",
+            Int32Array,
+            Int32Array,
+            [cframe, jsframe.indexStream.length],
+          );
+  
+          for (let i = 0; i < jsframe.indexStream.length; i++) {
+            status = Module.ccall(
+                "gif_frameAppendToIndexStream",
+                Int32Array,
+                Int32Array,
+                [cframe, jsframe.indexStream[i]],
+            );
+          }
 
-    status = Module.ccall(
-      "gif_expandCanvas",
-      Int32Array,
-      Int32Array,
-      [ccanvas, 50, 50],
-    );
+          status = Module.ccall(
+            "gif_frameSetTransparanetColorIndexInColorTable",
+            Int32Array,
+            Int32Array,
+            [cframe, currentColorTable.transparentColorIndex],
+          );
+  
+          status = Module.ccall(
+            "gif_canvasAddFrame",
+            Int32Array,
+            Int32Array,
+            [ccanvas, cframe],
+          );
+  
+        }
+  
+        status = Module.ccall(
+          "gif_expandCanvas",
+          Int32Array,
+          Int32Array,
+          [ccanvas, 10, 10],
+        );
+  
+        status = Module.ccall(
+          "gif_createGIF",
+          Int32Array,
+          Int32Array,
+          [ccanvas, true, true],
+        );
+  
+        Module.FS.readdir("/");
+  
+        var data = Module.FS.readFile("output.gif", Module.MEMFS);
+  
+        var img2 = document.createElement("img");
+        
+        document.body.appendChild(img2).src = URL.createObjectURL(
+          new Blob([data.buffer], { type: 'image/gif' })
+        );
+  
+        var src = document.body;
+        src.appendChild(img2);
+      
+      });
 
-    status = Module.ccall(
-      "gif_createGIF",
-      Int32Array,
-      Int32Array,
-      [ccanvas, true, true],
-    );
+    });
 
-    FS.readdir("/");
-
-    var data = FS.readFile("output.gif", MEMFS);
-
-    var img2 = document.createElement("img");
-    document.body.appendChild(img2).src = URL.createObjectURL(
-      new Blob([data.buffer], { type: 'image/gif' });
-    );
-    var src = document.body;
-    src.appendChild(img2);
-
-  }*/
+  }
 
   // Set initial states
   useEffect(() => {
@@ -260,7 +278,7 @@ export default function App() {
                           currentFrameIndex={currentFrameIndex}
                           setCurrentFrameIndex={setCurrentFrameIndex}
                           
-                          /* encodeGIF={encodeGIF} *//>
+                          encodeGIF={encodeGIF}/>
         </div>
         
         <div className="footer">
