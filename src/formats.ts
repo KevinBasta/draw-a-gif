@@ -44,4 +44,7 @@ export interface canvasType {
     canvasElement: CanvasObject,
     width: number, 
     height: number,
+    encodedData: Uint8Array,
+    blob: Blob,
+    url: string,
 };

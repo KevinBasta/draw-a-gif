@@ -64,7 +64,17 @@ worker.postMessage(["load"]);
 
 export default function App() {
 
-  const [canvas, setSanvas] = useState<canvasType>({ key: crypto.randomUUID(), canvasElement: new CanvasObject(10, 10), width: 10, height: 10 });
+  const [canvas, setCanvas] = useState<canvasType>(
+    { 
+      key: crypto.randomUUID(),
+      canvasElement: new CanvasObject(10, 10),
+      width: 10,
+      height: 10,
+      encodedData: null,
+      blob: null,
+      url: null,
+    });
+  
   const [frames, setFrames] = useState<Array<frameType>>([getEmptyFrame()]);
   
   // Initializing color table with two colors
@@ -128,20 +138,30 @@ export default function App() {
   }
 
   function encodeGIF() {
-    worker.postMessage(["encodeGIF", canvas, frames, globalColorTable]);
+    worker.postMessage(["encode", canvas, frames, globalColorTable]);
   }
 
-  function compfunc(url: string) {
-    var img2 = document.createElement("img");
-    document.body.appendChild(img2).src = url;
-    var src = document.body;
-    src.appendChild(img2);
+  function saveEncodedData(data: Uint8Array) {
+    setCanvas((currentCanvas) => {
+      return {
+        key: currentCanvas.key,
+        canvasElement: currentCanvas.canvasElement,
+        width: currentCanvas.width,
+        height: currentCanvas.height,
+        encodedData: data,
+        blob: null,
+        url: null
+      }
+    });
   }
   
   worker.onmessage = (e) => {
-    if (e.data[0] == 'url') {
+    if (e.data[0] == 'data') {
       console.log(e.data)
-      compfunc(e.data[1])
+      saveEncodedData(e.data[1])
+    } else if (e.data[0] == 'err') {
+      console.log("error")
+      console.log(e.data)
     }
   }
 
@@ -184,7 +204,10 @@ export default function App() {
                     currentColorIndex={currentColorIndex} />
           </div>
           
-          <CanvaseOptions frames={frames}
+          <CanvaseOptions canvas={canvas}
+                          setCanvas={setCanvas}
+
+                          frames={frames}
                           setFrames={setFrames}
 
                           currentFrameIndex={currentFrameIndex}

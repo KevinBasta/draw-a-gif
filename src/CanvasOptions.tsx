@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { disposalMethodType, frameType } from "./Formats";
+import { canvasType, disposalMethodType, frameType } from "./Formats";
 
 const CanvasOptionsToggle = styled.div<{ $icon: string; }>`
     position: absolute; 
@@ -69,10 +69,12 @@ const Title = styled.p`
 `;
 
 const Option = styled.div`
-    
+    display: flex;
+    flex-direction: column;
+    gap: min(2vw, 2vh);
 `;
 
-const Button = styled.div`
+const Button = styled.div<{ $disabled?: boolean }>`
     background-color: var(--tertiary-color);
     display: flex;
     flex-direction: row;
@@ -80,22 +82,32 @@ const Button = styled.div`
     justify-content: center;
     cursor: pointer;
     width: 100%;
+    padding: min(1vw, 1vh);
     font-size: var(--font-size-medium);
     text-wrap: nowrap;
 
     box-shadow: var(--button-shadow);
     transform: var(--button-transform);
     
-    transition: 0.01s;
-    
-    &:hover {
-        background-color: var(--tertiary-color-active);
-    }
+    ${props => props.$disabled ? 
+        `
+        opacity: 0.6;
+        cursor: not-allowed;
+        `
+        :
+        `
+        cursor: pointer;
+        transition: 0.01s;
+        
+        &:hover {
+            background-color: var(--tertiary-color-active);
+        }
 
-    &:active {
-        box-shadow: var(--button-shadow-active);
-        transform: var(--button-transform-active);
-    }
+        &:active {
+            box-shadow: var(--button-shadow-active);
+            transform: var(--button-transform-active);
+        }
+        `};
 `;
 
 const Input = styled.input`
@@ -135,18 +147,22 @@ const Select = styled.select`
 let keys = [crypto.randomUUID(), crypto.randomUUID()]
 
 interface CanvasOptionsProps {
+    canvas: canvasType,
+    setCanvas: Function,
+    
     frames: Array<frameType>,
     setFrames: Function,
 
     currentFrameIndex: number;
     setCurrentFrameIndex: Function;
 
-    /* encodeGIF: Function; */
+    encodeGIF: Function;
 }
 
 export function CanvaseOptions(props: CanvasOptionsProps) {
     const [canvasOptionsWidth, setCanvasOptionsWidth] = useState("0px");
     const [canvasOptionsToggleIcon, setcanvasOptionsToggleIcon] = useState("←");
+    const [previewGIF, setPreviewGIF] = useState(false);
 
     function toggleCanvasOptions() {
         switch (canvasOptionsWidth) {
@@ -244,7 +260,8 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                     <Title>Canvas</Title>
 
                     <Option>
-                        <Button onClick={() => {props.encodeGIF()}}>Encode GIF!</Button>
+                        <Button onClick={() => {props.encodeGIF()}}>Create GIF</Button>
+                        <Button $disabled={props.canvas.encodedData == null} onClick={() => {setPreviewGIF(() => false)}}>Show GIF</Button>
                     </Option>
                 </Section>
                 
