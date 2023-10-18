@@ -9,6 +9,7 @@ import { FramePicker } from "./components/FramePicker";
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
 import { CanvasObject } from "./common/canvasClass";
 import { CanvaseOptions } from "./components/CanvasMenu";
+import { Preview } from "./components/Preview";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -70,6 +71,7 @@ export default function App() {
       canvasElement: new CanvasObject(10, 10),
       width: 10,
       height: 10,
+      qualityMultiplier: 10,
       encodedData: null,
       blob: null,
       url: null,
@@ -95,7 +97,8 @@ export default function App() {
   const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(globalColorTable);
   const [currentColorIndex, setCurrentColorIndex]         = useState<number>(1);
   const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
-  
+  const [previewGIF, setPreviewGIF] = useState(false);
+
   // create a checkered trasparent background
   const [transparentBackground, setTransparentBackground] = useState<frameType>(
     {
@@ -120,6 +123,7 @@ export default function App() {
           }
         }
       ),
+      previewUrl: null,
     }
   );
 
@@ -134,23 +138,76 @@ export default function App() {
         {length: canvas.width * canvas.height},
         (_, i) => 0
       ),
+      previewUrl: null,
     }
   }
 
-  function encodeGIF() {
-    worker.postMessage(["encode", canvas, frames, globalColorTable]);
+  function expandFrames() {
+    for (let i = 0; i < frames.length; i++) {
+
+    }
   }
 
-  function saveEncodedData(data: Uint8Array) {
+  function encodeFramePreview() {
+    worker.postMessage(["framePreview", canvas, frames, currentFrameIndex, globalColorTable]);
+  }
+
+  function saveFramePreviewUrl(data: Uint8Array, index: number) {
+    let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
+    let blobUrl  = URL.createObjectURL(encodedBlob);
+
+    const newFrames = frames.map((frame, i) => {
+      if (i == index) {
+          return {
+              key: frame.key,
+              disposalMethod: frame.disposalMethod,
+              delayTime: frame.delayTime,
+              useLocalColorTable: frame.useLocalColorTable,
+              localColorTable: frame.localColorTable,
+              indexStream: frame.indexStream,
+              previewUrl: blobUrl,
+          }
+      } else {
+          return frame;
+      }
+    });
+
+    setFrames(() => newFrames);
+  }
+
+  function encodeGIF() {
     setCanvas((currentCanvas) => {
       return {
         key: currentCanvas.key,
         canvasElement: currentCanvas.canvasElement,
         width: currentCanvas.width,
         height: currentCanvas.height,
-        encodedData: data,
+        qualityMultiplier: currentCanvas.qualityMultiplier,
+        encodedData: null,
         blob: null,
         url: null
+      }
+    });
+
+    //setPreviewGIF(() => true)
+
+    worker.postMessage(["encode", canvas, frames, globalColorTable]);
+  }
+
+  function saveEncodedData(data: Uint8Array) {
+    let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
+    let blobUrl  = URL.createObjectURL(encodedBlob);
+
+    setCanvas((currentCanvas) => {
+      return {
+        key: currentCanvas.key,
+        canvasElement: currentCanvas.canvasElement,
+        width: currentCanvas.width,
+        height: currentCanvas.height,
+        qualityMultiplier: currentCanvas.qualityMultiplier,
+        encodedData: data,
+        blob: encodedBlob,
+        url: blobUrl
       }
     });
   }
@@ -159,7 +216,10 @@ export default function App() {
     if (e.data[0] == 'data') {
       console.log(e.data)
       saveEncodedData(e.data[1])
-    } else if (e.data[0] == 'err') {
+    } else if (e.data[0] == 'frameData') {
+      saveFramePreviewUrl(e.data[1], e.data[2]);
+    } 
+    else if (e.data[0] == 'err') {
       console.log("error")
       console.log(e.data)
     }
@@ -175,6 +235,7 @@ export default function App() {
   return (
     <>
       <GlobalStyles />
+      {previewGIF && <Preview canvas={canvas} setCanvas={setCanvas} setPreviewGIF={setPreviewGIF} />}
 
       <div className="tempflex">
         <div className="header">
@@ -184,6 +245,8 @@ export default function App() {
                        currentFrameIndex={currentFrameIndex}
                        setCurrentFrameIndex={setCurrentFrameIndex}
                        
+                       encodeFramePreview={encodeFramePreview}
+
                        getEmptyFrame={getEmptyFrame}/>
         </div>
         
@@ -200,7 +263,9 @@ export default function App() {
                     
                     currentTool={currentTool} 
                     
-                    currentColorTable={currentColorTable}
+                    globalColorTable={globalColorTable}
+                    setGlobalColorTable={setGlobalColorTable}
+
                     currentColorIndex={currentColorIndex} />
           </div>
           
@@ -213,13 +278,20 @@ export default function App() {
                           currentFrameIndex={currentFrameIndex}
                           setCurrentFrameIndex={setCurrentFrameIndex}
                           
+                          setPreviewGIF={setPreviewGIF}
+
                           encodeGIF={encodeGIF}/>
         </div>
         
         <div className="footer">
-          <ColorTable currentColorTable={currentColorTable}
-                      setCurrentColorTable={setCurrentColorTable}
+          <ColorTable frames={frames}
+                      setFrames={setFrames}
                       
+                      globalColorTable={globalColorTable}
+                      setGlobalColorTable={setGlobalColorTable}
+
+                      currentFrameIndex={currentFrameIndex}
+
                       currentColorIndex={currentColorIndex} 
                       setCurrentColorIndex={setCurrentColorIndex} 
                       
@@ -228,7 +300,6 @@ export default function App() {
         </div>
         
       </div>
-      
     </>
   )
 }

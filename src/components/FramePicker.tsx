@@ -75,6 +75,10 @@ const FrameAdder = styled.div`
     }
 `;
 
+const FrameImg = styled.img`
+    
+`;
+
 interface MyFramePickerProps {
     frames: Array<frameType>;
     setFrames: Function;
@@ -82,6 +86,8 @@ interface MyFramePickerProps {
     currentFrameIndex: number;
     setCurrentFrameIndex: Function;
     
+    encodeFramePreview: Function;
+
     getEmptyFrame: Function;
 }
 
@@ -97,6 +103,10 @@ export function FramePicker(props: MyFramePickerProps) {
     }
     
     function displayFrame(index: number): void {
+        // Create frame image display
+        props.encodeFramePreview();
+
+        // Update current frame
         props.setCurrentFrameIndex(() => {return index;});
     }
 
@@ -104,9 +114,13 @@ export function FramePicker(props: MyFramePickerProps) {
         <FramePickerElem>
         {
             [...Array(props.frames.length)].map((_, i) => {
-                return <FramePreview key={props.frames[i].key}
-                                     $selected={i == props.currentFrameIndex}
-                                     onClick={() => displayFrame(i)} />
+                return (
+                    <FramePreview key={props.frames[i].key}
+                                  $selected={i == props.currentFrameIndex}
+                                  onClick={() => displayFrame(i)}>
+                        <FrameImg src={props.frames[i].previewUrl}></FrameImg>
+                    </FramePreview>
+                )
             })
         }
         <FrameAdder onClick={() => addFrame()} />

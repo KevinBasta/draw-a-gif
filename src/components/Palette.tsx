@@ -58,8 +58,13 @@ const Color = styled.div<{ $color?: string; $selected?: boolean; }>`
 
 
 interface MyColorTableProps {
-    currentColorTable: colorTableType;
-    setCurrentColorTable: Function;
+    frames: Array<frameType>,
+    setFrames: Function,
+
+    currentFrameIndex: number,
+
+    globalColorTable: colorTableType,
+    setGlobalColorTable: Function,
 
     currentColorIndex: number;
     setCurrentColorIndex: Function;
@@ -93,7 +98,7 @@ export function ColorTable(props: MyColorTableProps) {
 
             <Colors>
             {   
-                props.currentColorTable.items.map((entry, i) => {
+                props.globalColorTable.items.map((entry, i) => {
                     if (i != 0) {
                         return <Color key={entry.key} $color={getColorString(entry)} $selected={i == props.currentColorIndex} onClick={() => setColorIndexAndTool(i)} />
                     }
@@ -101,8 +106,8 @@ export function ColorTable(props: MyColorTableProps) {
             }
             </Colors>
 
-            <ColorTableOptions currentColorTable={props.currentColorTable} 
-                               setCurrentColorTable={props.setCurrentColorTable}
+            <ColorTableOptions currentColorTable={props.globalColorTable} 
+                               setCurrentColorTable={props.setGlobalColorTable}
                                currentColorIndex={props.currentColorIndex}
                                setCurrentColorIndex={props.setCurrentColorIndex}/>
         </ColorTableWrapper>

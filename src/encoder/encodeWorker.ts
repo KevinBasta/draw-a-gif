@@ -27,6 +27,17 @@ if( 'function' === typeof importScripts) {
 
             postMessage(['data', data]);
         }
+        else if (e.data[0] == "framePreview")
+        {
+            let canvas: canvasType = e.data[1];
+            canvas.qualityMultiplier = 5;
+
+            let frames: Array<frameType> = [e.data[2][e.data[3]]];
+
+            let data = encodeData(encoderModule, canvas, frames, e.data[4]);
+
+            postMessage(['frameData', data, e.data[3]]);
+        }
     }, false);
 } 
 
@@ -75,12 +86,20 @@ function encodeData(encoder: any, canvas: canvasType, frames: Array<frameType>, 
         [cframe, globalColorTable.transparentColorIndex],
       );
 
+      // Set disposal method and delay time
+      status = encoder.ccall(
+        "gif_frameAddGraphicsControlInfo",
+        Int32Array,
+        Int32Array,
+        [cframe, jsframe.disposalMethod, jsframe.delayTime],
+      );
+      
       // Add the c frame to the c canvas 
       status = encoder.ccall("gif_canvasAddFrame", Int32Array, Int32Array, [ccanvas, cframe]);
     }
 
     // Expand the gif by a factor and encode it
-    status = encoder.ccall("gif_expandCanvas", Int32Array, Int32Array, [ccanvas, 20, 20]);
+    status = encoder.ccall("gif_expandCanvas", Int32Array, Int32Array, [ccanvas, canvas.qualityMultiplier, canvas.qualityMultiplier]);
     status = encoder.ccall("gif_createGIF", Int32Array, Int32Array, [ccanvas, true, true]);
 
     // Check if output.gif exsists

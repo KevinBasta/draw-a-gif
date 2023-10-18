@@ -52,8 +52,10 @@ interface CanvasProps {
     
     currentTool: toolData;
     
-    currentColorTable: colorTableType;
-    currentColorIndex: number;
+    globalColorTable: colorTableType,
+    setGlobalColorTable: Function,
+
+    currentColorIndex: number,
 }
 
 export function Canvas(props: CanvasProps) {
@@ -82,12 +84,12 @@ export function Canvas(props: CanvasProps) {
         let colorObject: colorType;
         let colorTableIndex: number = props.frames[props.currentFrameIndex].indexStream[indexStreamIndex];
         
-        if (colorTableIndex < props.currentColorTable.items.length) {
-            if (colorTableIndex == props.currentColorTable.transparentColorIndex) {
+        if (colorTableIndex < props.globalColorTable.items.length) {
+            if (colorTableIndex == props.globalColorTable.transparentColorIndex) {
                 let transparentColorTableIndex: number = props.transparentBackground.indexStream[indexStreamIndex];
                 colorObject = props.transparentBackground.localColorTable.items[transparentColorTableIndex];
             } else {
-                colorObject = props.currentColorTable.items[colorTableIndex];
+                colorObject = props.globalColorTable.items[colorTableIndex];
             }
         }
 
@@ -125,7 +127,7 @@ export function Canvas(props: CanvasProps) {
 
         if (tool == toolType.brush || tool == toolType.eraser) {
             let paintColor = (tool == toolType.eraser) ? 
-                             props.currentColorTable.transparentColorIndex : 
+                             props.globalColorTable.transparentColorIndex : 
                              props.currentColorIndex;
 
             for (let i = 0; i < toolSize; i++) {
@@ -212,7 +214,7 @@ export function Canvas(props: CanvasProps) {
     // current frame or color table change
     useEffect(() => {
         drawFrameOnCanvas();
-    }, [ props.currentFrameIndex, props.currentColorTable ]);
+    }, [ props.currentFrameIndex, props.globalColorTable ]);
 
     return (
         <>
