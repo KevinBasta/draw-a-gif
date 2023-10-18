@@ -1,4 +1,4 @@
-import { canvasType, colorTableType, colorType, frameType } from "./Formats";
+import { canvasType, colorTableType, colorType, frameType } from "../common/Formats";
 
 if( 'function' === typeof importScripts) {
     importScripts("/require.js")
@@ -12,7 +12,7 @@ if( 'function' === typeof importScripts) {
             }
     
             let req: Function = require;
-            req({baseUrl: "./"},['/src/gifEncoder.js'], function(func: Function) {
+            req({baseUrl: "./"},['/src/encoder/gifEncoder.js'], function(func: Function) {
                 let loadModule = func();
                 loadModule.then((Module: any) => {
                     encoderModule = Module;

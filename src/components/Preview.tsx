@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { canvasType } from "./Formats";
+import { canvasType } from "../common/Formats";
 import { useState } from "react";
 
 const PreviewWrapper = styled.div`

@@ -2,13 +2,13 @@ import { useEffect, useState } from "react"
 import { createGlobalStyle } from "styled-components";
 import "./styles.css"
 
-import { Canvas } from "./Canvas";
-import { ColorTable } from "./ColorTable";
-import { FramePicker } from "./FramePicker";
+import { Canvas } from "./components/Canvas";
+import { ColorTable } from "./components/Palette";
+import { FramePicker } from "./components/FramePicker";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData, disposalMethodType } from "./Formats"
-import { CanvasObject } from "./CanvasObject";
-import { CanvaseOptions } from "./CanvasOptions";
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
+import { CanvasObject } from "./common/canvasClass";
+import { CanvaseOptions } from "./components/CanvasMenu";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -59,7 +59,7 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-let worker = new Worker("/src/EncodeHelper.ts");
+let worker = new Worker("/src/encoder/EncodeWorker.ts");
 worker.postMessage(["load"]);
 
 export default function App() {

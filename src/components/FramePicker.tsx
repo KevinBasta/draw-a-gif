@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { frameType } from "./Formats";
+import { frameType } from "../common/Formats";
 
 const FramePickerElem = styled.div`
     height: 10vh;

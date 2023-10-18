@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
-import { ColorTableTools } from "./ColorTableTools";
-import { ColorTableOptions } from "./ColorTableOptions";
-import { getColorString } from "./ColorUtil";
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "../common/Formats"
+import { ColorTableTools } from "./PaletteTools";
+import { ColorTableOptions } from "./PaletteManager";
+import { getColorString } from "../common/colorUtilities";
 
 const ColorTableWrapper = styled.div`
     width: inherit;

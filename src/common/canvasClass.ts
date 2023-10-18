@@ -1,3 +1,4 @@
+
 export class CanvasObject {
     #width: number;
     #height: number;

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { toolData, toolType } from "./Formats";
+import { toolData, toolType } from "../common/Formats";
 
 const Tools = styled.div`
     width: 10%;    

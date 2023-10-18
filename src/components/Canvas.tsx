@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "./Formats"
-import { CanvasObject } from './CanvasObject';
-import { getColorString } from './ColorUtil';
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "../common/Formats"
+import { CanvasObject } from '../common/canvasClass';
+import { getColorString } from '../common/colorUtilities';
 
 // For detecting clicks on canvas
 var mouseDown = 0;

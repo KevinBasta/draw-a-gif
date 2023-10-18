@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { canvasType, disposalMethodType, frameType } from "./Formats";
+import { canvasType, disposalMethodType, frameType } from "../common/Formats";
 
 const CanvasOptionsToggle = styled.div<{ $icon: string; }>`
     position: absolute; 
