@@ -1,4 +1,6 @@
 import { canvasType, colorTableType, colorType, frameType } from "../common/Formats";
+/* global _ */
+/*eslint no-undef: "warn"*/
 
 if( 'function' === typeof importScripts) {
     importScripts("/require.js")

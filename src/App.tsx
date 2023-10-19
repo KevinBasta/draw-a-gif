@@ -6,7 +6,7 @@ import { Canvas } from "./components/Canvas";
 import { ColorTable } from "./components/Palette";
 import { FramePicker } from "./components/FramePicker";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
+import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
 import { CanvasObject } from "./common/canvasClass";
 import { CanvaseOptions } from "./components/CanvasMenu";
 import { Preview } from "./components/Preview";
@@ -257,12 +257,12 @@ export default function App() {
 
                           frames={frames}
                           setFrames={setFrames}
-      
+
                           currentFrameIndex={currentFrameIndex}
                           setCurrentFrameIndex={setCurrentFrameIndex}
-                          
+
                           encodeFramePreview={encodeFramePreview}
-      
+
                           getEmptyFrame={getEmptyFrame}/>
           </div>
           

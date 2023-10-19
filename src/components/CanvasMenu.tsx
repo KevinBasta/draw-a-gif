@@ -1,8 +1,6 @@
 import { useState } from "react";
-import styled from "styled-components";
 import { canvasType, disposalMethodType, frameType } from "../common/Formats";
 import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select } from "./CanvasMenuStyles"
-import { Preview } from "./Preview";
 import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
 
 
@@ -106,7 +104,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
         props.setCanvas(newCanvas);
     }
 
-    function updateCanvasWidth(e: any) {
+    /* function updateCanvasWidth(e: any) {
         let value = e.target.value;
         let valueInt = parseInt(value);
         let oldWidth = valueInt;
@@ -168,8 +166,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
 
         expandFrames(props.canvas.width, props.canvas.width, oldHeight, valueInt)
         props.setCanvas(newCanvas);
-    }
-
+    } */
 
     function updateDisposalMethod(value: number) {
         const newFrames = props.frames.map((frame, i) => {
