@@ -1,8 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { canvasType, disposalMethodType, frameType } from "../common/Formats";
-import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Title, Option, Button, Input, Label, Select } from "./CanvasMenuStyles"
+import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select } from "./CanvasMenuStyles"
 import { Preview } from "./Preview";
+import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
 
 
 
@@ -108,6 +109,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
     function updateCanvasWidth(e: any) {
         let value = e.target.value;
         let valueInt = parseInt(value);
+        let oldWidth = valueInt;
 
         if (valueInt > 10000) {
             e.key = (10000).toString();
@@ -132,12 +134,14 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
             url: props.canvas.url,
         };
 
+        expandFrames(oldWidth, valueInt, props.canvas.height, props.canvas.height);
         props.setCanvas(newCanvas);
     }
 
     function updateCanvasHeight(e: any) {
         let value = e.target.value;
         let valueInt = parseInt(value);
+        let oldHeight = valueInt;
 
         if (valueInt > 10000) {
             e.key = (10000).toString();
@@ -162,6 +166,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
             url: props.canvas.url,
         };
 
+        expandFrames(props.canvas.width, props.canvas.width, oldHeight, valueInt)
         props.setCanvas(newCanvas);
     }
 
@@ -185,7 +190,32 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
 
         props.setFrames(newFrames);
     }
+ 
+    function expandIndexStream(indexStream: Array<number>, oldWidth: number, newWidth: number, oldHeight: number, newHeight: number) {
+        
 
+        //for (let i = 0; i < )
+    }
+
+    // called for resizing of canvas
+    function expandFrames(oldWidth: number, newWidth: number, oldHeight: number, newHeight: number) {
+        const newFrames = props.frames.map((frame, i) => {
+            let newIndexStream =  expandIndexStream(frame.indexStream, oldWidth, newWidth, oldHeight, newHeight);
+            
+            return {
+                key: frame.key,
+                disposalMethod: frame.disposalMethod,
+                delayTime: frame.delayTime,
+                useLocalColorTable: frame.useLocalColorTable,
+                localColorTable: frame.localColorTable,
+                indexStream: newIndexStream,
+                previewUrl: frame.previewUrl,
+            }
+        });
+      
+        props.setFrames(() => newFrames);
+    }
+    
     function togglePreview() {
         if (props.canvas.encodedData != null) {
             props.setPreviewGIF(() => true);
@@ -237,7 +267,8 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                                 min="1"
                                 max="10000"
                                 value={(props.canvas.width).toString()}
-                                onChange={e => updateCanvasWidth(e)} />
+                                onChange={e => {e.target.value = (props.canvas.width).toString()}}
+                                /* onChange={e => updateCanvasWidth(e)} */ />
 
                             <Label>Height</Label>
                             <Input key={keys[4]}
@@ -245,7 +276,8 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                                 min="1"
                                 max="10000"
                                 value={(props.canvas.height).toString()}
-                                onChange={e => updateCanvasHeight(e)} />
+                                onChange={e => {e.target.value = (props.canvas.height).toString()}}
+                                /* onChange={e => updateCanvasHeight(e)} */ />
 
                     </Section>
 

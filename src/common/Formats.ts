@@ -50,3 +50,10 @@ export interface canvasType {
     blob: Blob,
     url: string,
 };
+
+// for storage purposes
+export interface gifRecord {
+    canvas: canvasType,
+    frames: Array<frameType>,
+    globalColorTable: colorTableType,
+};

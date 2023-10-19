@@ -17,7 +17,21 @@ const BackgroundDimmer = styled.div`
     justify-content: center;
 `;
 
+const PreviewCenterer = styled.div`
+    pointer-events: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 6;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+`;
+
 const PreviewWrapper = styled.div`
+    pointer-events: auto;
     position: absolute;
     height: fit-content;
     width: fit-content;
@@ -26,9 +40,13 @@ const PreviewWrapper = styled.div`
     z-index: 6;
 `;
 
-const PreviewElem = styled.img`
-    width: min(80vw, 80vh);
-    height: min(80vw, 80vh);
+const PreviewElem = styled.img<{ $widthratio: number; $heightratio: number; }>`
+    /* width: calc(${props => props.$widthratio} * 30px);
+    height: calc(${props => props.$heightratio} * 30px); */
+    max-width: min(80vw, 80vh);
+    max-height: min(80vw, 80vh);
+
+    aspect-ratio:  ${props => props.$widthratio / props.$heightratio};
 `;
 
 interface PreviewProps {
@@ -43,9 +61,9 @@ export function Preview(props: PreviewProps) {
         let imageTag;
         
         if (props.canvas.encodedData == null) {
-            imageTag = <PreviewElem src={"https://pbs.twimg.com/media/F4yoR3oWsAA_w_K?format=jpg&name=large"}></PreviewElem>
+            imageTag = <PreviewElem $widthratio={props.canvas.width} $heightratio={props.canvas.height} src={""}></PreviewElem>
         } else {
-            imageTag = <PreviewElem src={props.canvas.url}></PreviewElem>
+            imageTag = <PreviewElem $widthratio={props.canvas.width} $heightratio={props.canvas.height} src={props.canvas.url}></PreviewElem>
         }
 
         return imageTag;
@@ -53,14 +71,16 @@ export function Preview(props: PreviewProps) {
 
     return (
         <>
-        <BackgroundDimmer /* onClick={() => {props.setPreviewGIF(() => false)}} */>
+        <BackgroundDimmer onClick={() => {props.setPreviewGIF(() => false)}} />
+        
+        <PreviewCenterer>
             <PreviewWrapper>
                 <CanvasOptionsToggle $icon="x" onClick={() => {props.setPreviewGIF(() => false)}}></CanvasOptionsToggle>
                 {
                     displayGif()
                 }
             </PreviewWrapper>
-        </BackgroundDimmer>
+        </PreviewCenterer>
         </>
     );
 }

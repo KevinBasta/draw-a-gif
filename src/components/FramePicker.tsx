@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { frameType } from "../common/Formats";
+import { canvasType, frameType } from "../common/Formats";
 
 const FramePickerElem = styled.div`
     height: 10vh;
@@ -75,11 +75,16 @@ const FrameAdder = styled.div`
     }
 `;
 
-const FrameImg = styled.img`
-    
+const FrameImg = styled.img<{ $widthratio: number; $heightratio: number; }>`
+    max-width: 90%;
+    max-height: 90%;
+
+    aspect-ratio:  ${props => props.$widthratio / props.$heightratio}
 `;
 
 interface MyFramePickerProps {
+    canvas: canvasType;
+
     frames: Array<frameType>;
     setFrames: Function;
 
@@ -97,7 +102,7 @@ export function FramePicker(props: MyFramePickerProps) {
         props.setFrames((frames: Array<frameType>) => {
             return [
                 ...frames,
-                props.getEmptyFrame(),
+                props.getEmptyFrame(props.canvas.width, props.canvas.height),
             ]
         });
     }
@@ -118,7 +123,7 @@ export function FramePicker(props: MyFramePickerProps) {
                     <FramePreview key={props.frames[i].key}
                                   $selected={i == props.currentFrameIndex}
                                   onClick={() => displayFrame(i)}>
-                        <FrameImg src={props.frames[i].previewUrl}></FrameImg>
+                        <FrameImg $widthratio={props.canvas.width} $heightratio={props.canvas.height} src={props.frames[i].previewUrl}></FrameImg>
                     </FramePreview>
                 )
             })

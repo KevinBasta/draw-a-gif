@@ -10,10 +10,10 @@ import { canvasType, frameType, colorType, colorTableType, toolType, toolData, d
 import { CanvasObject } from "./common/canvasClass";
 import { CanvaseOptions } from "./components/CanvasMenu";
 import { Preview } from "./components/Preview";
+import { MainMenu } from "./components/MainMenu";
 
 const GlobalStyles = createGlobalStyle`
   :root {
-    
     // Canvas Color Palette
     // Other Matching Colors: A1D2CE F3DE8A E1D89F B4C4AE D4B483 E4DFDA 758acb
     --background-color: #686868;
@@ -50,6 +50,7 @@ const GlobalStyles = createGlobalStyle`
     --font-size-medium: min(2.5vw, 2.5vh);
     --font-size-ml: min(3vw, 3vh);
     --font-size-large: min(3.5vw, 3.5vh);
+    --font-size-extra-large: min(4.5vw, 4.5vh);
 
     user-drag: none;
     -webkit-user-drag: none;
@@ -64,70 +65,19 @@ let worker = new Worker("/src/encoder/EncodeWorker.ts");
 worker.postMessage(["load"]);
 
 export default function App() {
-
-  const [canvas, setCanvas] = useState<canvasType>(
-    { 
-      key: crypto.randomUUID(),
-      canvasElement: new CanvasObject(10, 10),
-      width: 10,
-      height: 10,
-      qualityMultiplier: 10,
-      encodedData: null,
-      blob: null,
-      url: null,
-    });
+  const [canvas, setCanvas] = useState<canvasType>();
+  const [frames, setFrames] = useState<Array<frameType>>();
+  const [globalColorTable, setGlobalColorTable] = useState<colorTableType>();
   
-  const [frames, setFrames] = useState<Array<frameType>>([getEmptyFrame()]);
-  
-  // Initializing color table with two colors
-  // First is for "erase" functionality
-  // Second is for the first user color
-  const [globalColorTable, setGlobalColorTable] = useState<colorTableType>(
-    {
-      transparentColorIndex: 0,
-      items: [
-        {key: crypto.randomUUID(),red: 0, green: 0, blue: 0}, 
-        {key: crypto.randomUUID(), red: 0, green: 0, blue: 0}
-      ],
-    }
-  );
-  
-  //{key: NaN, useLocalColorTable: null, localColorTable: null, indexStream: null}
   const [currentFrameIndex, setCurrentFrameIndex]         = useState<number>(0);
-  const [currentColorTable, setCurrentColorTable]         = useState<colorTableType>(globalColorTable);
   const [currentColorIndex, setCurrentColorIndex]         = useState<number>(1);
   const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
+  
+  const [transparentBackground, setTransparentBackground] = useState<frameType>();
   const [previewGIF, setPreviewGIF] = useState(false);
 
-  // create a checkered trasparent background
-  const [transparentBackground, setTransparentBackground] = useState<frameType>(
-    {
-      key: crypto.randomUUID(),
-      disposalMethod: disposalMethodType.restoreToBackgroundColor,
-      delayTime: 0,
-      useLocalColorTable: true,
-      localColorTable: {
-        transparentColorIndex: NaN,
-        items: [
-          {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
-          {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
-        ],
-      },
-      indexStream: Array.from(
-        {length: canvas.width * canvas.height},
-        (_, i) => {
-          if (canvas.width % 2 == 0) {
-            return Math.floor(i / canvas.width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
-          } else {
-            return (i % 2 == 0) ? 1 : 0;
-          }
-        }
-      ),
-      previewUrl: null,
-    }
-  );
 
-  function getEmptyFrame(): frameType {
+  function getEmptyFrame(width: number, height: number): frameType {
     return {
       key: crypto.randomUUID(),
       disposalMethod: disposalMethodType.restoreToBackgroundColor,
@@ -135,16 +85,10 @@ export default function App() {
       useLocalColorTable: false,
       localColorTable: null,
       indexStream: Array.from(
-        {length: canvas.width * canvas.height},
+        {length: width * height},
         (_, i) => 0
       ),
       previewUrl: null,
-    }
-  }
-
-  function expandFrames() {
-    for (let i = 0; i < frames.length; i++) {
-
     }
   }
 
@@ -226,80 +170,161 @@ export default function App() {
   }
 
 
+  function initCanvas(width: number, height: number) {
+    setCanvas(() => {
+      return { 
+        key: crypto.randomUUID(),
+        canvasElement: new CanvasObject(10, 10),
+        width: width,
+        height: height,
+        qualityMultiplier: 10,
+        encodedData: null,
+        blob: null,
+        url: null,
+      }
+    });
+
+    setFrames(() => {
+      return [getEmptyFrame(width, height)];
+    });
+
+    // Initializing color table with two colors
+    // First is for "erase" functionality
+    // Second is for the first user color
+    setGlobalColorTable(() => {
+      return {
+        transparentColorIndex: 0,
+        items: [
+          {key: crypto.randomUUID(),red: 0, green: 0, blue: 0}, 
+          {key: crypto.randomUUID(), red: 0, green: 0, blue: 0}
+        ],
+      }
+    });
+
+    // create a checkered trasparent background
+    setTransparentBackground(() => {
+      return {
+        key: crypto.randomUUID(),
+        disposalMethod: disposalMethodType.restoreToBackgroundColor,
+        delayTime: 0,
+        useLocalColorTable: true,
+        localColorTable: {
+          transparentColorIndex: NaN,
+          items: [
+            {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
+            {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
+          ],
+        },
+        indexStream: Array.from(
+          {length: width * height},
+          (_, i) => {
+            if (width % 2 == 0) {
+              return Math.floor(i / width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
+            } else {
+              return (i % 2 == 0) ? 1 : 0;
+            }
+          }
+        ),
+        previewUrl: null,
+      }
+    });
+  }
+
   // Set initial states
   useEffect(() => {
     //addFrame();
     //displayFrame(frames[0]);
   }, []);
 
-  return (
-    <>
+
+  function titleOrApp() {
+    if (canvas == null)
+    {
+      return <>
+        <GlobalStyles />
+        <MainMenu initCanvas={initCanvas}/>;
+      </>
+    }
+    else
+    {
+      return <>
       <GlobalStyles />
-      {previewGIF && <Preview canvas={canvas} setCanvas={setCanvas} setPreviewGIF={setPreviewGIF} />}
+        {previewGIF && <Preview canvas={canvas} setCanvas={setCanvas} setPreviewGIF={setPreviewGIF} />}
 
-      <div className="tempflex">
-        <div className="header">
-          <FramePicker frames={frames}
-                       setFrames={setFrames}
-
-                       currentFrameIndex={currentFrameIndex}
-                       setCurrentFrameIndex={setCurrentFrameIndex}
-                       
-                       encodeFramePreview={encodeFramePreview}
-
-                       getEmptyFrame={getEmptyFrame}/>
-        </div>
-        
-        <div className="canvasMenueWrapper">
-          <div className="mainContent">
-            <Canvas canvas={canvas}
-                    transparentBackground={transparentBackground}
-                    
-                    frames={frames}
-                    setFrames={setFrames}
-                    
-                    currentFrameIndex={currentFrameIndex}
-                    setCurrentFrameIndex={setCurrentFrameIndex}
-                    
-                    currentTool={currentTool} 
-                    
-                    globalColorTable={globalColorTable}
-                    setGlobalColorTable={setGlobalColorTable}
-
-                    currentColorIndex={currentColorIndex} />
-          </div>
-          
-          <CanvaseOptions canvas={canvas}
-                          setCanvas={setCanvas}
+        <div className="tempflex">
+          <div className="header">
+            <FramePicker canvas={canvas}
 
                           frames={frames}
                           setFrames={setFrames}
-
+      
                           currentFrameIndex={currentFrameIndex}
                           setCurrentFrameIndex={setCurrentFrameIndex}
                           
-                          setPreviewGIF={setPreviewGIF}
-
-                          encodeGIF={encodeGIF}/>
-        </div>
-        
-        <div className="footer">
-          <ColorTable frames={frames}
+                          encodeFramePreview={encodeFramePreview}
+      
+                          getEmptyFrame={getEmptyFrame}/>
+          </div>
+          
+          <div className="canvasMenueWrapper">
+            <div className="mainContent">
+              <Canvas canvas={canvas}
+                      transparentBackground={transparentBackground}
+                      
+                      frames={frames}
                       setFrames={setFrames}
+                      
+                      currentFrameIndex={currentFrameIndex}
+                      setCurrentFrameIndex={setCurrentFrameIndex}
+                      
+                      currentTool={currentTool} 
                       
                       globalColorTable={globalColorTable}
                       setGlobalColorTable={setGlobalColorTable}
 
-                      currentFrameIndex={currentFrameIndex}
+                      currentColorIndex={currentColorIndex} />
+            </div>
+            
+            <CanvaseOptions canvas={canvas}
+                            setCanvas={setCanvas}
 
-                      currentColorIndex={currentColorIndex} 
-                      setCurrentColorIndex={setCurrentColorIndex} 
-                      
-                      currentTool={currentTool} 
-                      setCurrentTool={setCurrentTool} />
+                            frames={frames}
+                            setFrames={setFrames}
+
+                            currentFrameIndex={currentFrameIndex}
+                            setCurrentFrameIndex={setCurrentFrameIndex}
+                            
+                            setPreviewGIF={setPreviewGIF}
+
+                            encodeGIF={encodeGIF}/>
+          </div>
+          
+          <div className="footer">
+            <ColorTable frames={frames}
+                        setFrames={setFrames}
+                        
+                        globalColorTable={globalColorTable}
+                        setGlobalColorTable={setGlobalColorTable}
+
+                        currentFrameIndex={currentFrameIndex}
+
+                        currentColorIndex={currentColorIndex} 
+                        setCurrentColorIndex={setCurrentColorIndex} 
+                        
+                        currentTool={currentTool} 
+                        setCurrentTool={setCurrentTool} />
+          </div>
+          
         </div>
-        
-      </div>
+      </>
+    }
+  }
+
+  return (
+    <>
+    {
+      titleOrApp()
+    }
     </>
-  )
+  );
 }
