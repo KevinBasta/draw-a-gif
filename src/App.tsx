@@ -61,7 +61,7 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-let worker = new Worker("/src/encoder/EncodeWorker.ts");
+let worker = new Worker("/src/encoder/encoderWorker.ts");
 worker.postMessage(["load"]);
 
 export default function App() {
