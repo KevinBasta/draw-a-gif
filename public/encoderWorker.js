@@ -1,6 +1,6 @@
+
 if( 'function' === typeof importScripts) {
   importScripts("/require.js")
-  let req = require;
 
   let encoderModule = null;
 
@@ -11,7 +11,7 @@ if( 'function' === typeof importScripts) {
                 return;
             }
     
-            req({baseUrl: "./"},['/gifEncoder.js'], function(func) {
+            require({baseUrl: "./"},['/gifEncoder.js'], function(func) {
                 let loadModule = func();
                 loadModule.then((Module) => {
                     encoderModule = Module;
