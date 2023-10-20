@@ -1,10 +1,8 @@
-import { canvasType, colorTableType, colorType, frameType } from "../common/Formats";
-/* global _ */
-/*eslint no-undef: "warn"*/
-
 if( 'function' === typeof importScripts) {
-    importScripts("/require.js")
-    let encoderModule: any = null;
+  importScripts("/require.js")
+  let req = require;
+
+  let encoderModule = null;
 
     self.addEventListener('message', function(e) {
         if (e.data[0] == "load")
@@ -13,10 +11,9 @@ if( 'function' === typeof importScripts) {
                 return;
             }
     
-            let req: Function = require;
-            req({baseUrl: "./"},['/src/encoder/gifEncoder.js'], function(func: Function) {
+            req({baseUrl: "./"},['/gifEncoder.js'], function(func) {
                 let loadModule = func();
-                loadModule.then((Module: any) => {
+                loadModule.then((Module) => {
                     encoderModule = Module;
                     console.log("ENCODER LOADED")
                     console.log(encoderModule);
@@ -31,10 +28,10 @@ if( 'function' === typeof importScripts) {
         }
         else if (e.data[0] == "framePreview")
         {
-            let canvas: canvasType = e.data[1];
+            let canvas = e.data[1];
             canvas.qualityMultiplier = 5;
 
-            let frames: Array<frameType> = [e.data[2][e.data[3]]];
+            let frames = [e.data[2][e.data[3]]];
 
             let data = encodeData(encoderModule, canvas, frames, e.data[4]);
 
@@ -43,7 +40,7 @@ if( 'function' === typeof importScripts) {
     }, false);
 } 
 
-function encodeData(encoder: any, canvas: canvasType, frames: Array<frameType>, globalColorTable: colorTableType) {
+function encodeData(encoder, canvas, frames, globalColorTable) {
     let status;
 
     // Create a c canvas and add a global color table
@@ -52,7 +49,7 @@ function encodeData(encoder: any, canvas: canvasType, frames: Array<frameType>, 
 
     // Add each color in the js global color table to the c global color table
     for (let i = 0; i < globalColorTable.items.length; i++) {
-      let currentColor: colorType = globalColorTable.items[i];
+      let currentColor = globalColorTable.items[i];
       
       status = encoder.ccall(
         "gif_canvasAddColorToColorTable",
@@ -64,7 +61,7 @@ function encodeData(encoder: any, canvas: canvasType, frames: Array<frameType>, 
 
     // Add encoding data for each js frame
     for (let i = 0; i < frames.length; i++) {
-      let jsframe: frameType = frames[i];
+      let jsframe = frames[i];
 
       // Create a c frame for each js frame and create an index stream
       const cframe = encoder.ccall("gif_frameCreate", Int32Array, Int32Array, [canvas.width, canvas.height, 0, 0]);

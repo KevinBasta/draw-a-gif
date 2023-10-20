@@ -61,7 +61,7 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-let worker = new Worker("/src/encoder/encoderWorker.ts");
+let worker = new Worker("/encoderWorker.ts");
 worker.postMessage(["load"]);
 
 export default function App() {
@@ -120,6 +120,7 @@ export default function App() {
   }
 
   function encodeGIF() {
+    console.log("HELLO??????????")
     setCanvas((currentCanvas) => {
       return {
         key: currentCanvas.key,
