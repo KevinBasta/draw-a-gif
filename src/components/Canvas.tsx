@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "../common/Formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/Formats"
 import { getColorString } from '../common/colorUtilities';
 
 // For detecting clicks on canvas
 var mouseDown = 0;
+var touchDown = 0;
 
 document.body.onmousedown = function() { 
     mouseDown = 1;
@@ -13,6 +14,14 @@ document.body.onmousedown = function() {
 
 document.body.onmouseup = function() {
     mouseDown = 0;
+}
+
+document.body.ontouchstart = function() {
+    touchDown = 1;
+}
+
+document.body.ontouchend = function() {
+    touchDown = 0;
 }
 
 
@@ -102,16 +111,29 @@ export function Canvas(props: CanvasProps) {
      * @param x     User click x
      * @param y     User click y
      */
-    function drawUserInputPixel(x: number, y: number) {
-        if (mouseDown == 0) {
+    function drawUserInputPixel(x: number, y: number, interaction: interactionType) {
+        if ((interaction != interactionType.click && mouseDown == 0) &&
+            (interaction != interactionType.touch && touchDown == 0)) {
             return;
         }
 
         let [cx, cy] = props.canvas.canvasElement.getDataMappedXY(x, y);
         let topRightIndex = getIndexStreamIndex(cx, cy);
 
-        saveUserDrawInput(topRightIndex);
-        renderUserDrawInput(cx, cy, topRightIndex);
+        if (props.currentTool.tool == toolType.bucket) {
+            if (interaction == interactionType.click || interaction == interactionType.touch) {
+                let pixelColor = props.frames[props.currentFrameIndex].indexStream[topRightIndex];
+                let bucketColor = props.currentColorIndex;
+                initVisitedPixels();
+                visited[topRightIndex] = bucketColor;
+                fillConnectedArea(cx, cy, pixelColor, bucketColor);
+
+                drawFrameOnCanvas();
+            }
+        } else {
+            saveUserDrawInput(topRightIndex);
+            renderUserDrawInput(cx, cy, topRightIndex);
+        }
     }
 
     /**
@@ -139,9 +161,6 @@ export function Canvas(props: CanvasProps) {
                     props.frames[props.currentFrameIndex].indexStream[topRightIndex + i + (canvasWidthInPixels * j)] = paintColor;
                 }
             }
-        }
-        else if (tool == toolType.bucket) {
-            console.log("bucket data");
         }
     }
 
@@ -173,10 +192,6 @@ export function Canvas(props: CanvasProps) {
                 }
             }
         }
-        else if (tool == toolType.bucket) {
-            console.log("bucket");
-            drawFrameOnCanvas();
-        }
     }
 
     /**
@@ -204,6 +219,96 @@ export function Canvas(props: CanvasProps) {
         })
     }
 
+
+
+
+
+    let visited: Array<number> = [];
+    function initVisitedPixels() {
+        visited = [];
+        for (let i = 0; i < canvasWidthInPixels; i++) {
+            for (let j = 0; j < canvasHeightInPixels; j++) {
+                visited.push(0);
+            }
+        }
+    }
+
+    function checkVisitedStatus(index: number): boolean {
+        return visited[index] == 0;
+    }
+
+    function fillConnectedArea(x: number, y: number, pixelColor: number, bucketColor: number) {
+        let n = 0;
+        let pixelsSetInIter = 0;
+        let edges = [[x, y]];
+
+        do {
+            let newEdges = [];
+            let adjacent = [];
+            pixelsSetInIter = 0;
+
+            for (let i = 0; i < edges.length; i++) {
+                let edgeX = edges[i][0];
+                let edgeY = edges[i][1];
+
+                let one = getIndexStreamIndex(edgeX - 1, edgeY);
+                checkVisitedStatus(one) ? adjacent.push([one, edgeX - 1, edgeY]) : false;
+                
+                let two = getIndexStreamIndex(edgeX + 1, edgeY);
+                checkVisitedStatus(two) ? adjacent.push([two, edgeX + 1, edgeY]) : false;
+                
+                let three = getIndexStreamIndex(edgeX, edgeY - 1);
+                checkVisitedStatus(three) ? adjacent.push([three, edgeX, edgeY - 1]) : false;
+                
+                let four = getIndexStreamIndex(edgeX, edgeY + 1);
+                checkVisitedStatus(four) ? adjacent.push([four, edgeX, edgeY + 1]) : false;
+            }
+
+            for (let j = 0; j < adjacent.length; j++) {
+                let currentIndex = adjacent[j][0];
+                let currentX = adjacent[j][1];
+                let currentY = adjacent[j][2];
+                
+                if (currentX < 0 || currentX >= canvasWidthInPixels ||
+                    currentY < 0 || currentY >= canvasHeightInPixels) {
+                    continue;
+                }
+
+                if (props.frames[props.currentFrameIndex].indexStream[currentIndex] == pixelColor) {
+                    visited[currentIndex] = bucketColor;
+                    newEdges.push([currentX, currentY]);
+                    pixelsSetInIter++;
+                }
+            }
+            
+            edges = [];
+            edges = newEdges.slice();
+            n++;
+            console.log(edges, newEdges, adjacent)
+        } while (pixelsSetInIter > 0 && edges.length > 0);
+        
+        
+        for (let i = 0; i < visited.length; i++) {
+            if (visited[i] == bucketColor) {
+                props.frames[props.currentFrameIndex].indexStream[i] = bucketColor;
+            }
+        }
+
+        console.log(visited);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Set the current canvas element on load
     useEffect(() => {
         props.canvas.canvasElement.setElement(document.getElementsByTagName("canvas")[0] as HTMLCanvasElement);
@@ -218,7 +323,10 @@ export function Canvas(props: CanvasProps) {
     return (
         <>
         <CanvasWrapper key={props.canvas.key}
-                       onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY)}}
+                       onMouseDown={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.click)}}
+                       onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.drag)}}
+                       onTouchStart={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
+                       onTouchMove={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
                        size={canvasSizeControl}
                        width={canvasWidthInPixels * props.canvas.canvasElement.getQualityMultiplier()}
                        height={canvasHeightInPixels * props.canvas.canvasElement.getQualityMultiplier()}
