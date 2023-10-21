@@ -11,11 +11,11 @@ export class CanvasObject {
         this.#height = height;
 
         // Set the factor to multiply canvas by to make frames sharper
-        if (width < 100 || width < 100) {
+        if (width < 100 || height < 100) {
             this.#qualityMultiplier = 50;
-        } else if (width < 250 || width < 250) {
+        } else if (width < 250 || height < 250) {
             this.#qualityMultiplier = 25;
-        } else if (width < 550 || width < 550) {
+        } else if (width < 550 || height < 550) {
             this.#qualityMultiplier = 10;
         }
     }

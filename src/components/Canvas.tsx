@@ -124,10 +124,8 @@ export function Canvas(props: CanvasProps) {
             if (interaction == interactionType.click || interaction == interactionType.touch) {
                 let pixelColor = props.frames[props.currentFrameIndex].indexStream[topRightIndex];
                 let bucketColor = props.currentColorIndex;
-                initVisitedPixels();
-                visited[topRightIndex] = bucketColor;
-                fillConnectedArea(cx, cy, pixelColor, bucketColor);
-
+                spanFill(cx, cy, pixelColor, bucketColor);
+                
                 drawFrameOnCanvas();
             }
         } else {
@@ -219,95 +217,86 @@ export function Canvas(props: CanvasProps) {
         })
     }
 
+    function sfInside(x: number, y: number, pixelColor: number, bucketColor: number): boolean {
+        if (x < 0 || x >= canvasWidthInPixels ||
+            y < 0 || y >= canvasHeightInPixels) {
+            return false;
+        }
 
+        let currentFrame = props.frames[props.currentFrameIndex];
+        let indexStreamIndex = getIndexStreamIndex(x, y);
+        
+        if (indexStreamIndex > currentFrame.indexStream.length) {
+            return false;
+        }
+        
+        if (currentFrame.indexStream[indexStreamIndex] == bucketColor) {
+            return false;
+        }
+        
+        if (currentFrame.indexStream[indexStreamIndex] == pixelColor) {
+            return true;
+        }
+        
+        return false;
+    }
 
+    function sfSet(x: number, y: number, bucketColor: number) {
+        props.frames[props.currentFrameIndex].indexStream[getIndexStreamIndex(x, y)] = bucketColor;
+    }
 
+    /**
+     * Algorithm for bucket implementation
+     * @param ix initial x click position
+     * @param iy initial y click position
+     * @param pixelColor initial color index of clicked pixel
+     * @param bucketColor color index to fill with bucked
+     */
+    function spanFill(ix: number, iy: number, pixelColor: number, bucketColor: number) {
+        if (!sfInside(ix, iy, pixelColor, bucketColor)) {
+            return;
+        }
 
-    let visited: Array<number> = [];
-    function initVisitedPixels() {
-        visited = [];
-        for (let i = 0; i < canvasWidthInPixels; i++) {
-            for (let j = 0; j < canvasHeightInPixels; j++) {
-                visited.push(0);
+        let s = [];
+        s.push([ix, ix, iy, 1]);
+        s.push([ix, ix, iy - 1, -1]);
+
+        while (s.length != 0) { 
+            let [x1, x2, y, dy] = s.pop();
+
+            let x = x1;
+            if (sfInside(x, y, pixelColor, bucketColor)) {
+                while (sfInside(x - 1, y, pixelColor, bucketColor)) {
+                    sfSet(x - 1, y, bucketColor);
+                    x =  x - 1;
+                }
+                if (x < x1) {
+                    s.push([x, x1 - 1, y - dy, -dy]);
+
+                }
+            }
+
+            while(x1 <= x2) {
+                while (sfInside(x1, y, pixelColor, bucketColor)) {
+                    sfSet(x1, y, bucketColor);
+                    x1 = x1 + 1;
+                }
+                if (x1 > x) {
+                    s.push([x, x1 - 1, y + dy, dy]);
+                }
+                if (x1 - 1 > x2) {
+                    s.push([x2 + 1, x1 - 1, y - dy, -dy]);
+                }
+                x1 = x1 + 1;
+
+                while (x1 < x2 && !sfInside(x1, y, pixelColor, bucketColor)) {
+                    x1 = x1 + 1;
+                }
+
+                x = x1
             }
         }
     }
-
-    function checkVisitedStatus(index: number): boolean {
-        return visited[index] == 0;
-    }
-
-    function fillConnectedArea(x: number, y: number, pixelColor: number, bucketColor: number) {
-        let n = 0;
-        let pixelsSetInIter = 0;
-        let edges = [[x, y]];
-
-        do {
-            let newEdges = [];
-            let adjacent = [];
-            pixelsSetInIter = 0;
-
-            for (let i = 0; i < edges.length; i++) {
-                let edgeX = edges[i][0];
-                let edgeY = edges[i][1];
-
-                let one = getIndexStreamIndex(edgeX - 1, edgeY);
-                checkVisitedStatus(one) ? adjacent.push([one, edgeX - 1, edgeY]) : false;
-                
-                let two = getIndexStreamIndex(edgeX + 1, edgeY);
-                checkVisitedStatus(two) ? adjacent.push([two, edgeX + 1, edgeY]) : false;
-                
-                let three = getIndexStreamIndex(edgeX, edgeY - 1);
-                checkVisitedStatus(three) ? adjacent.push([three, edgeX, edgeY - 1]) : false;
-                
-                let four = getIndexStreamIndex(edgeX, edgeY + 1);
-                checkVisitedStatus(four) ? adjacent.push([four, edgeX, edgeY + 1]) : false;
-            }
-
-            for (let j = 0; j < adjacent.length; j++) {
-                let currentIndex = adjacent[j][0];
-                let currentX = adjacent[j][1];
-                let currentY = adjacent[j][2];
-                
-                if (currentX < 0 || currentX >= canvasWidthInPixels ||
-                    currentY < 0 || currentY >= canvasHeightInPixels) {
-                    continue;
-                }
-
-                if (props.frames[props.currentFrameIndex].indexStream[currentIndex] == pixelColor) {
-                    visited[currentIndex] = bucketColor;
-                    newEdges.push([currentX, currentY]);
-                    pixelsSetInIter++;
-                }
-            }
-            
-            edges = [];
-            edges = newEdges.slice();
-            n++;
-            console.log(edges, newEdges, adjacent)
-        } while (pixelsSetInIter > 0 && edges.length > 0);
-        
-        
-        for (let i = 0; i < visited.length; i++) {
-            if (visited[i] == bucketColor) {
-                props.frames[props.currentFrameIndex].indexStream[i] = bucketColor;
-            }
-        }
-
-        console.log(visited);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Set the current canvas element on load
     useEffect(() => {

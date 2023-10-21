@@ -120,7 +120,6 @@ export default function App() {
   }
 
   function encodeGIF() {
-    console.log("HELLO??????????")
     setCanvas((currentCanvas) => {
       return {
         key: currentCanvas.key,
@@ -175,7 +174,7 @@ export default function App() {
     setCanvas(() => {
       return { 
         key: crypto.randomUUID(),
-        canvasElement: new CanvasObject(10, 10),
+        canvasElement: new CanvasObject(width, height),
         width: width,
         height: height,
         qualityMultiplier: 10,
