@@ -12,6 +12,12 @@ export enum disposalMethodType {
     restoreToPreviousState,
 };
 
+export enum interactionType {
+    click = 1,
+    drag,
+    touch
+}
+
 export interface toolData {
     key: string,
     tool: toolType,
