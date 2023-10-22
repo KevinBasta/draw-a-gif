@@ -1,4 +1,4 @@
-import { toolData, toolType } from "../common/formats";
+import { toolData, toolType } from "../common/Formats";
 import { returnInput, updateInput } from "../common/commonUtilities";
 import { SizeInput, Tool, Tools } from "./ColorTableToolsStyles";
 import { maxToolSize, minToolSize } from "../common/constants";

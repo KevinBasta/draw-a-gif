@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { canvasType, disposalMethodType, frameType } from "../common/formats";
+import { canvasType, disposalMethodType, frameType } from "../common/Formats";
 import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameMenuStyles"
 import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
 import { returnInput, validateAndConvertInput } from "../common/commonUtilities";
