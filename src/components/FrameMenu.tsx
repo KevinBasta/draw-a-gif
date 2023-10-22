@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../common/formats";
-import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select } from "./CanvasMenuStyles"
+import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select } from "./FrameMenuStyles"
 import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
 import { returnInput, validateAndConvertInput } from "../common/commonUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../common/constants";

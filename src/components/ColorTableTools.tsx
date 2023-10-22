@@ -1,7 +1,6 @@
-import styled from "styled-components";
 import { toolData, toolType } from "../common/formats";
 import { returnInput, updateInput } from "../common/commonUtilities";
-import { SizeInput, Tool, Tools } from "./PaletteToolsStyles";
+import { SizeInput, Tool, Tools } from "./ColorTableToolsStyles";
 import { maxToolSize, minToolSize } from "../common/constants";
 
 let toolButtonKeys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];

@@ -3,12 +3,12 @@ import { createGlobalStyle } from "styled-components";
 import "./styles.css"
 
 import { Canvas } from "./components/Canvas";
-import { ColorTable } from "./components/Palette";
+import { ColorTable } from "./components/ColorTableContext";
 import { FramePicker } from "./components/FramePicker";
 
 import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/formats"
 import { CanvasObject } from "./common/canvasClass";
-import { CanvaseOptions } from "./components/CanvasMenu";
+import { CanvaseOptions } from "./components/FrameMenu";
 import { Preview } from "./components/Preview";
 import { MainMenu } from "./components/MainMenu";
 

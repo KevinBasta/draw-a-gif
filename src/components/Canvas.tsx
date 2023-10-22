@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/formats"
 import { getColorString } from '../common/commonUtilities';
+import { CanvasWrapper } from './CanvasStyles';
 
 // For detecting clicks on canvas
 var mouseDown = 0;
@@ -23,30 +24,6 @@ document.body.ontouchstart = function() {
 document.body.ontouchend = function() {
     touchDown = 0;
 }
-
-
-interface CanvasWrapperProps {
-    $ratiowidth: number;
-    $ratioheight: number;
-    size: string;
-}
-
-const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
-    background-color: var(--primary-color);
-    border: 3px solid black;
-    aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
-    position: relative;
-    ${props => props.size};
-
-    user-drag: none;
-    -webkit-user-drag: none;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-`;
-
-
 
 interface CanvasProps {
     canvas: canvasType;
