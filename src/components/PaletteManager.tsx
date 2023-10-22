@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { colorTableType, colorType } from "../common/Formats";
+import { colorTableType, colorType } from "../common/formats";
 
 const ColorOptions = styled.div`
     width: 20%;

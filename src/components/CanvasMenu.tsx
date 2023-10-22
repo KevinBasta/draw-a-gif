@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { canvasType, disposalMethodType, frameType } from "../common/Formats";
+import { canvasType, disposalMethodType, frameType } from "../common/formats";
 import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select } from "./CanvasMenuStyles"
 import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
-
-
+import { returnInput, validateAndConvertInput } from "../common/commonUtilities";
+import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../common/constants";
 
 interface CanvasOptionsProps {
     canvas: canvasType,
@@ -40,27 +40,14 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
     }
 
     function updateDelayTime(e: any) {
-        let value = e.target.value;
-        let valueInt = parseInt(value);
-
-        if (valueInt > 65535) {
-            e.key = (65535).toString();
-            value = (e.key).toString();
-        }
-        
-        if (valueInt < 0) {
-            e.key = (0).toString();
-            value = (e.key).toString();
-        }
-
-        valueInt = parseInt(value);
+        let value = returnInput(e, minDelayTime, maxDelayTime);
         
         const newFrames = props.frames.map((frame, i) => {
             if (i == props.currentFrameIndex) {
                 return {
                     key: frame.key,
                     disposalMethod: frame.disposalMethod,
-                    delayTime: valueInt,
+                    delayTime: validateAndConvertInput(value, minDelayTime),
                     useLocalColorTable: frame.useLocalColorTable,
                     localColorTable: frame.localColorTable,
                     indexStream: frame.indexStream,
@@ -75,27 +62,14 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
     }
 
     function updateQualityMultiplier(e: any) {
-        let value = e.target.value;
-        let valueInt = parseInt(value);
-
-        if (valueInt > 1000) {
-            e.key = (1000).toString();
-            value = (e.key).toString();
-        }
-        
-        if (valueInt < 1) {
-            e.key = (1).toString();
-            value = (e.key).toString();
-        }
-
-        valueInt = parseInt(value);
+        let value = returnInput(e, minQualityMultiplier, maxQualityMultiplier);
         
         const newCanvas = {
             key: props.canvas.key,
             canvasElement: props.canvas.canvasElement,
             width: props.canvas.width,
             height: props.canvas.height,
-            qualityMultiplier: valueInt,
+            qualityMultiplier: validateAndConvertInput(value, minQualityMultiplier),
             encodedData: props.canvas.encodedData,
             blob: props.canvas.blob,
             url: props.canvas.url,
@@ -105,59 +79,31 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
     }
 
     /* function updateCanvasWidth(e: any) {
-        let value = e.target.value;
-        let valueInt = parseInt(value);
-        let oldWidth = valueInt;
-
-        if (valueInt > 10000) {
-            e.key = (10000).toString();
-            value = (e.key).toString();
-        }
-        
-        if (valueInt < 1) {
-            e.key = (1).toString();
-            value = (e.key).toString();
-        }
-
-        valueInt = parseInt(value);
+        let value = returnInput(e, minCanvasSize, maxCanvasSize);
         
         const newCanvas = {
             key: props.canvas.key,
             canvasElement: props.canvas.canvasElement,
-            width: valueInt,
+            width: validateAndConvertInput(value, minCanvasSize),
             height: props.canvas.height,
             qualityMultiplier: props.canvas.qualityMultiplier,
             encodedData: props.canvas.encodedData,
             blob: props.canvas.blob,
             url: props.canvas.url,
         };
-
+        
         expandFrames(oldWidth, valueInt, props.canvas.height, props.canvas.height);
         props.setCanvas(newCanvas);
     }
-
+    
     function updateCanvasHeight(e: any) {
-        let value = e.target.value;
-        let valueInt = parseInt(value);
-        let oldHeight = valueInt;
+        let value = returnInput(e, minCanvasSize, maxCanvasSize);
 
-        if (valueInt > 10000) {
-            e.key = (10000).toString();
-            value = (e.key).toString();
-        }
-        
-        if (valueInt < 1) {
-            e.key = (1).toString();
-            value = (e.key).toString();
-        }
-
-        valueInt = parseInt(value);
-        
         const newCanvas = {
             key: props.canvas.key,
             canvasElement: props.canvas.canvasElement,
             width: props.canvas.width,
-            height: valueInt,
+            height: validateAndConvertInput(value, minCanvasSize),
             qualityMultiplier: props.canvas.qualityMultiplier,
             encodedData: props.canvas.encodedData,
             blob: props.canvas.blob,
@@ -187,31 +133,6 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
 
         props.setFrames(newFrames);
     }
- 
-    function expandIndexStream(indexStream: Array<number>, oldWidth: number, newWidth: number, oldHeight: number, newHeight: number) {
-        
-
-        //for (let i = 0; i < )
-    }
-
-    // called for resizing of canvas
-    function expandFrames(oldWidth: number, newWidth: number, oldHeight: number, newHeight: number) {
-        const newFrames = props.frames.map((frame, i) => {
-            let newIndexStream =  expandIndexStream(frame.indexStream, oldWidth, newWidth, oldHeight, newHeight);
-            
-            return {
-                key: frame.key,
-                disposalMethod: frame.disposalMethod,
-                delayTime: frame.delayTime,
-                useLocalColorTable: frame.useLocalColorTable,
-                localColorTable: frame.localColorTable,
-                indexStream: newIndexStream,
-                previewUrl: frame.previewUrl,
-            }
-        });
-      
-        props.setFrames(() => newFrames);
-    }
     
     function togglePreview() {
         if (props.canvas.encodedData != null) {
@@ -228,19 +149,19 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                 <Section>
                     <Title>Frame</Title>
 
-                    <Label>Transition Type:</Label>
+                    <Label>Transition:</Label>
                     <Select value={props.frames[props.currentFrameIndex].disposalMethod}
                             onChange={e => updateDisposalMethod(parseInt(e.target.value))}>
+                        <option value={disposalMethodType.restoreToBackgroundColor}> normal </option>
                         <option value={disposalMethodType.keep}> Keep </option>
-                        <option value={disposalMethodType.restoreToBackgroundColor}> Background Color </option>
                         <option value={disposalMethodType.restoreToPreviousState}> Previous State </option>
                     </Select>
 
-                    <Label>Transition Time:</Label>
+                    <Label>Duration:</Label>
                     <Input key={keys[1]} 
                            type="number"
-                           min="0"
-                           max="65535"
+                           min={minDelayTime.toString()}
+                           max={maxDelayTime.toString()}
                            value={(props.frames[props.currentFrameIndex].delayTime).toString()}
                            onChange={e => updateDelayTime(e)}/>
                 </Section>
@@ -253,16 +174,16 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                         <Label>Quality Multiplier</Label>
                             <Input key={keys[2]}
                                 type="number"
-                                min="1"
-                                max="1000"
+                                min={minQualityMultiplier.toString()}
+                                max={maxQualityMultiplier.toString()}
                                 value={(props.canvas.qualityMultiplier).toString()}
                                 onChange={e => updateQualityMultiplier(e)} />
 
                             <Label>Width</Label>
                             <Input key={keys[3]}
                                 type="number"
-                                min="1"
-                                max="10000"
+                                min={minCanvasSize.toString()}
+                                max={maxCanvasSize.toString()}
                                 value={(props.canvas.width).toString()}
                                 onChange={e => {e.target.value = (props.canvas.width).toString()}}
                                 /* onChange={e => updateCanvasWidth(e)} */ />
@@ -270,8 +191,8 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                             <Label>Height</Label>
                             <Input key={keys[4]}
                                 type="number"
-                                min="1"
-                                max="10000"
+                                min={minCanvasSize.toString()}
+                                max={maxCanvasSize.toString()}
                                 value={(props.canvas.height).toString()}
                                 onChange={e => {e.target.value = (props.canvas.height).toString()}}
                                 /* onChange={e => updateCanvasHeight(e)} */ />

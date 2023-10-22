@@ -29,7 +29,13 @@ if( 'function' === typeof importScripts) {
         else if (e.data[0] == "framePreview")
         {
             let canvas = e.data[1];
-            canvas.qualityMultiplier = 5;
+
+            // limit quality of frame previews
+            if (canvas.width > 100 || canvas.height > 100) {
+              canvas.qualityMultiplier = 1;
+            } else {
+              canvas.qualityMultiplier = 5;
+            }
 
             let frames = [e.data[2][e.data[3]]];
 

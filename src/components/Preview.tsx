@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { canvasType } from "../common/Formats";
+import { canvasType } from "../common/formats";
 import { useState } from "react";
 import { CanvasOptionsToggle } from "./CanvasMenuStyles";
 

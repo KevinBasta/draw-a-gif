@@ -1,49 +1,18 @@
 import styled from "styled-components";
 import { Button, Input, Label, LargeTitle, Title } from "../common/CommonStyledComponents";
 import { useState } from "react";
-
-
-const MenuWrapper = styled.div`
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    z-index: 10;
-    top: 0;
-    left: 0;
-    background-color: var(--primary-color);
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-`;
-
-const CreateCanvasWrapper = styled.div`
-    width: 40vw;
-    padding: 5vw;
-    gap: 5vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--secondary-color);
-`;
-
-const SizePickerContainer = styled.div`
-    width: 30vw;
-    display: grid;
-    grid-template-columns: 4fr 10fr;
-`;
-
+import { updateInput, validateAndConvertInput } from "../common/commonUtilities";
+import { CreateCanvasWrapper, MenuWrapper, SizePickerContainer } from "./MainMenuStyles";
+import { maxCanvasSize, minCanvasSize } from "../common/constants";
 
 interface TitleScreenProps {
     initCanvas: Function;
 }
 
 export function MainMenu(props: TitleScreenProps) {
-    const [width, setWidth] = useState(10);
-    const [height, setHeight] = useState(10);
-
+    const [width, setWidth] = useState<string>('10');
+    const [height, setHeight] = useState<string>('10');
+    
     return (
         <>
             <MenuWrapper>
@@ -53,13 +22,27 @@ export function MainMenu(props: TitleScreenProps) {
 
                     <SizePickerContainer>
                         <Label>Width:</Label>
-                        <Input type="number" min={1} max={10000} value={width.toString()} onChange={(e) => {setWidth(parseInt(e.target.value))}}/>
+                        <Input type="number" 
+                               min={minCanvasSize.toString()}
+                               max={maxCanvasSize.toString()}
+                               value={width}
+                               onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
+                               onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}}
+                               onChange={(e) => {updateInput(e, setWidth, 1, 3000)}}/>
 
                         <Label>Height:</Label>
-                        <Input type="number" min={1} max={10000} value={height.toString()} onChange={(e) => {setHeight(parseInt(e.target.value))}}/>
+                        <Input type="number"
+                               min={minCanvasSize.toString()}
+                               max={maxCanvasSize.toString()}
+                               value={height} 
+                               onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
+                               onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}}
+                               onChange={(e) => {updateInput(e, setHeight, 1, 3000)}}/>
                     </SizePickerContainer>
                 
-                    <Button onClick={(e) => props.initCanvas(width, height)}>create a canvas</Button>
+                    <Button onClick={(e) => {
+                        props.initCanvas(validateAndConvertInput(width, minCanvasSize), validateAndConvertInput(height, minCanvasSize));
+                    }}>create a canvas</Button>
                 </CreateCanvasWrapper>
             </MenuWrapper>
         </>

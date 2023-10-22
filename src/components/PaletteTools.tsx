@@ -1,75 +1,8 @@
 import styled from "styled-components";
-import { toolData, toolType } from "../common/Formats";
-
-const Tools = styled.div`
-    width: 10%;    
-    padding: var(--standard-gap-size) 1vw;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 5px;
-    
-    background-color: var(--secondary-color);
-`
-
-const Tool = styled.div<{ $icon?: string; $selected?: boolean; }>`
-    aspect-ratio: 1 / 1;
-    width: var(--tool-item-width);
-    background-color: var(--tertiary-color);
-    place-self: center;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-
-    transition: 0.1s;
-
-    ${props => props.$selected ?
-        `
-        box-shadow: var(--button-shadow-small-active);
-        transform: var(--button-transform-small-active);
-        `
-        : 
-        `
-        box-shadow: var(--button-shadow-small);
-        transform: var(--button-transform-small);
-        `};
-
-    cursor: pointer;
-
-    &:after {
-        content: "${props => props.$icon}";
-        font-size: var(--font-size-small);
-    }
-`;
-
-const SizeInput = styled.input`
-    aspect-ratio: 1 / 1;
-    width: var(--tool-item-width);
-    background-color: var(--tertiary-color);
-    place-self: center;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin: 0px;
-    padding: 0px;
-    cursor: text;
-
-    &:hover {
-        background-color: #555555;
-        color: white;
-    }
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    &[type=number] {
-        -moz-appearance: textfield;
-    }
-`;
+import { toolData, toolType } from "../common/formats";
+import { returnInput, updateInput } from "../common/commonUtilities";
+import { SizeInput, Tool, Tools } from "./PaletteToolsStyles";
+import { maxToolSize, minToolSize } from "../common/constants";
 
 let toolButtonKeys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
 
@@ -87,25 +20,11 @@ export function ColorTableTools(props: MyColorTableToolsProps) {
     }
 
     function updateToolSize(e: any) {
-        let value = e.target.value;
-        let valueInt = parseInt(value);
-        
-        if (valueInt > 100) {
-            e.key = (100).toString();
-            value = (e.key).toString();
-        }
-        
-        if (valueInt < 1) {
-            e.key = (1).toString();
-            value = (e.key).toString();
-        }
-        
+        let value = returnInput(e, minToolSize, maxToolSize);
+
         props.setCurrentTool((object: toolData) => {
             return {key: object.key, tool: object.tool, size: value};
         });
-        
-        console.log(props.currentTool.size);
-        console.log(e.target.value);
     }
 
     return (
@@ -117,10 +36,11 @@ export function ColorTableTools(props: MyColorTableToolsProps) {
                 
             <SizeInput key={toolButtonKeys[1]} 
                        type="number"
-                       min="1"
-                       max="100"
+                       min={minToolSize.toString()}
+                       max={maxToolSize.toString()}
                        value={props.currentTool.size}
                        onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
+                       /* onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}} */
                        onChange={e => updateToolSize(e)}></SizeInput>
 
             <Tool key={toolButtonKeys[2]}

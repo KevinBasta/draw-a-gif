@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/Formats"
-import { getColorString } from '../common/colorUtilities';
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/formats"
+import { getColorString } from '../common/commonUtilities';
 
 // For detecting clicks on canvas
 var mouseDown = 0;
@@ -125,7 +125,7 @@ export function Canvas(props: CanvasProps) {
                 let pixelColor = props.frames[props.currentFrameIndex].indexStream[topRightIndex];
                 let bucketColor = props.currentColorIndex;
                 spanFill(cx, cy, pixelColor, bucketColor);
-                
+
                 drawFrameOnCanvas();
             }
         } else {
@@ -314,8 +314,8 @@ export function Canvas(props: CanvasProps) {
         <CanvasWrapper key={props.canvas.key}
                        onMouseDown={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.click)}}
                        onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.drag)}}
-                       onTouchStart={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
-                       onTouchMove={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
+                       onTouchStart={(e) => {e.preventDefault(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
+                       onTouchMove={(e) => {e.preventDefault(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
                        size={canvasSizeControl}
                        width={canvasWidthInPixels * props.canvas.canvasElement.getQualityMultiplier()}
                        height={canvasHeightInPixels * props.canvas.canvasElement.getQualityMultiplier()}
