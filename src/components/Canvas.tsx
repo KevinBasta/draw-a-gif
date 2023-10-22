@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/Formats"
 import { getColorString } from '../common/commonUtilities';
 import { CanvasWrapper } from './CanvasStyles';
 

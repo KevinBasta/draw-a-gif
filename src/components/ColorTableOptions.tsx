@@ -1,4 +1,4 @@
-import { colorTableType, colorType } from "../common/formats";
+import { colorTableType, colorType } from "../common/Formats";
 import { Button, ButtonManager, ColorOptions, ColorPicker } from "./ColorTableOptionsStyles";
 
 interface MyColorTableOptionsProps {

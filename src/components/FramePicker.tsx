@@ -1,4 +1,4 @@
-import { canvasType, frameType } from "../common/formats";
+import { canvasType, frameType } from "../common/Formats";
 import { FrameAdder, FrameImg, FramePickerElem, FramePreview } from "./FramePickerStyles";
 
 interface MyFramePickerProps {

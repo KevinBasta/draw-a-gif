@@ -1,4 +1,4 @@
-import { colorType } from "./formats";
+import { colorType } from "./Formats";
 
 /**
   * Return a string to be used by html color style

@@ -6,7 +6,7 @@ import { Canvas } from "./components/Canvas";
 import { ColorTable } from "./components/ColorTableContext";
 import { FramePicker } from "./components/FramePicker";
 
-import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/formats"
+import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
 import { CanvasObject } from "./common/canvasClass";
 import { CanvaseOptions } from "./components/FrameMenu";
 import { Preview } from "./components/Preview";
