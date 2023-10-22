@@ -15,7 +15,10 @@ export function ColorTableOptions(props: MyColorTableOptionsProps) {
             return;
         }
 
-        let [r, g, b] = getColorPickerValues();
+        let colorPickerElement: HTMLInputElement = document.getElementById("colorpicker") as HTMLInputElement;
+        let hexInputColor: string = colorPickerElement.value;
+
+        let [r, g, b] = getColorPickerValues(hexInputColor);
 
         props.setCurrentColorTable((table: colorTableType) => {
             return {
@@ -28,8 +31,8 @@ export function ColorTableOptions(props: MyColorTableOptionsProps) {
         });
     }
 
-    function setClr() {
-        let [r, g, b] = getColorPickerValues();
+    function setClr(e) {
+        let [r, g, b] = getColorPickerValues(e.target.value);
 
         props.setCurrentColorTable((object: colorTableType) => {
             return {
@@ -71,10 +74,7 @@ export function ColorTableOptions(props: MyColorTableOptionsProps) {
         console.log(props.currentColorTable);
     }
 
-    function getColorPickerValues() {
-        let colorPickerElement: HTMLInputElement = document.getElementById("colorpicker") as HTMLInputElement;
-        let hexInputColor: string = colorPickerElement.value;
-        
+    function getColorPickerValues(hexInputColor: string) {
         let r: string, g: string, b: string;
         if (hexInputColor.length == 4) {
             r = "0x" + hexInputColor[1] + hexInputColor[1];
@@ -91,18 +91,18 @@ export function ColorTableOptions(props: MyColorTableOptionsProps) {
 
     return (
         <ColorOptions>
-            <ColorPicker type="color" id="colorpicker" name="colorpicker"></ColorPicker>
+            <ColorPicker type="color" id="colorpicker" name="colorpicker" onInput={(e) => setClr(e)}></ColorPicker>
+            
             <ButtonManager>
                 <Button key={crypto.randomUUID()}
-                        onClick={() => setClr()}> Set </Button>
-                
-                <Button key={crypto.randomUUID()}
-                        $disabled={props.currentColorTable.items.length <= 2}
-                        onClick={() => removeClr()}> Remove </Button>
-                
-                <Button key={crypto.randomUUID()}
+                        className="material-symbols-outlined"
                         $disabled={props.currentColorTable.items.length >= 255}
-                        onClick={() => {addNewColor()}}> Add </Button>
+                        onClick={() => {addNewColor()}}> shadow_add </Button>
+                
+                <Button key={crypto.randomUUID()}
+                        className="material-symbols-outlined"
+                        $disabled={props.currentColorTable.items.length <= 2}
+                        onClick={() => removeClr()}> shadow_minus </Button>
             </ButtonManager>
         </ColorOptions>
     );

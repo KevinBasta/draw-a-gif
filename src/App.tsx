@@ -24,6 +24,8 @@ const bKey = '66';
 
 const GlobalStyles = createGlobalStyle`
   :root {
+    font-family: 'DotGothic16', sans-serif;
+
     // Canvas Color Palette
     // Other Matching Colors: A1D2CE F3DE8A E1D89F B4C4AE D4B483 E4DFDA 758acb
     --background-color: #686868;

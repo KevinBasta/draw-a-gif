@@ -47,7 +47,7 @@ export function FramePicker(props: MyFramePickerProps) {
                 )
             })
         }
-        <FrameAdder onClick={() => addFrame()} />
+        <FrameAdder onClick={() => addFrame()} className="material-symbols-outlined"/>
         </FramePickerElem>
     );
 }

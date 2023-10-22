@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../common/formats";
-import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select } from "./FrameMenuStyles"
+import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameMenuStyles"
 import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
 import { returnInput, validateAndConvertInput } from "../common/commonUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../common/constants";
@@ -24,17 +24,17 @@ let keys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypt
 
 export function CanvaseOptions(props: CanvasOptionsProps) {
     const [canvasOptionsWidth, setCanvasOptionsWidth] = useState("0px");
-    const [canvasOptionsToggleIcon, setcanvasOptionsToggleIcon] = useState("←");
+    const [canvasOptionsToggleIcon, setcanvasOptionsToggleIcon] = useState("arrow_back");
 
     function toggleCanvasOptions() {
         switch (canvasOptionsWidth) {
             case "0px":
                 setCanvasOptionsWidth(() => {return "25%"});
-                setcanvasOptionsToggleIcon(() => {return "→"})
+                setcanvasOptionsToggleIcon(() => {return "arrow_forward"})
                 break;
             default:
                 setCanvasOptionsWidth(() => {return "0px"});
-                setcanvasOptionsToggleIcon(() => {return "←"})
+                setcanvasOptionsToggleIcon(() => {return "arrow_back"})
         }
 
     }
@@ -142,7 +142,9 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
 
     return (
         <>
-        <CanvasOptionsToggle $icon={canvasOptionsToggleIcon} onClick={() => {toggleCanvasOptions()}}></CanvasOptionsToggle>
+        <CanvasOptionsToggle $icon={canvasOptionsToggleIcon} 
+                             className="material-symbols-outlined"
+                             onClick={() => {toggleCanvasOptions()}}/>
         <CanvasOptionsWrapper $width={canvasOptionsWidth}>
             <Content>
 
@@ -152,9 +154,9 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                     <Label>Transition:</Label>
                     <Select value={props.frames[props.currentFrameIndex].disposalMethod}
                             onChange={e => updateDisposalMethod(parseInt(e.target.value))}>
-                        <option value={disposalMethodType.restoreToBackgroundColor}> normal </option>
-                        <option value={disposalMethodType.keep}> Keep </option>
-                        <option value={disposalMethodType.restoreToPreviousState}> Previous State </option>
+                        <Option value={disposalMethodType.restoreToBackgroundColor}> Normal </Option>
+                        <Option value={disposalMethodType.keep}> Keep </Option>
+                        <Option value={disposalMethodType.restoreToPreviousState}> Previous State </Option>
                     </Select>
 
                     <Label>Duration:</Label>
@@ -169,7 +171,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                 <Section>
                     <Title>Canvas</Title>
 
-                    <Option>
+                    <SectionWrapper>
                     <Section>
                         <Label>Quality Multiplier</Label>
                             <Input key={keys[2]}
@@ -202,7 +204,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                         <Button onClick={() => {props.encodeGIF()}}>Create GIF</Button>
                         <Button $disabled={props.canvas.encodedData == null} 
                                 onClick={() => {togglePreview()}}>Show GIF</Button>
-                    </Option>
+                    </SectionWrapper>
                 </Section>
                 
             </Content>

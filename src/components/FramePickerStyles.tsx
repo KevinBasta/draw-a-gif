@@ -69,7 +69,7 @@ export const FrameAdder = styled.div`
     }
     
     &:after {
-        content: "+";
+        content: "add";
         font-size: var(--font-size-medium);
     }
 `;

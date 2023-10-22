@@ -29,9 +29,9 @@ export function ColorTableTools(props: MyColorTableToolsProps) {
     return (
         <Tools>
             <Tool key={toolButtonKeys[0]}
-                  $icon={"P"}
+                  className="material-symbols-outlined"
                   $selected={props.currentTool.tool == toolType.brush}
-                  onClick={(e) => {updateTool(toolType.brush)}}></Tool>
+                  onClick={(e) => {updateTool(toolType.brush)}}>brush</Tool>
                 
             <SizeInput key={toolButtonKeys[1]} 
                        type="number"
@@ -43,14 +43,14 @@ export function ColorTableTools(props: MyColorTableToolsProps) {
                        onChange={e => updateToolSize(e)}></SizeInput>
 
             <Tool key={toolButtonKeys[2]}
-                  $icon={"B"}
+                  className="material-symbols-outlined"
                   $selected={props.currentTool.tool == toolType.bucket}
-                  onClick={(e) => {updateTool(toolType.bucket)}}></Tool>
+                  onClick={(e) => {updateTool(toolType.bucket)}}>colors</Tool>
                 
             <Tool key={toolButtonKeys[3]}
-                  $icon={"E"}
+                  className="material-symbols-outlined"
                   $selected={props.currentTool.tool == toolType.eraser}
-                  onClick={(e) => {updateTool(toolType.eraser)}}></Tool>
+                  onClick={(e) => {updateTool(toolType.eraser)}}>ink_eraser</Tool>
         </Tools>
     );
 }

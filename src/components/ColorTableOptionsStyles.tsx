@@ -51,13 +51,14 @@ export const ColorPicker = styled.input`
 
 export const ButtonManager = styled.div`
     width: 50%;
+    height: 90%;
     padding: 10px;
-    background-color: var(--primary-color);
 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    flex-wrap: wrap;
     
     gap: 0.5vh;
 `;
@@ -66,14 +67,15 @@ export const Button = styled.button<{ $disabled?: boolean; }>`
     background-color: var(--tertiary-color);
     color: black;
     border: 2px solid #555555;
+    aspect-ratio: 1/1;
+    flex-grow: 2;
 
     border: none;
-    width: 100%;
     
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: var(--font-size-small);
+    font-size: var(--font-size-medium);
     
     box-shadow: var(--button-shadow-small);
     transform: var(--button-transform-small);
