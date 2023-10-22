@@ -54,7 +54,7 @@ export const Section = styled.div`
     flex-direction: column;
 `;
 
-export const Option = styled.div`
+export const SectionWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: min(2vw, 2vh);
@@ -62,6 +62,13 @@ export const Option = styled.div`
 
 export const Select = styled.select`
     width: 100%;
-    font-size: var(--font-size-small);
+    height: 2vh;
+    font-size: var(--font-size-sm);
+    font-family: 'DotGothic16', sans-serif;
     margin: 0px;
+`;
+
+export const Option = styled.option`
+    font-family: 'DotGothic16', sans-serif;
+    font-size: var(--font-size-sm);
 `;

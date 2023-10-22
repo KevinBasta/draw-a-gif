@@ -3,17 +3,29 @@ import { createGlobalStyle } from "styled-components";
 import "./styles.css"
 
 import { Canvas } from "./components/Canvas";
-import { ColorTable } from "./components/Palette";
+import { ColorTable } from "./components/ColorTableContext";
 import { FramePicker } from "./components/FramePicker";
 
-import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
+import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/formats"
 import { CanvasObject } from "./common/canvasClass";
-import { CanvaseOptions } from "./components/CanvasMenu";
+import { CanvaseOptions } from "./components/FrameMenu";
 import { Preview } from "./components/Preview";
 import { MainMenu } from "./components/MainMenu";
 
+const leftArrow = '37';
+const aKey = '65';
+
+const rightArrow = '39';
+const dKey = '68';
+
+const eKey = '69';
+const pKey = '80';
+const bKey = '66';
+
 const GlobalStyles = createGlobalStyle`
   :root {
+    font-family: 'DotGothic16', sans-serif;
+
     // Canvas Color Palette
     // Other Matching Colors: A1D2CE F3DE8A E1D89F B4C4AE D4B483 E4DFDA 758acb
     --background-color: #686868;
@@ -230,11 +242,69 @@ export default function App() {
     });
   }
 
+
+  function reactToKeyPress(e: any) {
+    if (canvas == null) {
+      return;
+    }
+
+    let key = e.keyCode;
+
+    if ((key == leftArrow || key == aKey) && 
+        (currentFrameIndex - 1 >= 0))
+    {
+      setCurrentFrameIndex((current) => {return current - 1;})
+    }
+    else if ((key == rightArrow || key == dKey) &&
+             (frames.length - 1) >= (currentFrameIndex + 1)) 
+    {
+      setCurrentFrameIndex((current) => {return current + 1;})
+    }
+
+
+    if (key == eKey) {
+      setCurrentTool((current) => {
+        return {
+          key: current.key,
+          tool: toolType.eraser,
+          size: current.size,
+        }
+      })
+    }
+
+    if (key == pKey) {
+      setCurrentTool((current) => {
+        return {
+          key: current.key,
+          tool: toolType.brush,
+          size: current.size,
+        }
+      })
+    }
+
+    if (key == bKey) {
+      setCurrentTool((current) => {
+        return {
+          key: current.key,
+          tool: toolType.bucket,
+          size: current.size,
+        }
+      })
+    }
+    
+  }
+  
   // Set initial states
-  useEffect(() => {
+  useEffect(() => {      
+    window.addEventListener('keydown', reactToKeyPress);
+    
+    return () => {
+      // remove on dismount
+      window.removeEventListener('keydown', reactToKeyPress);
+    }
     //addFrame();
     //displayFrame(frames[0]);
-  }, []);
+  }, [reactToKeyPress]);
 
 
   function titleOrApp() {

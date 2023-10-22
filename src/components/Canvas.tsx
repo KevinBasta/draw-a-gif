@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/Formats"
-import { getColorString } from '../common/colorUtilities';
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/formats"
+import { getColorString } from '../common/commonUtilities';
+import { CanvasWrapper } from './CanvasStyles';
 
 // For detecting clicks on canvas
 var mouseDown = 0;
@@ -23,30 +24,6 @@ document.body.ontouchstart = function() {
 document.body.ontouchend = function() {
     touchDown = 0;
 }
-
-
-interface CanvasWrapperProps {
-    $ratiowidth: number;
-    $ratioheight: number;
-    size: string;
-}
-
-const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
-    background-color: var(--primary-color);
-    border: 3px solid black;
-    aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
-    position: relative;
-    ${props => props.size};
-
-    user-drag: none;
-    -webkit-user-drag: none;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-`;
-
-
 
 interface CanvasProps {
     canvas: canvasType;
@@ -71,9 +48,9 @@ export function Canvas(props: CanvasProps) {
     let canvasHeightInPixels = props.canvas.height;
     
     // Set width/height css property directly depending on width/height ratio
-    let canvasSizeControl;
+    let canvasSizeControl = "max-height: inherit; max-width: 90%";
     if (canvasWidthInPixels > canvasHeightInPixels) {
-        canvasSizeControl = "width: 90vw";
+        canvasSizeControl = "max-height: inherit; max-width: 90%";
     } else {
         canvasSizeControl = "max-height: inherit; max-width: 90%;";
     }
@@ -125,7 +102,7 @@ export function Canvas(props: CanvasProps) {
                 let pixelColor = props.frames[props.currentFrameIndex].indexStream[topRightIndex];
                 let bucketColor = props.currentColorIndex;
                 spanFill(cx, cy, pixelColor, bucketColor);
-                
+
                 drawFrameOnCanvas();
             }
         } else {
@@ -314,8 +291,8 @@ export function Canvas(props: CanvasProps) {
         <CanvasWrapper key={props.canvas.key}
                        onMouseDown={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.click)}}
                        onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.drag)}}
-                       onTouchStart={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
-                       onTouchMove={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
+                       onTouchStart={(e) => {e.preventDefault(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
+                       onTouchMove={(e) => {e.preventDefault(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
                        size={canvasSizeControl}
                        width={canvasWidthInPixels * props.canvas.canvasElement.getQualityMultiplier()}
                        height={canvasHeightInPixels * props.canvas.canvasElement.getQualityMultiplier()}

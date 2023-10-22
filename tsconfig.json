@@ -21,6 +21,6 @@
     "noFallthroughCasesInSwitch": true,
     "strictNullChecks": false
   },
-  "include": ["src", "public/require.js", "public/gifEncoder.js", "public/encoderWorker.js", "src/common/Formats.ts"],
+  "include": ["src", "public/require.js", "public/gifEncoder.js", "public/encoderWorker.js", "src/common/formats.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
