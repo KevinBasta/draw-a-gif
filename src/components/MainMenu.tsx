@@ -3,6 +3,7 @@ import { useState } from "react";
 import { updateInput, validateAndConvertInput } from "../common/commonUtilities";
 import { CreateCanvasWrapper, MenuWrapper, SizePickerContainer } from "./MainMenuStyles";
 import { maxCanvasSize, minCanvasSize } from "../common/constants";
+import React from "react";
 
 interface TitleScreenProps {
     initCanvas: Function;

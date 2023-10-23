@@ -62,7 +62,7 @@ export const SectionWrapper = styled.div`
 
 export const Select = styled.select`
     width: 100%;
-    height: 2vh;
+    height: max(2vh, var(--font-size-large));
     font-size: var(--font-size-sm);
     font-family: 'DotGothic16', sans-serif;
     margin: 0px;

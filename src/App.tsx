@@ -11,6 +11,8 @@ import { CanvasObject } from "./common/canvasClass";
 import { CanvaseOptions } from "./components/FrameMenu";
 import { Preview } from "./components/Preview";
 import { MainMenu } from "./components/MainMenu";
+import { minDelayTime, minQualityMultiplier } from "./common/constants";
+import { validateAndConvertInput } from "./common/commonUtilities";
 
 const leftArrow = '37';
 const aKey = '65';
@@ -132,22 +134,40 @@ export default function App() {
   }
 
   function encodeGIF() {
-    setCanvas((currentCanvas) => {
+    let validatedCanvas = {
+      key: canvas.key,
+      canvasElement: canvas.canvasElement,
+      width: canvas.width,
+      height: canvas.height,
+      qualityMultiplier: validateAndConvertInput(canvas.qualityMultiplier, minQualityMultiplier),
+      encodedData: null,
+      blob: null,
+      url: null
+    }
+
+    setCanvas(() => {
+      return validatedCanvas;
+    });
+    
+    let validatedFrames = frames.map((frame, i) => {
       return {
-        key: currentCanvas.key,
-        canvasElement: currentCanvas.canvasElement,
-        width: currentCanvas.width,
-        height: currentCanvas.height,
-        qualityMultiplier: currentCanvas.qualityMultiplier,
-        encodedData: null,
-        blob: null,
-        url: null
+        key: frame.key,
+        disposalMethod: frame.disposalMethod,
+        delayTime: validateAndConvertInput(frame.delayTime, minDelayTime),
+        useLocalColorTable: frame.useLocalColorTable,
+        localColorTable: frame.localColorTable,
+        indexStream: frame.indexStream,
+        previewUrl: frame.previewUrl,
       }
     });
 
-    //setPreviewGIF(() => true)
+    setFrames(() => {
+      return validatedFrames;
+    });
+    
+  //setPreviewGIF(() => true)
 
-    worker.postMessage(["encode", canvas, frames, globalColorTable]);
+    worker.postMessage(["encode", validatedCanvas, validatedFrames, globalColorTable]);
   }
 
   function saveEncodedData(data: Uint8Array) {

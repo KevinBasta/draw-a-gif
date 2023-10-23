@@ -291,8 +291,8 @@ export function Canvas(props: CanvasProps) {
         <CanvasWrapper key={props.canvas.key}
                        onMouseDown={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.click)}}
                        onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.drag)}}
-                       onTouchStart={(e) => {e.preventDefault(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
-                       onTouchMove={(e) => {e.preventDefault(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
+                       onTouchStart={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
+                       onTouchMove={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
                        size={canvasSizeControl}
                        width={canvasWidthInPixels * props.canvas.canvasElement.getQualityMultiplier()}
                        height={canvasHeightInPixels * props.canvas.canvasElement.getQualityMultiplier()}

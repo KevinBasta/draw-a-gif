@@ -4,6 +4,7 @@ import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Se
 import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
 import { returnInput, validateAndConvertInput } from "../common/commonUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../common/constants";
+import React from "react";
 
 interface CanvasOptionsProps {
     canvas: canvasType,
@@ -47,7 +48,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
                 return {
                     key: frame.key,
                     disposalMethod: frame.disposalMethod,
-                    delayTime: validateAndConvertInput(value, minDelayTime),
+                    delayTime: value,
                     useLocalColorTable: frame.useLocalColorTable,
                     localColorTable: frame.localColorTable,
                     indexStream: frame.indexStream,
@@ -69,7 +70,7 @@ export function CanvaseOptions(props: CanvasOptionsProps) {
             canvasElement: props.canvas.canvasElement,
             width: props.canvas.width,
             height: props.canvas.height,
-            qualityMultiplier: validateAndConvertInput(value, minQualityMultiplier),
+            qualityMultiplier: value,
             encodedData: props.canvas.encodedData,
             blob: props.canvas.blob,
             url: props.canvas.url,

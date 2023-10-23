@@ -51,9 +51,8 @@ export const ColorPicker = styled.input`
 
 export const ButtonManager = styled.div`
     width: 50%;
-    height: 90%;
-    padding: 10px;
-
+    max-height: 90%;
+    
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -68,8 +67,8 @@ export const Button = styled.button<{ $disabled?: boolean; }>`
     color: black;
     border: 2px solid #555555;
     aspect-ratio: 1/1;
-    flex-grow: 2;
-
+    flex-grow: 1;
+    padding: 7%;
     border: none;
     
     text-align: center;

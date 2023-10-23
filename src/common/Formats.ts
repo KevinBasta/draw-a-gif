@@ -39,7 +39,7 @@ export interface colorTableType {
 export interface frameType {
     key: string,
     disposalMethod: disposalMethodType,
-    delayTime: number;
+    delayTime: any;
     useLocalColorTable: boolean,
     localColorTable: colorTableType,
     indexStream: Array<number>,
@@ -51,7 +51,7 @@ export interface canvasType {
     canvasElement: CanvasObject,
     width: number, 
     height: number,
-    qualityMultiplier: number,
+    qualityMultiplier: any,
     encodedData: Uint8Array,
     blob: Blob,
     url: string,

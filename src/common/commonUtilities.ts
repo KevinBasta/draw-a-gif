@@ -39,7 +39,7 @@ export function validateAndConvertInput(value: string, defaultValue: number): nu
   let valueInt = parseInt(value);
 
   if (Number.isNaN(valueInt)) {
-      return 1;
+      return defaultValue;
   }
 
   return valueInt;
