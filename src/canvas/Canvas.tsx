@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from "styled-components";
 
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../shared/Formats"
@@ -46,30 +46,7 @@ interface CanvasProps {
 export function Canvas(props: CanvasProps) {
     let canvasWidthInPixels = props.canvas.width;
     let canvasHeightInPixels = props.canvas.height;
-
-
-/*     useEffect(() => {
-        Canvas.addEventListener('touchStart')
-    });
-
-    touchEventGuards(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    componentDidMount() {
-        
-        onTouchStart={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
-                       onTouchMove={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
-                       
-        this.input.addEventListener('keypress', this.onKeyPress, { passive: false });
-    }
     
-    componentWillUnmount() {
-        this.input.removeEventListener('keypress', this.onKeyPress);
-    }
- */
-
     // Set width/height css property directly depending on width/height ratio
     let canvasSizeControl = "max-height: inherit; max-width: 90%";
     if (canvasWidthInPixels > canvasHeightInPixels) {
@@ -77,6 +54,24 @@ export function Canvas(props: CanvasProps) {
     } else {
         canvasSizeControl = "max-height: inherit; max-width: 90%;";
     }
+
+
+    // Prevent scrolling when drawing on mobile devices
+    const canvasElem = useRef(null);
+    useEffect(() => {
+        canvasElem.current.addEventListener('touchstart', touchHandler, { passive: false });
+        canvasElem.current.addEventListener('touchmove', touchHandler, { passive: false });
+
+        return () => {
+            canvasElem.current.removeEventListener('touchstart', touchHandler);
+            canvasElem.current.removeEventListener('touchmove', touchHandler);
+        };
+    }, []);
+
+    function touchHandler(e) {
+        e.preventDefault();
+    }
+
 
     function getIndexStreamIndex(x: number, y: number) {
         return (canvasWidthInPixels * y) + x;
@@ -311,7 +306,8 @@ export function Canvas(props: CanvasProps) {
 
     return (
         <>
-        <CanvasWrapper key={props.canvas.key}
+        <CanvasWrapper ref={canvasElem}
+                       key={props.canvas.key}
                        onMouseDown={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.click)}}
                        onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.drag)}}
                        onTouchStart={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
