@@ -8,11 +8,12 @@ import { FramePicker } from "./frame-picker/FramePicker";
 
 import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./shared/Formats"
 import { CanvasObject } from "./canvas/CanvasClass";
-import { CanvaseOptions } from "./options/FrameMenu";
+import { FrameOptions } from "./options/FrameOptions";
 import { Preview } from "./options/Preview";
 import { MainMenu } from "./menu/MainMenu";
 import { minDelayTime, minQualityMultiplier } from "./shared/Constants";
 import { validateAndConvertInput } from "./shared/SharedUtilities";
+import { CanvasOptions } from "./options/CanvasOptions";
 
 const leftArrow = '37';
 const aKey = '65';
@@ -327,7 +328,7 @@ export default function App() {
   }, [reactToKeyPress]);
 
 
-  
+
 
 
   function titleOrApp() {
@@ -377,8 +378,21 @@ export default function App() {
 
                       currentColorIndex={currentColorIndex} />
             </div>
+
+            <CanvasOptions canvas={canvas}
+                           setCanvas={setCanvas}
+
+                           frames={frames}
+                           setFrames={setFrames}
+
+                            currentFrameIndex={currentFrameIndex}
+                            setCurrentFrameIndex={setCurrentFrameIndex}
+
+                            setPreviewGIF={setPreviewGIF}
+
+                            encodeGIF={encodeGIF}/>
             
-            <CanvaseOptions canvas={canvas}
+            <FrameOptions canvas={canvas}
                             setCanvas={setCanvas}
 
                             frames={frames}

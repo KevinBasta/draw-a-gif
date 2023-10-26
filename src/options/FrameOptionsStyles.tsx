@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const CanvasOptionsToggle = styled.div<{ $icon: string; }>`
+export const FrameOptionsToggle = styled.div<{ $icon: string; }>`
     position: absolute; 
     height: inherit;
     width: max-content;
@@ -22,7 +22,7 @@ export const CanvasOptionsToggle = styled.div<{ $icon: string; }>`
     }
 `;
 
-export const CanvasOptionsWrapper = styled.div<{ $width?: string; }>`
+export const FrameOptionsWrapper = styled.div<{ $width?: string; }>`
     position: absolute; 
     height: inherit;
     width: ${props => props.$width};

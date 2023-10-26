@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { canvasType } from "../shared/Formats";
 import { useState } from "react";
-import { CanvasOptionsToggle } from "./FrameMenuStyles";
+import { FrameOptionsToggle } from "./FrameOptionsStyles";
 import { BackgroundDimmer, PreviewCenterer, PreviewElem, PreviewWrapper } from "./PreviewStyles";
 
 
@@ -31,7 +31,7 @@ export function Preview(props: PreviewProps) {
         
         <PreviewCenterer>
             <PreviewWrapper>
-                <CanvasOptionsToggle $icon="x" onClick={() => {props.setPreviewGIF(() => false)}}></CanvasOptionsToggle>
+                <FrameOptionsToggle $icon="x" onClick={() => {props.setPreviewGIF(() => false)}}></FrameOptionsToggle>
                 {
                     displayGif()
                 }
