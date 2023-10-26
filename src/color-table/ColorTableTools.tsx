@@ -1,7 +1,7 @@
-import { toolData, toolType } from "../common/Formats";
-import { returnInput, updateInput } from "../common/commonUtilities";
+import { toolData, toolType } from "../shared/Formats";
+import { returnInput, updateInput } from "../shared/SharedUtilities";
 import { SizeInput, Tool, Tools } from "./ColorTableToolsStyles";
-import { maxToolSize, minToolSize } from "../common/constants";
+import { maxToolSize, minToolSize } from "../shared/Constants";
 
 let toolButtonKeys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
 

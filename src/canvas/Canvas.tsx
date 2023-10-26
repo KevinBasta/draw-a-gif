@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import styled from "styled-components";
 
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../common/Formats"
-import { getColorString } from '../common/commonUtilities';
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData, interactionType } from "../shared/Formats"
+import { getColorString } from '../shared/SharedUtilities';
 import { CanvasWrapper } from './CanvasStyles';
 
 // For detecting clicks on canvas
@@ -46,7 +46,30 @@ interface CanvasProps {
 export function Canvas(props: CanvasProps) {
     let canvasWidthInPixels = props.canvas.width;
     let canvasHeightInPixels = props.canvas.height;
+
+
+/*     useEffect(() => {
+        Canvas.addEventListener('touchStart')
+    });
+
+    touchEventGuards(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    componentDidMount() {
+        
+        onTouchStart={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
+                       onTouchMove={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
+                       
+        this.input.addEventListener('keypress', this.onKeyPress, { passive: false });
+    }
     
+    componentWillUnmount() {
+        this.input.removeEventListener('keypress', this.onKeyPress);
+    }
+ */
+
     // Set width/height css property directly depending on width/height ratio
     let canvasSizeControl = "max-height: inherit; max-width: 90%";
     if (canvasWidthInPixels > canvasHeightInPixels) {
@@ -291,8 +314,8 @@ export function Canvas(props: CanvasProps) {
         <CanvasWrapper key={props.canvas.key}
                        onMouseDown={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.click)}}
                        onMouseMove={(e) => {drawUserInputPixel(e.clientX, e.clientY, interactionType.drag)}}
-                       onTouchStart={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
-                       onTouchMove={(e) => {e.preventDefault(); e.stopPropagation(); drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
+                       onTouchStart={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.touch)}}
+                       onTouchMove={(e) => {drawUserInputPixel(e.touches[0].clientX, e.touches[0].clientY, interactionType.drag)}}
                        size={canvasSizeControl}
                        width={canvasWidthInPixels * props.canvas.canvasElement.getQualityMultiplier()}
                        height={canvasHeightInPixels * props.canvas.canvasElement.getQualityMultiplier()}

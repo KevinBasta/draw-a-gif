@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { canvasType, disposalMethodType, frameType } from "../common/Formats";
+import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
 import { CanvasOptionsToggle, CanvasOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameMenuStyles"
-import { Button, Input, Label, Title } from "../common/CommonStyledComponents";
-import { returnInput, validateAndConvertInput } from "../common/commonUtilities";
-import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../common/constants";
+import { Button, Input, Label, Title } from "../shared/SharedStyledComponents";
+import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
+import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../shared/Constants";
 import React from "react";
 
 interface CanvasOptionsProps {

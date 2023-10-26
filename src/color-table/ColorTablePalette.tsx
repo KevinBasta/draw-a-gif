@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { colorTableType, toolData, toolType } from "../common/Formats";
-import { getColorString } from "../common/commonUtilities";
+import { colorTableType, toolData, toolType } from "../shared/Formats";
+import { getColorString } from "../shared/SharedUtilities";
 import { Color, Colors } from "./ColorTablePaletteStyles";
 
 

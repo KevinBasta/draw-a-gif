@@ -1,8 +1,8 @@
-import { Button, Input, Label, LargeTitle, Title } from "../common/CommonStyledComponents";
+import { Button, Input, Label, LargeTitle, Title } from "../shared/SharedStyledComponents";
 import { useState } from "react";
-import { updateInput, validateAndConvertInput } from "../common/commonUtilities";
+import { updateInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { CreateCanvasWrapper, MenuWrapper, SizePickerContainer } from "./MainMenuStyles";
-import { maxCanvasSize, minCanvasSize } from "../common/constants";
+import { maxCanvasSize, minCanvasSize } from "../shared/Constants";
 import React from "react";
 
 interface TitleScreenProps {

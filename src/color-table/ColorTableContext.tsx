@@ -1,7 +1,7 @@
-import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "../common/Formats"
+import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "../shared/Formats"
 import { ColorTableTools } from "./ColorTableTools";
 import { ColorTableOptions } from "./ColorTableOptions";
-import { getColorString } from "../common/commonUtilities";
+import { getColorString } from "../shared/SharedUtilities";
 import { ColorTablePalette } from "./ColorTablePalette";
 import { ColorTableWrapper } from "./ColorTableContextStyles";
 

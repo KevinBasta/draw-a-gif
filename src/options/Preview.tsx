@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { canvasType } from "../common/Formats";
+import { canvasType } from "../shared/Formats";
 import { useState } from "react";
 import { CanvasOptionsToggle } from "./FrameMenuStyles";
 import { BackgroundDimmer, PreviewCenterer, PreviewElem, PreviewWrapper } from "./PreviewStyles";
