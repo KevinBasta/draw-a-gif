@@ -80,6 +80,22 @@ export function FrameOptions(props: FrameOptionsProps) {
 
         props.setFrames(newFrames);
     }
+
+    function duplicateFrame() {
+        let newFrames: Array<frameType> = [];
+
+        for (let i = 0; i < props.frames.length; i++) {
+            newFrames.push(props.frames[i]);
+            
+            if (i == props.currentFrameIndex) {
+                let duplicate =JSON.parse(JSON.stringify(props.frames[i]));
+                duplicate.key = crypto.randomUUID();
+                newFrames.push(duplicate);
+            }
+        }
+       
+        props.setFrames(newFrames);
+    }
     
     return (
         <>
@@ -92,6 +108,8 @@ export function FrameOptions(props: FrameOptionsProps) {
 
                 <Section>
                     <Title>Frame</Title>
+
+                    <Button onClick={e => duplicateFrame()}>Duplicate</Button>
 
                     <Label>Transition:</Label>
                     <Select value={props.frames[props.currentFrameIndex].disposalMethod}
