@@ -103,9 +103,9 @@ export function FrameOptions(props: FrameOptionsProps) {
         }
 
         if (props.currentFrameIndex == 0) {
-            props.setCurrentFrameIndex(() => {return props.currentFrameIndex});
+            props.setCurrentFrameIndex((current: number) => {return current});
         } else {
-            props.setCurrentFrameIndex(() => {return props.currentFrameIndex - 1});
+            props.setCurrentFrameIndex((current: number) => {return current - 1});
         }
         
         let newFrames: Array<frameType> = [];
@@ -117,9 +117,52 @@ export function FrameOptions(props: FrameOptionsProps) {
         }
        
         props.setFrames(newFrames);
-    
     }
     
+    function moveFrameLeft() {
+        if (props.currentFrameIndex == 0) {
+            return;
+        }
+        
+        let newFrames: Array<frameType> = [];
+        let previousFrame: frameType = props.frames[0];
+        
+        for (let i = 1; i < props.frames.length; i++) {
+            if (i == props.currentFrameIndex) { 
+                newFrames.push(props.frames[i]);
+            } else {
+                newFrames.push(previousFrame);
+                previousFrame = props.frames[i];
+            }
+        }
+        
+        newFrames.push(previousFrame);
+        props.setFrames(newFrames);
+
+        props.setCurrentFrameIndex((current: number) => {return current - 1});
+    }
+
+    function moveFrameRight() {
+        if (props.currentFrameIndex == props.frames.length - 1) {
+            return;
+        }
+
+        let newFrames: Array<frameType> = [];
+        
+        for (let i = 0; i < props.frames.length; i++) {
+            if (i == props.currentFrameIndex) { 
+                newFrames.push(props.frames[i + 1]);
+                newFrames.push(props.frames[i]);
+            } else if (i != props.currentFrameIndex + 1) {
+                newFrames.push(props.frames[i]);
+            }
+        }
+        
+        props.setFrames(newFrames);
+
+        props.setCurrentFrameIndex((current: number) => {return current + 1});
+    }
+
     return (
         <>
         <FrameOptionsToggle $icon={frameOptionsToggleIcon} 
@@ -132,6 +175,8 @@ export function FrameOptions(props: FrameOptionsProps) {
                 <Section>
                     <Title>Frame</Title>
 
+                    <Button onClick={e => moveFrameLeft()}  $disabled={props.currentFrameIndex == 0}>Reorder Left</Button>
+                    <Button onClick={e => moveFrameRight()} $disabled={props.currentFrameIndex == props.frames.length - 1}>Reorder Right</Button>
                     <Button onClick={e => duplicateFrame()}>Duplicate</Button>
                     <Button onClick={e => deleteFrame()} $disabled={props.frames.length <= 1}>Delete</Button>
 
