@@ -1,10 +1,10 @@
 import { useState } from "react";
+import * as cloneDeep from 'lodash/cloneDeep';
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
 import { FrameOptionsToggle, FrameOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameOptionsStyles"
 import { Button, Input, Label, Title } from "../shared/SharedStyledComponents";
 import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../shared/Constants";
-import React from "react";
 
 interface FrameOptionsProps {
     canvas: canvasType,
@@ -88,13 +88,36 @@ export function FrameOptions(props: FrameOptionsProps) {
             newFrames.push(props.frames[i]);
             
             if (i == props.currentFrameIndex) {
-                let duplicate =JSON.parse(JSON.stringify(props.frames[i]));
+                let duplicate = cloneDeep(props.frames[i]);
                 duplicate.key = crypto.randomUUID();
                 newFrames.push(duplicate);
             }
         }
        
         props.setFrames(newFrames);
+    }
+
+    function deleteFrame() {
+        if (props.frames.length <= 1) {
+            return;
+        }
+
+        if (props.currentFrameIndex == 0) {
+            props.setCurrentFrameIndex(() => {return props.currentFrameIndex});
+        } else {
+            props.setCurrentFrameIndex(() => {return props.currentFrameIndex - 1});
+        }
+        
+        let newFrames: Array<frameType> = [];
+        
+        for (let i = 0; i < props.frames.length; i++) {
+            if (i != props.currentFrameIndex) {
+                newFrames.push(props.frames[i]);
+            }
+        }
+       
+        props.setFrames(newFrames);
+    
     }
     
     return (
@@ -110,6 +133,7 @@ export function FrameOptions(props: FrameOptionsProps) {
                     <Title>Frame</Title>
 
                     <Button onClick={e => duplicateFrame()}>Duplicate</Button>
+                    <Button onClick={e => deleteFrame()} $disabled={props.frames.length <= 1}>Delete</Button>
 
                     <Label>Transition:</Label>
                     <Select value={props.frames[props.currentFrameIndex].disposalMethod}

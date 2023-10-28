@@ -302,7 +302,7 @@ export function Canvas(props: CanvasProps) {
     // current frame or color table change
     useEffect(() => {
         drawFrameOnCanvas();
-    }, [ props.currentFrameIndex, props.globalColorTable ]);
+    }, [ props.currentFrameIndex, props.frames, props.globalColorTable ]);
 
     return (
         <>
