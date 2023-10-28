@@ -1,5 +1,4 @@
 import { useState } from "react";
-import * as cloneDeep from 'lodash/cloneDeep';
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
 import { FrameOptionsToggle, FrameOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameOptionsStyles"
 import { Button, Input, Label, Title } from "../shared/SharedStyledComponents";
@@ -88,7 +87,7 @@ export function FrameOptions(props: FrameOptionsProps) {
             newFrames.push(props.frames[i]);
             
             if (i == props.currentFrameIndex) {
-                let duplicate = cloneDeep(props.frames[i]);
+                let duplicate = JSON.parse(JSON.stringify(props.frames[i]));
                 duplicate.key = crypto.randomUUID();
                 newFrames.push(duplicate);
             }
