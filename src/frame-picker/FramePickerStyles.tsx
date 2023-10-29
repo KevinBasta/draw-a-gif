@@ -78,5 +78,15 @@ export const FrameImg = styled.img<{ $widthratio: number; $heightratio: number; 
     max-width: 90%;
     max-height: 90%;
 
-    aspect-ratio:  ${props => props.$widthratio / props.$heightratio}
+    aspect-ratio:  ${props => props.$widthratio / props.$heightratio};
+`;
+
+export const FrameNumb = styled.p<{ $text: number }>`
+    max-width: 90%;
+    max-height: 90%;
+    font-size: var(--font-size-medium);
+
+    &:after {
+        content:  "${props => props.$text + 1}";
+    }
 `;

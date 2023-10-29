@@ -6,7 +6,7 @@ import { Canvas } from "./canvas/Canvas";
 import { ColorTable } from "./color-table/ColorTableContext";
 import { FramePicker } from "./frame-picker/FramePicker";
 
-import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./shared/Formats"
+import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType, gifRecord } from "./shared/Formats"
 import { CanvasObject } from "./canvas/CanvasClass";
 import { FrameOptions } from "./options/FrameOptions";
 import { Preview } from "./options/Preview";
@@ -103,40 +103,16 @@ export default function App() {
         {length: width * height},
         (_, i) => 0
       ),
+      previewData: null,
+      previewBlob: null,
       previewUrl: null,
     }
-  }
-
-  function encodeFramePreview() {
-    worker.postMessage(["framePreview", canvas, frames, currentFrameIndex, globalColorTable]);
-  }
-
-  function saveFramePreviewUrl(data: Uint8Array, index: number) {
-    let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
-    let blobUrl  = URL.createObjectURL(encodedBlob);
-
-    const newFrames = frames.map((frame, i) => {
-      if (i == index) {
-          return {
-              key: frame.key,
-              disposalMethod: frame.disposalMethod,
-              delayTime: frame.delayTime,
-              useLocalColorTable: frame.useLocalColorTable,
-              localColorTable: frame.localColorTable,
-              indexStream: frame.indexStream,
-              previewUrl: blobUrl,
-          }
-      } else {
-          return frame;
-      }
-    });
-
-    setFrames(() => newFrames);
   }
 
   function encodeGIF() {
     let validatedCanvas = {
       key: canvas.key,
+      canvasName: canvas.canvasName,
       canvasElement: canvas.canvasElement,
       width: canvas.width,
       height: canvas.height,
@@ -158,6 +134,8 @@ export default function App() {
         useLocalColorTable: frame.useLocalColorTable,
         localColorTable: frame.localColorTable,
         indexStream: frame.indexStream,
+        previewData: frame.previewData,
+        previewBlob: frame.previewBlob,
         previewUrl: frame.previewUrl,
       }
     });
@@ -178,6 +156,7 @@ export default function App() {
     setCanvas((currentCanvas) => {
       return {
         key: currentCanvas.key,
+        canvasName: currentCanvas.canvasName,
         canvasElement: currentCanvas.canvasElement,
         width: currentCanvas.width,
         height: currentCanvas.height,
@@ -193,9 +172,7 @@ export default function App() {
     if (e.data[0] == 'data') {
       console.log(e.data)
       saveEncodedData(e.data[1])
-    } else if (e.data[0] == 'frameData') {
-      saveFramePreviewUrl(e.data[1], e.data[2]);
-    } 
+    }
     else if (e.data[0] == 'err') {
       console.log("error")
       console.log(e.data)
@@ -203,10 +180,47 @@ export default function App() {
   }
 
 
-  function initCanvas(width: number, height: number) {
+  function initTransparentBackground(width: number, height: number) {
+    setTransparentBackground(() => {
+      return {
+        key: crypto.randomUUID(),
+        disposalMethod: disposalMethodType.restoreToBackgroundColor,
+        delayTime: 0,
+        useLocalColorTable: true,
+        localColorTable: {
+          transparentColorIndex: NaN,
+          items: [
+            {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
+            {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
+          ],
+        },
+        indexStream: Array.from(
+          {length: width * height},
+          (_, i) => {
+            if (width % 2 == 0) {
+              return Math.floor(i / width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
+            } else {
+              return (i % 2 == 0) ? 1 : 0;
+            }
+          }
+        ),
+        previewData: null,
+        previewBlob: null,
+        previewUrl: null,
+      }
+    });
+  }
+
+
+
+
+
+
+  function initCanvas(canvasName: string, width: number, height: number) {
     setCanvas(() => {
       return { 
         key: crypto.randomUUID(),
+        canvasName: canvasName,
         canvasElement: new CanvasObject(width, height),
         width: width,
         height: height,
@@ -235,34 +249,30 @@ export default function App() {
     });
 
     // create a checkered trasparent background
-    setTransparentBackground(() => {
-      return {
-        key: crypto.randomUUID(),
-        disposalMethod: disposalMethodType.restoreToBackgroundColor,
-        delayTime: 0,
-        useLocalColorTable: true,
-        localColorTable: {
-          transparentColorIndex: NaN,
-          items: [
-            {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
-            {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
-          ],
-        },
-        indexStream: Array.from(
-          {length: width * height},
-          (_, i) => {
-            if (width % 2 == 0) {
-              return Math.floor(i / width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
-            } else {
-              return (i % 2 == 0) ? 1 : 0;
-            }
-          }
-        ),
-        previewUrl: null,
-      }
-    });
+    initTransparentBackground(width, height);
   }
 
+  function initCanvasFromSave(savedCanvas: canvasType, savedFrames: Array<frameType>, savedGlobalColorTable: colorTableType) {
+    setCanvas(() => {
+      return { 
+        key: savedCanvas.key,
+        canvasName: savedCanvas.canvasName,
+        canvasElement: new CanvasObject(savedCanvas.width, savedCanvas.height),
+        width: savedCanvas.width,
+        height: savedCanvas.height,
+        qualityMultiplier: savedCanvas.qualityMultiplier,
+        encodedData: null,
+        blob: null,
+        url: null,
+      }
+    });
+
+    setFrames(() => { return savedFrames });
+
+    setGlobalColorTable(() => { return savedGlobalColorTable });
+
+    initTransparentBackground(savedCanvas.width, savedCanvas.height);
+  }
 
   function reactToKeyPress(e: any) {
     if (canvas == null) {
@@ -312,9 +322,32 @@ export default function App() {
         }
       })
     }
-    
   }
-  
+
+  function saveGIF() {
+    let savedGIFs: Array<gifRecord> = JSON.parse(localStorage.getItem("GIFS") || "[]");
+
+    let canvasEdit: canvasType = JSON.parse(JSON.stringify(canvas));
+    canvasEdit.url = null;
+
+    
+    let framesEdit: Array<frameType> = JSON.parse(JSON.stringify(frames));
+    for (let i = 0; i < framesEdit.length; i++) {
+      framesEdit[i].previewBlob = null;
+      framesEdit[i].previewUrl = null;
+    }
+
+    let currentGIF: gifRecord = {
+      canvas: canvasEdit,
+      frames: framesEdit,
+      globalColorTable: globalColorTable,
+    }
+
+    savedGIFs.push(currentGIF);
+
+    localStorage.setItem("GIFS", JSON.stringify(savedGIFs));
+  }
+
   // Set initial states
   useEffect(() => {      
     window.addEventListener('keydown', reactToKeyPress);
@@ -336,7 +369,8 @@ export default function App() {
     {
       return <>
         <GlobalStyles />
-        <MainMenu initCanvas={initCanvas}/>;
+        <MainMenu initCanvas={initCanvas}
+                  initCanvasFromSave={initCanvasFromSave}/>;
       </>
     }
     else
@@ -355,8 +389,8 @@ export default function App() {
                           currentFrameIndex={currentFrameIndex}
                           setCurrentFrameIndex={setCurrentFrameIndex}
 
-                          encodeFramePreview={encodeFramePreview}
-
+                          globalColorTable={globalColorTable}
+                          
                           getEmptyFrame={getEmptyFrame}/>
           </div>
           
@@ -390,7 +424,8 @@ export default function App() {
 
                             setPreviewGIF={setPreviewGIF}
 
-                            encodeGIF={encodeGIF}/>
+                            encodeGIF={encodeGIF}
+                            saveGIF={saveGIF}/>
             
             <FrameOptions canvas={canvas}
                             setCanvas={setCanvas}

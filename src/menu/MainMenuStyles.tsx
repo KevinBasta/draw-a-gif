@@ -17,11 +17,12 @@ export const MenuWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    gap: 1vh;
 `;
 
 export const CreateCanvasWrapper = styled.div`
-    width: min(40vw, 40vh);
-    padding: max(2vw, 2vh);
+    width: min(70vw, 70vh);
+    padding: max(4vw, 4vh);
     gap: 3vh;
 
     display: flex;

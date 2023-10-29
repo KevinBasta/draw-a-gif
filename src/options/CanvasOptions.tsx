@@ -19,6 +19,7 @@ interface CanvasOptionsProps {
     setPreviewGIF: Function;
 
     encodeGIF: Function;
+    saveGIF: Function;
 }
 
 let keys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()]
@@ -44,6 +45,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
         
         const newCanvas = {
             key: props.canvas.key,
+            canvasName: props.canvas.canvasName,
             canvasElement: props.canvas.canvasElement,
             width: props.canvas.width,
             height: props.canvas.height,
@@ -106,6 +108,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                         <Button onClick={() => {props.encodeGIF()}}>Create GIF</Button>
                         <Button $disabled={props.canvas.encodedData == null} 
                                 onClick={() => {togglePreview()}}>Show GIF</Button>
+                        <Button onClick={() => {props.saveGIF()}}>Save GIF</Button>
                     </SectionWrapper>
                 </Section>
                 </Content>

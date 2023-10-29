@@ -43,11 +43,14 @@ export interface frameType {
     useLocalColorTable: boolean,
     localColorTable: colorTableType,
     indexStream: Array<number>,
+    previewData: Array<number>,
+    previewBlob: Blob,
     previewUrl: string,
 };
 
 export interface canvasType {
     key: string,
+    canvasName: string,
     canvasElement: CanvasObject,
     width: number, 
     height: number,

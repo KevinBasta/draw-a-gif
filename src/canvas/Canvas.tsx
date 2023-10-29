@@ -303,6 +303,8 @@ export function Canvas(props: CanvasProps) {
     useEffect(() => {
         drawFrameOnCanvas();
     }, [ props.currentFrameIndex, props.frames, props.globalColorTable ]);
+    // props.frmaes SHOULD NO BE HERE, NEDD TO FIND DIFFERENT WAY TO UPDATE WHEN currentFrameindex is updated to the smae value
+
 
     return (
         <>

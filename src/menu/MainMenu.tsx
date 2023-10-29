@@ -1,15 +1,17 @@
-import { Button, Input, Label, LargeTitle, Title } from "../shared/SharedStyledComponents";
 import { useState } from "react";
+import { Button, Input, Label, LargeTitle, Title } from "../shared/SharedStyledComponents";
 import { updateInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { CreateCanvasWrapper, MenuWrapper, SizePickerContainer } from "./MainMenuStyles";
 import { maxCanvasSize, minCanvasSize } from "../shared/Constants";
-import React from "react";
+import { GifStorageContext } from "./GifStorageContext";
 
 interface TitleScreenProps {
     initCanvas: Function;
+    initCanvasFromSave: Function;
 }
 
 export function MainMenu(props: TitleScreenProps) {
+    const [name, setName] = useState<string>('');
     const [width, setWidth] = useState<string>('10');
     const [height, setHeight] = useState<string>('10');
     
@@ -21,6 +23,14 @@ export function MainMenu(props: TitleScreenProps) {
                     <Title>Canvas Options</Title>
 
                     <SizePickerContainer>
+                        <Label>GIF Name:</Label>
+                        <Input type="text" 
+                               value={name}
+                               placeholder="GIF Name"
+                               onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
+                               onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}}
+                               onChange={(e) => {setName(e.target.value)}}/>
+
                         <Label>Width:</Label>
                         <Input type="number" 
                                min={minCanvasSize.toString()}
@@ -41,9 +51,10 @@ export function MainMenu(props: TitleScreenProps) {
                     </SizePickerContainer>
                 
                     <Button onClick={(e) => {
-                        props.initCanvas(validateAndConvertInput(width, minCanvasSize), validateAndConvertInput(height, minCanvasSize));
+                        props.initCanvas(name, validateAndConvertInput(width, minCanvasSize), validateAndConvertInput(height, minCanvasSize));
                     }}>create a canvas</Button>
                 </CreateCanvasWrapper>
+                <GifStorageContext initCanvasFromSave={props.initCanvasFromSave}></GifStorageContext>
             </MenuWrapper>
         </>
     );
