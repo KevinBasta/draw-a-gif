@@ -30,10 +30,12 @@ export function GifStorageItems(props: GifStorageItemsProps) {
         for (let i = 0; i < savedGIFs.length; i++) {
             let currentGIF: gifRecord = savedGIFs[i];
 
-            let encodedData = Uint8Array.from(currentGIF.frames[0].previewData);
-
-            let encodedBlob = new Blob([encodedData.buffer], { type: 'image/gif' })
-            let blobUrl  = URL.createObjectURL(encodedBlob);
+            let blobUrl = null;
+            if (currentGIF.frames[0].previewData != null) {
+                let encodedData = Uint8Array.from(currentGIF.frames[0].previewData);
+                let encodedBlob = new Blob([encodedData.buffer], { type: 'image/gif' })
+                blobUrl  = URL.createObjectURL(encodedBlob);
+            }
             
             elements.push(
                 <GifStorageItemWrapper key={crypto.randomUUID()}>
@@ -43,7 +45,7 @@ export function GifStorageItems(props: GifStorageItemsProps) {
                                                src={blobUrl}></GifStorageItemPreview>
                     </GifStorageItemPreviewWrapper>
                     
-                    <GifStorageItemTitle title={currentGIF.canvas.canvasName}>{currentGIF.canvas.canvasName}</GifStorageItemTitle>
+                    <GifStorageItemTitle title={currentGIF.canvas.canvasName}>{currentGIF.canvas.canvasName || "GIF SAVE #" + (i + 1) }</GifStorageItemTitle>
                     
                     <GifStorageItemButton onClick={e => props.initCanvasFromSave(currentGIF.canvas, currentGIF.frames, currentGIF.globalColorTable)}>load</GifStorageItemButton>
                     <GifStorageItemButton onClick={e => deleteSavedGIF(i)}>delete</GifStorageItemButton>
