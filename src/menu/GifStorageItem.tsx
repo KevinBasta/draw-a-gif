@@ -10,13 +10,12 @@ interface GifStorageItemsProps {
 export function GifStorageItems(props: GifStorageItemsProps) {
     const [localStorageGIFs, setLocalStorageGIFs] = useState(JSON.parse(localStorage.getItem("GIFS") || "[]"));
 
-    function deleteSavedGIF(i: number) {
-        let savedGIFs: Array<gifRecord> = localStorageGIFs;
+    function deleteSavedGIF(deletingIndex: number) {
         let newGIFs: Array<gifRecord> = [];
         
-        for (let j = 0; j < savedGIFs.length; j++) {
-            if (i != j) {
-                newGIFs.push(savedGIFs[i]);
+        for (let i = 0; i < localStorageGIFs.length; i++) {
+            if (i != deletingIndex) {
+                newGIFs.push(localStorageGIFs[i]);
             }
         }
 
