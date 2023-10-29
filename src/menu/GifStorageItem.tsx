@@ -23,6 +23,14 @@ export function GifStorageItems(props: GifStorageItemsProps) {
     }
 
     function getSavedGIFs() {
+        if (localStorageGIFs.length == 0) {
+            return (
+                <GifStorageItemWrapper key={crypto.randomUUID()}>
+                    <GifStorageItemTitle>No Saved GIFs</GifStorageItemTitle>
+                </GifStorageItemWrapper>
+            )
+        }
+
         let savedGIFs: Array<gifRecord> = localStorageGIFs;
         let elements = [];
 

@@ -28,7 +28,6 @@ export function MainMenu(props: TitleScreenProps) {
                                value={name}
                                placeholder="GIF Name"
                                onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
-                               onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}}
                                onChange={(e) => {setName(e.target.value)}}/>
 
                         <Label>Width:</Label>
@@ -37,7 +36,6 @@ export function MainMenu(props: TitleScreenProps) {
                                max={maxCanvasSize.toString()}
                                value={width}
                                onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
-                               onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}}
                                onChange={(e) => {updateInput(e, setWidth, 1, 3000)}}/>
 
                         <Label>Height:</Label>
@@ -46,7 +44,6 @@ export function MainMenu(props: TitleScreenProps) {
                                max={maxCanvasSize.toString()}
                                value={height} 
                                onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
-                               onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}}
                                onChange={(e) => {updateInput(e, setHeight, 1, 3000)}}/>
                     </SizePickerContainer>
                 
