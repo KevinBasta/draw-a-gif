@@ -41,7 +41,7 @@ export function GifStorageItems(props: GifStorageItemsProps) {
     }
 
     function uploadJsonGIF() {
-        var files = document.getElementById('jsonFile').files;
+        var files = (document.getElementById('jsonFile') as HTMLInputElement).files;
         console.log(files);
         if (files.length <= 0) {
             return;
@@ -51,9 +51,9 @@ export function GifStorageItems(props: GifStorageItemsProps) {
 
         fr.onload = function(e) { 
             console.log(e);
-            var result = JSON.parse(e.target.result);
+            var result = JSON.parse((e.target as any).result);
             var formatted = JSON.stringify(result, null, 2);
-            setLocalStorageGIFs((current) => { return [...current, JSON.parse(fr.result)] });
+            setLocalStorageGIFs((current) => { return [...current, JSON.parse((fr as any).result)] });
             console.log(localStorageGIFs);
         }
 
