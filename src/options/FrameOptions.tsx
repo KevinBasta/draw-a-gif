@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
 import { FrameOptionsToggle, FrameOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameOptionsStyles"
-import { Button, Input, Label, Title } from "../shared/SharedStyledComponents";
+import { Input, Label, Title } from "../shared/SharedStyledComponents";
 import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../shared/Constants";
+import { LargeButton } from "../shared-styles/Button";
 
 interface FrameOptionsProps {
     canvas: canvasType,
@@ -174,10 +175,10 @@ export function FrameOptions(props: FrameOptionsProps) {
                 <Section>
                     <Title>Frame</Title>
 
-                    <Button onClick={e => moveFrameLeft()}  $disabled={props.currentFrameIndex == 0}>Reorder Left</Button>
-                    <Button onClick={e => moveFrameRight()} $disabled={props.currentFrameIndex == props.frames.length - 1}>Reorder Right</Button>
-                    <Button onClick={e => duplicateFrame()}>Duplicate</Button>
-                    <Button onClick={e => deleteFrame()} $disabled={props.frames.length <= 1}>Delete</Button>
+                    <LargeButton onClick={e => moveFrameLeft()}  $disabled={props.currentFrameIndex == 0}>Reorder Left</LargeButton>
+                    <LargeButton onClick={e => moveFrameRight()} $disabled={props.currentFrameIndex == props.frames.length - 1}>Reorder Right</LargeButton>
+                    <LargeButton onClick={e => duplicateFrame()}>Duplicate</LargeButton>
+                    <LargeButton onClick={e => deleteFrame()} $disabled={props.frames.length <= 1}>Delete</LargeButton>
 
                     <Label>Transition:</Label>
                     <Select value={props.frames[props.currentFrameIndex].disposalMethod}

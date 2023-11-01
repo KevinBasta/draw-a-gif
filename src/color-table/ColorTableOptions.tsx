@@ -1,5 +1,6 @@
+import { ButtonColorTableOption } from "../shared-styles/Button";
 import { colorTableType, colorType } from "../shared/Formats";
-import { Button, ButtonManager, ColorOptions, ColorPicker } from "./ColorTableOptionsStyles";
+import { ButtonManager, ColorOptions, ColorPicker } from "./ColorTableOptionsStyles";
 
 interface MyColorTableOptionsProps {
     currentColorTable: colorTableType;
@@ -94,15 +95,15 @@ export function ColorTableOptions(props: MyColorTableOptionsProps) {
             <ColorPicker type="color" id="colorpicker" name="colorpicker" onInput={(e) => setClr(e)}></ColorPicker>
             
             <ButtonManager>
-                <Button key={crypto.randomUUID()}
+                <ButtonColorTableOption key={crypto.randomUUID()}
                         className="material-symbols-outlined"
                         $disabled={props.currentColorTable.items.length >= 255}
-                        onClick={() => {addNewColor()}}> shadow_add </Button>
+                        onClick={() => {addNewColor()}}> shadow_add </ButtonColorTableOption>
                 
-                <Button key={crypto.randomUUID()}
+                <ButtonColorTableOption key={crypto.randomUUID()}
                         className="material-symbols-outlined"
                         $disabled={props.currentColorTable.items.length <= 2}
-                        onClick={() => removeClr()}> shadow_minus </Button>
+                        onClick={() => removeClr()}> shadow_minus </ButtonColorTableOption>
             </ButtonManager>
         </ColorOptions>
     );

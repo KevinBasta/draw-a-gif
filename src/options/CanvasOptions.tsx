@@ -2,9 +2,10 @@ import { useState } from "react";
 import { canvasType, frameType } from "../shared/Formats";
 import { CanvasOptionsToggle, CanvasOptionsWrapper } from "./CanvasOptionsStyles";
 import { Content, Section, SectionWrapper } from "./FrameOptionsStyles";
-import { Button, Input, Label, Title } from "../shared/SharedStyledComponents";
+import { Input, Label, Title } from "../shared/SharedStyledComponents";
 import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplier } from "../shared/Constants";
 import { returnInput } from "../shared/SharedUtilities";
+import { LargeButton } from "../shared-styles/Button";
 
 interface CanvasOptionsProps {
     canvas: canvasType,
@@ -105,10 +106,10 @@ export function CanvasOptions(props: CanvasOptionsProps) {
 
                         </Section>
 
-                        <Button onClick={() => {props.encodeGIF()}}>Create GIF</Button>
-                        <Button $disabled={props.canvas.encodedData == null} 
-                                onClick={() => {togglePreview()}}>Show GIF</Button>
-                        <Button onClick={() => {props.saveGIF()}}>Save GIF</Button>
+                        <LargeButton onClick={() => {props.encodeGIF()}}>Create GIF</LargeButton>
+                        <LargeButton $disabled={props.canvas.encodedData == null} 
+                                onClick={() => {togglePreview()}}>Show GIF</LargeButton>
+                        <LargeButton onClick={() => {props.saveGIF()}}>Save GIF</LargeButton>
                     </SectionWrapper>
                 </Section>
                 </Content>
