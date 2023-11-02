@@ -190,3 +190,71 @@ export const ButtonFrameAdder = styled.div`
         font-size: var(--font-size-medium);
     }
 `;
+
+export const ButtonPreviewClose = styled.div<{ $icon: string; }>`
+    position: absolute; 
+    height: inherit;
+    width: max-content;
+    height: max-content;
+    padding: 10px;
+    z-index: 2;
+    right: 0;
+    top: 0;
+
+    transition: 2s;
+
+    display: flex;
+    
+    //background-color: var(--primary-color);
+    font-size: var(--font-size-medium);
+
+    &:after {
+        content: "${props => props.$icon}";
+    }
+`;
+
+
+export const ButtonFrameTab = styled.div<{ $icon: string; }>`
+    position: absolute; 
+    height: inherit;
+    width: max-content;
+    height: max-content;
+    padding: 10px;
+    z-index: 2;
+    right: 0;
+    top: 0;
+
+    transition: 2s;
+
+    display: flex;
+    
+    //background-color: var(--primary-color);
+    font-size: var(--font-size-medium);
+
+    &:after {
+        content: "${props => props.$icon}";
+    }
+`;
+
+export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
+    position: absolute; 
+    height: inherit;
+    width: max-content;
+    height: max-content;
+    padding: 10px;
+    z-index: 2;
+    left: 0;
+    top: 0;
+
+    /* font-family: 'DotGothic16', sans-serif; */
+    transition: 2s;
+
+    display: flex;
+    
+    //background-color: var(--primary-color);
+    font-size: var(--font-size-medium);
+
+    &:after {
+        content: "${props => props.$icon}";
+    }
+`;

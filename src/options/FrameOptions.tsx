@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
-import { FrameOptionsToggle, FrameOptionsWrapper } from "./FrameOptionsStyles"
+import { FrameOptionsWrapper } from "./FrameOptionsStyles"
 import { Input, Label, Title } from "../shared/SharedStyledComponents";
 import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier, widthFrameOptions } from "../shared/Constants";
-import { ButtonLarge } from "../shared-styles/Button";
+import { ButtonFrameTab, ButtonLarge } from "../shared-styles/Button";
 import { OptionTransition, SelectTransition } from "../shared-styles/Input";
 import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
 
@@ -167,9 +167,9 @@ export function FrameOptions(props: FrameOptionsProps) {
 
     return (
         <>
-        <FrameOptionsToggle $icon={frameOptionsToggleIcon} 
-                            className="material-symbols-outlined"
-                            onClick={() => {toggleFrameOptions()}}/>
+        <ButtonFrameTab $icon={frameOptionsToggleIcon} 
+                        className="material-symbols-outlined"
+                        onClick={() => {toggleFrameOptions()}}/>
         
         <FrameOptionsWrapper $width={frameOptionsWidth}>
             <OptionsWrapper>

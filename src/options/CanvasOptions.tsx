@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { canvasType, frameType } from "../shared/Formats";
-import { CanvasOptionsToggle, CanvasOptionsWrapper } from "./CanvasOptionsStyles";
+import { CanvasOptionsWrapper } from "./CanvasOptionsStyles";
 import { Input, Label, Title } from "../shared/SharedStyledComponents";
 import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplier, widthCanvasOptions } from "../shared/Constants";
 import { returnInput } from "../shared/SharedUtilities";
-import { ButtonLarge } from "../shared-styles/Button";
+import { ButtonCanvasTab, ButtonLarge } from "../shared-styles/Button";
 import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
 
 interface CanvasOptionsProps {
@@ -67,7 +67,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
 
     return (
         <>
-            <CanvasOptionsToggle $icon={canvasOptionsToggleIcon} 
+            <ButtonCanvasTab $icon={canvasOptionsToggleIcon} 
                                  className="material-symbols-outlined"
                                  onClick={() => {toggleCanvasOptions()}}/>
 

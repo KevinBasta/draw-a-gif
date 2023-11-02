@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { canvasType } from "../shared/Formats";
 import { useState } from "react";
-import { FrameOptionsToggle } from "./FrameOptionsStyles";
 import { BackgroundDimmer, PreviewCenterer, PreviewElem, PreviewWrapper } from "./PreviewStyles";
+import { ButtonPreviewClose } from "../shared-styles/Button";
 
 
 interface PreviewProps {
@@ -31,7 +31,7 @@ export function Preview(props: PreviewProps) {
         
         <PreviewCenterer>
             <PreviewWrapper>
-                <FrameOptionsToggle $icon="x" onClick={() => {props.setPreviewGIF(() => false)}}></FrameOptionsToggle>
+                <ButtonPreviewClose $icon="x" onClick={() => {props.setPreviewGIF(() => false)}}></ButtonPreviewClose>
                 {
                     displayGif()
                 }

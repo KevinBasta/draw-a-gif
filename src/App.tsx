@@ -14,6 +14,8 @@ import { MainMenu } from "./menu/MainMenu";
 import { minDelayTime, minQualityMultiplier } from "./shared/Constants";
 import { validateAndConvertInput } from "./shared/SharedUtilities";
 import { CanvasOptions } from "./options/CanvasOptions";
+import { getEmptyFrame, getTransparentFrame, getValidatedFrames } from "./core/FramesCore";
+import { getNewCanvas, getCanvasUpdatedEncode, getSavedCanvas, getValidatedCanvas } from "./core/CanvasCore";
 
 const leftArrow = '37';
 const aKey = '65';
@@ -91,87 +93,33 @@ export default function App() {
   const [transparentBackground, setTransparentBackground] = useState<frameType>();
   const [previewGIF, setPreviewGIF] = useState(false);
 
-
-  function getEmptyFrame(width: number, height: number): frameType {
-    return {
-      key: crypto.randomUUID(),
-      disposalMethod: disposalMethodType.restoreToBackgroundColor,
-      delayTime: 0,
-      useLocalColorTable: false,
-      localColorTable: null,
-      indexStream: Array.from(
-        {length: width * height},
-        (_, i) => 0
-      ),
-      previewData: null,
-      previewBlob: null,
-      previewUrl: null,
-    }
-  }
-
   function encodeGIF() {
-    let validatedCanvas = {
-      key: canvas.key,
-      canvasName: canvas.canvasName,
-      canvasElement: canvas.canvasElement,
-      width: canvas.width,
-      height: canvas.height,
-      qualityMultiplier: validateAndConvertInput(canvas.qualityMultiplier, minQualityMultiplier),
-      encodedData: null,
-      blob: null,
-      url: null
-    }
-
+    let validatedCanvas = getValidatedCanvas(canvas);
     setCanvas(() => {
       return validatedCanvas;
     });
     
-    let validatedFrames = frames.map((frame, i) => {
-      return {
-        key: frame.key,
-        disposalMethod: frame.disposalMethod,
-        delayTime: validateAndConvertInput(frame.delayTime, minDelayTime),
-        useLocalColorTable: frame.useLocalColorTable,
-        localColorTable: frame.localColorTable,
-        indexStream: frame.indexStream,
-        previewData: frame.previewData,
-        previewBlob: frame.previewBlob,
-        previewUrl: frame.previewUrl,
-      }
-    });
-
+    let validatedFrames = getValidatedFrames(frames);
     setFrames(() => {
       return validatedFrames;
     });
     
-  //setPreviewGIF(() => true)
-
     worker.postMessage(["encode", validatedCanvas, validatedFrames, globalColorTable]);
   }
 
-  function saveEncodedData(data: Uint8Array) {
-    let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
-    let blobUrl  = URL.createObjectURL(encodedBlob);
+  function saveEncodedGIF(data: Uint8Array) {
+    let blob = new Blob([data.buffer], { type: 'image/gif' })
+    let url  = URL.createObjectURL(blob);
 
     setCanvas((currentCanvas) => {
-      return {
-        key: currentCanvas.key,
-        canvasName: currentCanvas.canvasName,
-        canvasElement: currentCanvas.canvasElement,
-        width: currentCanvas.width,
-        height: currentCanvas.height,
-        qualityMultiplier: currentCanvas.qualityMultiplier,
-        encodedData: data,
-        blob: encodedBlob,
-        url: blobUrl
-      }
+      return getCanvasUpdatedEncode(currentCanvas, data, blob, url);
     });
   }
   
   worker.onmessage = (e) => {
     if (e.data[0] == 'data') {
       console.log(e.data)
-      saveEncodedData(e.data[1])
+      saveEncodedGIF(e.data[1])
     }
     else if (e.data[0] == 'err') {
       console.log("error")
@@ -179,56 +127,16 @@ export default function App() {
     }
   }
 
-
   function initTransparentBackground(width: number, height: number) {
     setTransparentBackground(() => {
-      return {
-        key: crypto.randomUUID(),
-        disposalMethod: disposalMethodType.restoreToBackgroundColor,
-        delayTime: 0,
-        useLocalColorTable: true,
-        localColorTable: {
-          transparentColorIndex: NaN,
-          items: [
-            {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
-            {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
-          ],
-        },
-        indexStream: Array.from(
-          {length: width * height},
-          (_, i) => {
-            if (width % 2 == 0) {
-              return Math.floor(i / width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
-            } else {
-              return (i % 2 == 0) ? 1 : 0;
-            }
-          }
-        ),
-        previewData: null,
-        previewBlob: null,
-        previewUrl: null,
-      }
+      return getTransparentFrame(width, height);
     });
   }
 
 
-
-
-
-
   function initCanvas(canvasName: string, width: number, height: number) {
     setCanvas(() => {
-      return { 
-        key: crypto.randomUUID(),
-        canvasName: canvasName,
-        canvasElement: new CanvasObject(width, height),
-        width: width,
-        height: height,
-        qualityMultiplier: 10,
-        encodedData: null,
-        blob: null,
-        url: null,
-      }
+      return getNewCanvas(canvasName, width, height);
     });
 
     setFrames(() => {
@@ -254,17 +162,7 @@ export default function App() {
 
   function initCanvasFromSave(savedCanvas: canvasType, savedFrames: Array<frameType>, savedGlobalColorTable: colorTableType) {
     setCanvas(() => {
-      return { 
-        key: savedCanvas.key,
-        canvasName: savedCanvas.canvasName,
-        canvasElement: new CanvasObject(savedCanvas.width, savedCanvas.height),
-        width: savedCanvas.width,
-        height: savedCanvas.height,
-        qualityMultiplier: savedCanvas.qualityMultiplier,
-        encodedData: null,
-        blob: null,
-        url: null,
-      }
+      return getSavedCanvas(savedCanvas);
     });
 
     setFrames(() => { return savedFrames });
