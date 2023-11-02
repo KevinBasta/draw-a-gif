@@ -4,7 +4,7 @@ import { updateInput, validateAndConvertInput } from "../shared/SharedUtilities"
 import { CreateCanvasWrapper, MenuWrapper, SizePickerContainer } from "./MainMenuStyles";
 import { maxCanvasSize, minCanvasSize } from "../shared/Constants";
 import { GifStorageContext } from "./GifStorageContext";
-import { LargeButton } from "../shared-styles/Button";
+import { ButtonLarge } from "../shared-styles/Button";
 
 interface TitleScreenProps {
     initCanvas: Function;
@@ -48,9 +48,9 @@ export function MainMenu(props: TitleScreenProps) {
                                onChange={(e) => {updateInput(e, setHeight, 1, 3000)}}/>
                     </SizePickerContainer>
                 
-                    <LargeButton onClick={(e) => {
+                    <ButtonLarge onClick={(e) => {
                         props.initCanvas(name, validateAndConvertInput(width, minCanvasSize), validateAndConvertInput(height, minCanvasSize));
-                    }}>create a canvas</LargeButton>
+                    }}>create a canvas</ButtonLarge>
                 </CreateCanvasWrapper>
                 <GifStorageContext initCanvasFromSave={props.initCanvasFromSave}></GifStorageContext>
             </MenuWrapper>

@@ -3,7 +3,7 @@ import { createGlobalStyle } from "styled-components";
 import "./styles.css"
 
 import { Canvas } from "./canvas/Canvas";
-import { ColorTable } from "./color-table/ColorTableContext";
+import { ColorTable } from "./color-palette/PaletteWrapper";
 import { FramePicker } from "./frame-picker/FramePicker";
 
 import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType, gifRecord } from "./shared/Formats"

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ColorOptions = styled.div`
+export const PaletteOptionsWrapper = styled.div`
     width: 20%;
     background-color: var(--secondary-color);
     padding: var(--standard-gap-size) 2vw;
@@ -11,6 +11,19 @@ export const ColorOptions = styled.div`
     align-items: center;
     
     gap: 0.2vw;
+`;
+
+export const PaletteOptionsButtonsWrapper = styled.div`
+    width: 50%;
+    max-height: 90%;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    
+    gap: 0.5vh;
 `;
 
 export const ColorPicker = styled.input`
@@ -47,17 +60,4 @@ export const ColorPicker = styled.input`
             border: 5px solid #555555;
         }
     }
-`;
-
-export const ButtonManager = styled.div`
-    width: 50%;
-    max-height: 90%;
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    flex-wrap: wrap;
-    
-    gap: 0.5vh;
 `;

@@ -1,6 +1,6 @@
-import { ButtonColorTableOption } from "../shared-styles/Button";
+import { ButtonPaletteOption } from "../shared-styles/Button";
 import { colorTableType, colorType } from "../shared/Formats";
-import { ButtonManager, ColorOptions, ColorPicker } from "./ColorTableOptionsStyles";
+import { PaletteOptionsWrapper, ColorPicker, PaletteOptionsButtonsWrapper } from "./PaletteOptionsStyles";
 
 interface MyColorTableOptionsProps {
     currentColorTable: colorTableType;
@@ -10,7 +10,7 @@ interface MyColorTableOptionsProps {
     setCurrentColorIndex: Function;
 }
 
-export function ColorTableOptions(props: MyColorTableOptionsProps) {
+export function PaletteOptions(props: MyColorTableOptionsProps) {
     function addNewColor() {
         if (props.currentColorTable.items.length >= 255) {
             return;
@@ -91,20 +91,20 @@ export function ColorTableOptions(props: MyColorTableOptionsProps) {
     }
 
     return (
-        <ColorOptions>
+        <PaletteOptionsWrapper>
             <ColorPicker type="color" id="colorpicker" name="colorpicker" onInput={(e) => setClr(e)}></ColorPicker>
             
-            <ButtonManager>
-                <ButtonColorTableOption key={crypto.randomUUID()}
+            <PaletteOptionsButtonsWrapper>
+                <ButtonPaletteOption key={crypto.randomUUID()}
                         className="material-symbols-outlined"
                         $disabled={props.currentColorTable.items.length >= 255}
-                        onClick={() => {addNewColor()}}> shadow_add </ButtonColorTableOption>
+                        onClick={() => {addNewColor()}}> shadow_add </ButtonPaletteOption>
                 
-                <ButtonColorTableOption key={crypto.randomUUID()}
+                <ButtonPaletteOption key={crypto.randomUUID()}
                         className="material-symbols-outlined"
                         $disabled={props.currentColorTable.items.length <= 2}
-                        onClick={() => removeClr()}> shadow_minus </ButtonColorTableOption>
-            </ButtonManager>
-        </ColorOptions>
+                        onClick={() => removeClr()}> shadow_minus </ButtonPaletteOption>
+            </PaletteOptionsButtonsWrapper>
+        </PaletteOptionsWrapper>
     );
 }

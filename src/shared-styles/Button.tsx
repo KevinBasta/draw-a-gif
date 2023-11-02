@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const LargeButton = styled.div<{ $disabled?: boolean }>`
+export const ButtonLarge = styled.div<{ $disabled?: boolean }>`
     background-color: var(--tertiary-color);
 
     display: flex;
@@ -38,7 +38,7 @@ export const LargeButton = styled.div<{ $disabled?: boolean }>`
     `};
 `;
 
-export const ButtonColorTableOption = styled.button<{ $disabled?: boolean; }>`
+export const ButtonPaletteOption = styled.button<{ $disabled?: boolean; }>`
     background-color: var(--tertiary-color);
     color: black;
     border: 2px solid #555555;
@@ -75,4 +75,59 @@ export const ButtonColorTableOption = styled.button<{ $disabled?: boolean; }>`
         `background-color: #555555;
          color: white;`};
       }
+`;
+
+export const ButtonTool = styled.div<{ $icon?: string; $selected?: boolean; }>`
+    aspect-ratio: 1 / 1;
+    width: var(--tool-item-width);
+    background-color: var(--tertiary-color);
+    place-self: center;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+    transition: 0.1s;
+
+    ${props => props.$selected ?
+        `
+        box-shadow: var(--button-shadow-small-active);
+        transform: var(--button-transform-small-active);
+        `
+        : 
+        `
+        box-shadow: var(--button-shadow-small);
+        transform: var(--button-transform-small);
+        `};
+
+    cursor: pointer;
+
+    &:after {
+        content: "${props => props.$icon}";
+        font-size: var(--font-size-small);
+    }
+`;
+
+
+export const ButtonColor = styled.div<{ $color?: string; $selected?: boolean; }>`
+    aspect-ratio: 1 / 1;
+    height: var(--color-table-item-width);
+    background-color: ${props => props.$color};
+    margin: 0px 12px 1vh 12px;
+    border: 1px solid white;
+
+    transition: 0.1s;
+
+    ${props => props.$selected ?
+        `
+        box-shadow: var(--button-shadow-small-active);
+        transform: var(--button-transform-small-active);
+        `
+        : 
+        `
+        box-shadow: var(--button-shadow-small);
+        transform: var(--button-transform-small);
+        `};
+
+    cursor: pointer;
 `;

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ColorTableWrapper = styled.div`
+export const PaletteWrapper = styled.div`
     width: inherit;
     height: inherit;
     height: 10vh;

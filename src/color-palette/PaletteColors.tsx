@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import { colorTableType, toolData, toolType } from "../shared/Formats";
 import { getColorString } from "../shared/SharedUtilities";
-import { Color, Colors } from "./ColorTablePaletteStyles";
+import { PaletteColorsWrapper } from "./PaletteColorsStyles";
+import { ButtonColor } from "../shared-styles/Button";
 
 
 interface MyColorTableColorsProps {
@@ -14,10 +14,10 @@ interface MyColorTableColorsProps {
     setCurrentTool: Function;
 }
 
-export function ColorTablePalette(props: MyColorTableColorsProps) {
+export function PaletteColors(props: MyColorTableColorsProps) {
     
     function setColorIndexAndTool(i: number) {
-        // Set the color to the clicked color index
+        // Set the color index to the clicked color index
         props.setCurrentColorIndex(() => {return i});
         
         // Set tool to brush if it's currently an eraser
@@ -34,15 +34,15 @@ export function ColorTablePalette(props: MyColorTableColorsProps) {
 
     return (
         <>
-            <Colors>
+            <PaletteColorsWrapper>
             {   
                 props.globalColorTable.items.map((entry, i) => {
                     if (i != 0) {
-                        return <Color key={entry.key} $color={getColorString(entry)} $selected={i == props.currentColorIndex} onClick={() => setColorIndexAndTool(i)} />
+                        return <ButtonColor key={entry.key} $color={getColorString(entry)} $selected={i == props.currentColorIndex} onClick={() => setColorIndexAndTool(i)} />
                     }
                 })
             }
-            </Colors>
+            </PaletteColorsWrapper>
         </>
     );
 }
