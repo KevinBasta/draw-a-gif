@@ -80,3 +80,31 @@ export function getFrameUpdatedEncode(frame: frameType, data: Array<number>, blo
     previewUrl: url,
   }
 }
+
+export function getFrameUpdatedDelayTime(frame: frameType, newDelayTime: string) {
+  return {
+    key: frame.key,
+    disposalMethod: frame.disposalMethod,
+    delayTime: newDelayTime,
+    useLocalColorTable: frame.useLocalColorTable,
+    localColorTable: frame.localColorTable,
+    indexStream: frame.indexStream,
+    previewData: frame.previewData,
+    previewBlob: frame.previewBlob,
+    previewUrl: frame.previewUrl,
+  }
+}
+
+export function getFrameUpdatedDisposalMethod(frame: frameType, newDisposalMethod: number) {
+  return {
+    key: frame.key,
+    disposalMethod: newDisposalMethod,
+    delayTime: frame.delayTime,
+    useLocalColorTable: frame.useLocalColorTable,
+    localColorTable: frame.localColorTable,
+    indexStream: frame.indexStream,
+    previewData: frame.previewData,
+    previewBlob: frame.previewBlob,
+    previewUrl: frame.previewUrl,
+  }
+}

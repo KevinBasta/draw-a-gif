@@ -7,6 +7,7 @@ import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDe
 import { ButtonFrameTab, ButtonLarge } from "../shared-styles/Button";
 import { OptionTransition, SelectTransition } from "../shared-styles/Input";
 import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
+import { getFrameUpdatedDelayTime, getFrameUpdatedDisposalMethod } from "../core/FramesCore";
 
 interface FrameOptionsProps {
     canvas: canvasType,
@@ -46,15 +47,7 @@ export function FrameOptions(props: FrameOptionsProps) {
         
         const newFrames = props.frames.map((frame, i) => {
             if (i == props.currentFrameIndex) {
-                return {
-                    key: frame.key,
-                    disposalMethod: frame.disposalMethod,
-                    delayTime: value,
-                    useLocalColorTable: frame.useLocalColorTable,
-                    localColorTable: frame.localColorTable,
-                    indexStream: frame.indexStream,
-                    previewUrl: frame.previewUrl,
-                }
+                return getFrameUpdatedDelayTime(frame, value);
             } else {
                 return frame;
             }
@@ -66,15 +59,7 @@ export function FrameOptions(props: FrameOptionsProps) {
     function updateDisposalMethod(value: number) {
         const newFrames = props.frames.map((frame, i) => {
             if (i == props.currentFrameIndex) {
-                return {
-                    key: frame.key,
-                    disposalMethod: value,
-                    delayTime: frame.delayTime,
-                    useLocalColorTable: frame.useLocalColorTable,
-                    localColorTable: frame.localColorTable,
-                    indexStream: frame.indexStream,
-                    previewUrl: frame.previewUrl
-                }
+                return getFrameUpdatedDisposalMethod(frame, value);
             } else {
                 return frame;
             }

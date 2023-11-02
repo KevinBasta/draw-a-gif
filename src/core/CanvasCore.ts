@@ -62,3 +62,17 @@ export function getCanvasUpdatedEncode(canvas: canvasType, data: Uint8Array, blo
         url: url
     }
 }
+
+export function getCanvasUpdatedQualityMultiplier(canvas: canvasType, newQualityMultiplier: string) {
+    return {
+        key: canvas.key,
+        canvasName: canvas.canvasName,
+        canvasElement: canvas.canvasElement,
+        width: canvas.width,
+        height: canvas.height,
+        qualityMultiplier: newQualityMultiplier,
+        encodedData: canvas.encodedData,
+        blob: canvas.blob,
+        url: canvas.url,
+    }
+}

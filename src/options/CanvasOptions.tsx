@@ -6,6 +6,7 @@ import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplie
 import { returnInput } from "../shared/SharedUtilities";
 import { ButtonCanvasTab, ButtonLarge } from "../shared-styles/Button";
 import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
+import { getCanvasUpdatedQualityMultiplier } from "../core/CanvasCore";
 
 interface CanvasOptionsProps {
     canvas: canvasType,
@@ -44,17 +45,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
     function updateQualityMultiplier(e: any) {
         let value = returnInput(e, minQualityMultiplier, maxQualityMultiplier);
         
-        const newCanvas = {
-            key: props.canvas.key,
-            canvasName: props.canvas.canvasName,
-            canvasElement: props.canvas.canvasElement,
-            width: props.canvas.width,
-            height: props.canvas.height,
-            qualityMultiplier: value,
-            encodedData: props.canvas.encodedData,
-            blob: props.canvas.blob,
-            url: props.canvas.url,
-        };
+        const newCanvas = getCanvasUpdatedQualityMultiplier(props.canvas, value);
 
         props.setCanvas(newCanvas);
     }

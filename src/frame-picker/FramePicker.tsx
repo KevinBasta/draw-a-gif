@@ -33,7 +33,7 @@ export function FramePicker(props: MyFramePickerProps) {
           if (i == index) {
             return getFrameUpdatedEncode(frame, arrData, blob, url);
           } else {
-              return frame;
+            return frame;
           }
         });
     
