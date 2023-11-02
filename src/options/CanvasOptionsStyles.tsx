@@ -34,6 +34,7 @@ export const CanvasOptionsWrapper = styled.div<{ $width?: string; }>`
     transition: 0.3s;
 
     display: flex;
+    justify-content: center;
     
     background-color: var(--primary-color);
 `;

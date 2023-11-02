@@ -33,42 +33,7 @@ export const FrameOptionsWrapper = styled.div<{ $width?: string; }>`
     transition: 0.3s;
 
     display: flex;
+    justify-content: center;
     
     background-color: var(--primary-color);
-`;
-
-export const Content = styled.div`
-    position: relative;
-    width: 80%;
-    //padding: 5px;
-    margin: 30px;
-    overflow: hidden;
-    
-    display: flex;
-    flex-direction: column;
-`;
-
-export const Section = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-`;
-
-export const SectionWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: min(2vw, 2vh);
-`;
-
-export const Select = styled.select`
-    width: 100%;
-    height: max(2vh, var(--font-size-large));
-    font-size: var(--font-size-sm);
-    font-family: 'DotGothic16', sans-serif;
-    margin: 0px;
-`;
-
-export const Option = styled.option`
-    font-family: 'DotGothic16', sans-serif;
-    font-size: var(--font-size-sm);
 `;

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { canvasType, frameType } from "../shared/Formats";
 import { CanvasOptionsToggle, CanvasOptionsWrapper } from "./CanvasOptionsStyles";
-import { Content, Section, SectionWrapper } from "./FrameOptionsStyles";
 import { Input, Label, Title } from "../shared/SharedStyledComponents";
-import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplier } from "../shared/Constants";
+import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplier, widthCanvasOptions } from "../shared/Constants";
 import { returnInput } from "../shared/SharedUtilities";
 import { ButtonLarge } from "../shared-styles/Button";
+import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
 
 interface CanvasOptionsProps {
     canvas: canvasType,
@@ -32,7 +32,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
     function toggleCanvasOptions() {
         switch (canvasOptionsWidth) {
             case "0px":
-                setCanvasOptionsWidth(() => {return "100%"});
+                setCanvasOptionsWidth(() => {return widthCanvasOptions});
                 setCanvasOptionsToggleIcon(() => {return "arrow_back"})
                 break;
             default:
@@ -72,13 +72,12 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                                  onClick={() => {toggleCanvasOptions()}}/>
 
             <CanvasOptionsWrapper $width={canvasOptionsWidth}>
-                <Content>
-                <Section>
+                <OptionsWrapper>
                     <Title>Canvas</Title>
 
-                    <SectionWrapper>
-                    <Section>
-                        <Label>Quality Multiplier</Label>
+                    <OptionsSection>
+                        <OptionsInputLabelWrapper>
+                            <Label>Quality Multiplier</Label>
                             <Input key={keys[0]}
                                 type="number"
                                 min={minQualityMultiplier.toString()}
@@ -103,16 +102,14 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                                 value={(props.canvas.height).toString()}
                                 onChange={e => {e.target.value = (props.canvas.height).toString()}}
                                 /* onChange={e => updateCanvasHeight(e)} */ />
-
-                        </Section>
+                        </OptionsInputLabelWrapper>
 
                         <ButtonLarge onClick={() => {props.encodeGIF()}}>Create GIF</ButtonLarge>
                         <ButtonLarge $disabled={props.canvas.encodedData == null} 
-                                onClick={() => {togglePreview()}}>Show GIF</ButtonLarge>
+                                     onClick={() => {togglePreview()}}>Show GIF</ButtonLarge>
                         <ButtonLarge onClick={() => {props.saveGIF()}}>Save GIF</ButtonLarge>
-                    </SectionWrapper>
-                </Section>
-                </Content>
+                    </OptionsSection>
+                </OptionsWrapper>
             </CanvasOptionsWrapper>
         </>
     );

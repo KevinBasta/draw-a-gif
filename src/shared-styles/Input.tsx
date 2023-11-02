@@ -27,3 +27,16 @@ export const InputToolSize = styled.input`
         -moz-appearance: textfield;
     }
 `;
+
+export const SelectTransition = styled.select`
+    width: 100%;
+    height: max(2vh, var(--font-size-large));
+    font-size: var(--font-size-sm);
+    font-family: 'DotGothic16', sans-serif;
+    margin: 0px;
+`;
+
+export const OptionTransition = styled.option`
+    font-family: 'DotGothic16', sans-serif;
+    font-size: var(--font-size-sm);
+`;

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
-import { FrameOptionsToggle, FrameOptionsWrapper, Content, Section, Option, Select, SectionWrapper } from "./FrameOptionsStyles"
+import { FrameOptionsToggle, FrameOptionsWrapper } from "./FrameOptionsStyles"
 import { Input, Label, Title } from "../shared/SharedStyledComponents";
 import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
-import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier } from "../shared/Constants";
+import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier, widthFrameOptions } from "../shared/Constants";
 import { ButtonLarge } from "../shared-styles/Button";
+import { OptionTransition, SelectTransition } from "../shared-styles/Input";
+import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
 
 interface FrameOptionsProps {
     canvas: canvasType,
@@ -30,7 +32,7 @@ export function FrameOptions(props: FrameOptionsProps) {
     function toggleFrameOptions() {
         switch (frameOptionsWidth) {
             case "0px":
-                setFrameOptionsWidth(() => {return "25%"});
+                setFrameOptionsWidth(() => {return widthFrameOptions});
                 setFrameOptionsToggleIcon(() => {return "arrow_forward"})
                 break;
             default:
@@ -170,33 +172,37 @@ export function FrameOptions(props: FrameOptionsProps) {
                             onClick={() => {toggleFrameOptions()}}/>
         
         <FrameOptionsWrapper $width={frameOptionsWidth}>
-            <Content>
+            <OptionsWrapper>
 
-                <Section>
+                <OptionsSection>
                     <Title>Frame</Title>
+
+                    <OptionsInputLabelWrapper>
+                        <Label>Transition:</Label>
+                        <SelectTransition value={props.frames[props.currentFrameIndex].disposalMethod}
+                                        onChange={e => updateDisposalMethod(parseInt(e.target.value))}>
+                            <OptionTransition value={disposalMethodType.restoreToBackgroundColor}> Normal </OptionTransition>
+                            <OptionTransition value={disposalMethodType.keep}>                     Keep </OptionTransition>
+                            <OptionTransition value={disposalMethodType.restoreToPreviousState}>   Previous State </OptionTransition>
+                        </SelectTransition>
+
+                        <Label>Duration:</Label>
+                        <Input key={keys[1]} 
+                            type="number"
+                            min={minDelayTime.toString()}
+                            max={maxDelayTime.toString()}
+                            value={(props.frames[props.currentFrameIndex].delayTime).toString()}
+                            onChange={e => updateDelayTime(e)}/>
+                    </OptionsInputLabelWrapper>
+
 
                     <ButtonLarge onClick={e => moveFrameLeft()}  $disabled={props.currentFrameIndex == 0}>Reorder Left</ButtonLarge>
                     <ButtonLarge onClick={e => moveFrameRight()} $disabled={props.currentFrameIndex == props.frames.length - 1}>Reorder Right</ButtonLarge>
                     <ButtonLarge onClick={e => duplicateFrame()}>Duplicate</ButtonLarge>
                     <ButtonLarge onClick={e => deleteFrame()} $disabled={props.frames.length <= 1}>Delete</ButtonLarge>
 
-                    <Label>Transition:</Label>
-                    <Select value={props.frames[props.currentFrameIndex].disposalMethod}
-                            onChange={e => updateDisposalMethod(parseInt(e.target.value))}>
-                        <Option value={disposalMethodType.restoreToBackgroundColor}> Normal </Option>
-                        <Option value={disposalMethodType.keep}> Keep </Option>
-                        <Option value={disposalMethodType.restoreToPreviousState}> Previous State </Option>
-                    </Select>
-
-                    <Label>Duration:</Label>
-                    <Input key={keys[1]} 
-                           type="number"
-                           min={minDelayTime.toString()}
-                           max={maxDelayTime.toString()}
-                           value={(props.frames[props.currentFrameIndex].delayTime).toString()}
-                           onChange={e => updateDelayTime(e)}/>
-                </Section>                
-            </Content>
+                </OptionsSection>                
+            </OptionsWrapper>
         </FrameOptionsWrapper>
         </>
     );

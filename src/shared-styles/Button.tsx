@@ -131,3 +131,62 @@ export const ButtonColor = styled.div<{ $color?: string; $selected?: boolean; }>
 
     cursor: pointer;
 `;
+
+
+export const ButtonFramePreview = styled.div<{ $selected?: boolean; }>`
+    aspect-ratio: 1 / 1;
+    height: 70%;
+    background-color: var(--tertiary-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+    transition: 0.2s;
+
+    ${props => props.$selected ?
+        `
+        box-shadow: var(--button-shadow-active);
+        transform: var(--button-transform-active);
+        `
+        : 
+        `
+        box-shadow: var(--button-shadow);
+        transform: var(--button-transform);
+        &:hover {
+            background-color: var(--tertiary-color-active);
+        }
+        `};
+    
+    cursor: pointer;
+`;
+
+export const ButtonFrameAdder = styled.div`
+    aspect-ratio: 1 / 1;
+    height: 70%;
+    background-color: var(--tertiary-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    box-shadow: var(--button-shadow);
+    transform: var(--button-transform);
+    
+    transition: 0.01s;
+    
+    &:hover {
+        background-color: var(--tertiary-color-active);
+    }
+
+    &:active {
+        box-shadow: var(--button-shadow-active);
+        transform: var(--button-transform-active);
+    }
+    
+    &:after {
+        content: "add";
+        font-size: var(--font-size-medium);
+    }
+`;

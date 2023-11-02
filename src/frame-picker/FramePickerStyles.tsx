@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const FramePickerElem = styled.div`
+export const FramePickerWrapper = styled.div`
     height: 10vh;
 
     background-color: var(--secondary-color);
@@ -14,64 +14,6 @@ export const FramePickerElem = styled.div`
     padding: 0px 1vw;
 
     overflow-x: scroll;
-`;
-
-export const FramePreview = styled.div<{ $selected?: boolean; }>`
-    aspect-ratio: 1 / 1;
-    height: 70%;
-    background-color: var(--tertiary-color);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    
-    transition: 0.2s;
-
-    ${props => props.$selected ?
-        `
-        box-shadow: var(--button-shadow-active);
-        transform: var(--button-transform-active);
-        `
-        : 
-        `
-        box-shadow: var(--button-shadow);
-        transform: var(--button-transform);
-        &:hover {
-            background-color: var(--tertiary-color-active);
-        }
-        `};
-    
-    cursor: pointer;
-`;
-
-export const FrameAdder = styled.div`
-    aspect-ratio: 1 / 1;
-    height: 70%;
-    background-color: var(--tertiary-color);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-
-    box-shadow: var(--button-shadow);
-    transform: var(--button-transform);
-    
-    transition: 0.01s;
-    
-    &:hover {
-        background-color: var(--tertiary-color-active);
-    }
-
-    &:active {
-        box-shadow: var(--button-shadow-active);
-        transform: var(--button-transform-active);
-    }
-    
-    &:after {
-        content: "add";
-        font-size: var(--font-size-medium);
-    }
 `;
 
 export const FrameImg = styled.img<{ $widthratio: number; $heightratio: number; }>`

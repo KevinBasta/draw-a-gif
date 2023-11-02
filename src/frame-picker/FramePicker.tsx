@@ -1,5 +1,6 @@
+import { ButtonFrameAdder, ButtonFramePreview } from "../shared-styles/Button";
 import { canvasType, colorTableType, frameType } from "../shared/Formats";
-import { FrameAdder, FrameImg, FrameNumb, FramePickerElem, FramePreview } from "./FramePickerStyles";
+import { FrameImg, FrameNumb, FramePickerWrapper } from "./FramePickerStyles";
 
 let worker = new Worker("/encoderWorker.js");
 worker.postMessage(["load"]);
@@ -86,21 +87,21 @@ export function FramePicker(props: MyFramePickerProps) {
     }
 
     return (
-        <FramePickerElem>
-        {
-            [...Array(props.frames.length)].map((_, i) => {
-                return (
-                    <FramePreview key={props.frames[i].key}
-                                  $selected={i == props.currentFrameIndex}
-                                  onClick={() => displayFrame(i)}>
-                        {
-                            framePreivew(i)
-                        }
-                    </FramePreview>
-                )
-            })
-        }
-        <FrameAdder onClick={() => addFrame()} className="material-symbols-outlined"/>
-        </FramePickerElem>
+        <FramePickerWrapper>
+            {
+                [...Array(props.frames.length)].map((_, i) => {
+                    return (
+                        <ButtonFramePreview key={props.frames[i].key}
+                                    $selected={i == props.currentFrameIndex}
+                                    onClick={() => displayFrame(i)}>
+                            {
+                                framePreivew(i)
+                            }
+                        </ButtonFramePreview>
+                    )
+                })
+            }
+            <ButtonFrameAdder onClick={() => addFrame()} className="material-symbols-outlined"/>
+        </FramePickerWrapper>
     );
 }
