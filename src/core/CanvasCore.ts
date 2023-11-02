@@ -1,4 +1,4 @@
-import { CanvasObject } from "../canvas/CanvasClass";
+import { CanvasObject } from "../canvas/CanvasObject";
 import { minQualityMultiplier } from "../shared/Constants";
 import { canvasType } from "../shared/Formats";
 import { validateAndConvertInput } from "../shared/SharedUtilities";

@@ -14,7 +14,17 @@ export const maxDelayTime = 65535;
 export const minToolSize = 1;
 export const maxToolSize = 3000;
 
-
-// Style Options
+// Style options
 export const widthCanvasOptions = "50%";
 export const widthFrameOptions = "50%";
+
+// Keyboard shortcuts
+export const leftArrow = '37';
+export const aKey = '65';
+
+export const rightArrow = '39';
+export const dKey = '68';
+
+export const eKey = '69';
+export const pKey = '80';
+export const bKey = '66';

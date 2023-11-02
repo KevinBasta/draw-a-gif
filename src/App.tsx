@@ -7,25 +7,16 @@ import { ColorTable } from "./color-palette/PaletteWrapper";
 import { FramePicker } from "./frame-picker/FramePicker";
 
 import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType, gifRecord } from "./shared/Formats"
-import { CanvasObject } from "./canvas/CanvasClass";
+import { CanvasObject } from "./canvas/CanvasObject";
 import { FrameOptions } from "./options/FrameOptions";
 import { Preview } from "./options/Preview";
 import { MainMenu } from "./menu/MainMenu";
-import { minDelayTime, minQualityMultiplier } from "./shared/Constants";
+import { aKey, bKey, dKey, eKey, leftArrow, minDelayTime, minQualityMultiplier, pKey, rightArrow } from "./shared/Constants";
 import { validateAndConvertInput } from "./shared/SharedUtilities";
 import { CanvasOptions } from "./options/CanvasOptions";
 import { getEmptyFrame, getTransparentFrame, getValidatedFrames } from "./core/FramesCore";
 import { getNewCanvas, getCanvasUpdatedEncode, getSavedCanvas, getValidatedCanvas } from "./core/CanvasCore";
-
-const leftArrow = '37';
-const aKey = '65';
-
-const rightArrow = '39';
-const dKey = '68';
-
-const eKey = '69';
-const pKey = '80';
-const bKey = '66';
+import { getUpdatedTool } from "./core/ToolsCore";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -180,45 +171,20 @@ export default function App() {
     let key = e.keyCode;
 
     if ((key == leftArrow || key == aKey) && 
-        (currentFrameIndex - 1 >= 0))
-    {
-      setCurrentFrameIndex((current) => {return current - 1;})
+        (currentFrameIndex - 1 >= 0)) {
+      setCurrentFrameIndex((current) => {return current - 1});
     }
     else if ((key == rightArrow || key == dKey) &&
-             (frames.length - 1) >= (currentFrameIndex + 1)) 
-    {
-      setCurrentFrameIndex((current) => {return current + 1;})
+             (frames.length - 1) >= (currentFrameIndex + 1)) {
+      setCurrentFrameIndex((current) => {return current + 1});
     }
-
 
     if (key == eKey) {
-      setCurrentTool((current) => {
-        return {
-          key: current.key,
-          tool: toolType.eraser,
-          size: current.size,
-        }
-      })
-    }
-
-    if (key == pKey) {
-      setCurrentTool((current) => {
-        return {
-          key: current.key,
-          tool: toolType.brush,
-          size: current.size,
-        }
-      })
-    }
-
-    if (key == bKey) {
-      setCurrentTool((current) => {
-        return {
-          key: current.key,
-          tool: toolType.bucket,
-          size: current.size,
-        }
-      })
+      setCurrentTool((current) => {return getUpdatedTool(current, toolType.eraser)});
+    } else if (key == pKey) {
+      setCurrentTool((current) => {return getUpdatedTool(current, toolType.brush)});
+    } else if (key == bKey) {
+      setCurrentTool((current) => {return getUpdatedTool(current, toolType.bucket)});
     }
   }
 
@@ -287,9 +253,7 @@ export default function App() {
                           currentFrameIndex={currentFrameIndex}
                           setCurrentFrameIndex={setCurrentFrameIndex}
 
-                          globalColorTable={globalColorTable}
-                          
-                          getEmptyFrame={getEmptyFrame}/>
+                          globalColorTable={globalColorTable}/>
           </div>
           
           <div className="canvasMenueWrapper">

@@ -2,7 +2,7 @@
 export class CanvasObject {
     #width: number;
     #height: number;
-    #qualityMultiplier: number = 1;
+    #elementPixelQuality: number = 1;
     #element: HTMLCanvasElement = null;
     #context: any = null;
 
@@ -12,11 +12,11 @@ export class CanvasObject {
 
         // Set the factor to multiply canvas by to make frames sharper
         if (width < 100 || height < 100) {
-            this.#qualityMultiplier = 50;
+            this.#elementPixelQuality = 50;
         } else if (width < 250 || height < 250) {
-            this.#qualityMultiplier = 25;
+            this.#elementPixelQuality = 25;
         } else if (width < 550 || height < 550) {
-            this.#qualityMultiplier = 10;
+            this.#elementPixelQuality = 10;
         }
     }
 
@@ -26,7 +26,7 @@ export class CanvasObject {
     }
 
     getQualityMultiplier() {
-        return this.#qualityMultiplier;
+        return this.#elementPixelQuality;
     }
     
     getDataMappedXY(x: number, y: number) {
@@ -37,8 +37,8 @@ export class CanvasObject {
         const rect = this.#element.getBoundingClientRect();
         let contextX = (x - rect.left) * this.#element.width / rect.width;
         let contextY = (y - rect.top) * this.#element.height / rect.height;
-        let dataMappedX = Math.round(((contextX - (contextX % this.#qualityMultiplier)) / this.#qualityMultiplier));
-        let dataMappedY = Math.round(((contextY - (contextY % this.#qualityMultiplier)) / this.#qualityMultiplier));
+        let dataMappedX = Math.round(((contextX - (contextX % this.#elementPixelQuality)) / this.#elementPixelQuality));
+        let dataMappedY = Math.round(((contextY - (contextY % this.#elementPixelQuality)) / this.#elementPixelQuality));
 
         return [dataMappedX, dataMappedY];
     }
@@ -48,10 +48,10 @@ export class CanvasObject {
             return;
         }
 
-        this.#context.fillRect((x) * this.#qualityMultiplier,
-                               (y) * this.#qualityMultiplier,
-                               size * this.#qualityMultiplier,
-                               size * this.#qualityMultiplier);
+        this.#context.fillRect((x) * this.#elementPixelQuality,
+                               (y) * this.#elementPixelQuality,
+                               size * this.#elementPixelQuality,
+                               size * this.#elementPixelQuality);
     }
 
     drawRectangle(color: string, x: number, y: number, size: number) {

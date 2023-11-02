@@ -23,7 +23,6 @@ interface MyColorTableProps {
 
 export function ColorTable(props: MyColorTableProps) {
     return (
-        <>
         <PaletteWrapper>
             <Tools  currentTool={props.currentTool} 
                     setCurrentTool={props.setCurrentTool} />
@@ -39,6 +38,5 @@ export function ColorTable(props: MyColorTableProps) {
                             currentColorIndex={props.currentColorIndex}
                             setCurrentColorIndex={props.setCurrentColorIndex}/>
         </PaletteWrapper>
-        </>
     );
 }

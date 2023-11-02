@@ -1,4 +1,4 @@
-import { CanvasObject } from "../canvas/CanvasClass";
+import { CanvasObject } from "../canvas/CanvasObject";
 
 export enum toolType {
     brush = 1,

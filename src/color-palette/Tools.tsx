@@ -4,6 +4,7 @@ import { ToolsWrapper } from "./ToolsStyles";
 import { maxToolSize, minToolSize } from "../shared/Constants";
 import { ButtonTool } from "../shared-styles/Button";
 import { InputToolSize } from "../shared-styles/Input";
+import { getUpdatedTool, getUpdatedToolSize } from "../core/ToolsCore";
 
 let toolButtonKeys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
 
@@ -15,16 +16,16 @@ interface MyColorTableToolsProps {
 export function Tools(props: MyColorTableToolsProps) {
 
     function updateTool(newTool: toolType) {
-        props.setCurrentTool((object: toolData) => {
-            return {key: object.key, tool: newTool, size: object.size};
+        props.setCurrentTool((toolObject: toolData) => {
+            return getUpdatedTool(toolObject, newTool);
         });
     }
 
     function updateToolSize(e: any) {
-        let value = returnInput(e, minToolSize, maxToolSize);
+        let value: string = returnInput(e, minToolSize, maxToolSize);
 
-        props.setCurrentTool((object: toolData) => {
-            return {key: object.key, tool: object.tool, size: value};
+        props.setCurrentTool((toolObject: toolData) => {
+            return getUpdatedToolSize(toolObject, value);
         });
     }
 

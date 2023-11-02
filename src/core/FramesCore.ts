@@ -66,3 +66,17 @@ export function getTransparentFrame(width: number, height: number) {
         previewUrl: null,
     }
 }
+
+export function getFrameUpdatedEncode(frame: frameType, data: Array<number>, blob: Blob, url: string) {
+  return {
+    key: frame.key,
+    disposalMethod: frame.disposalMethod,
+    delayTime: frame.delayTime,
+    useLocalColorTable: frame.useLocalColorTable,
+    localColorTable: frame.localColorTable,
+    indexStream: frame.indexStream,
+    previewData: data,
+    previewBlob: blob,
+    previewUrl: url,
+  }
+}

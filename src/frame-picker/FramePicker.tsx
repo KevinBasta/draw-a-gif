@@ -1,3 +1,4 @@
+import { getEmptyFrame, getFrameUpdatedEncode } from "../core/FramesCore";
 import { ButtonFrameAdder, ButtonFramePreview } from "../shared-styles/Button";
 import { canvasType, colorTableType, frameType } from "../shared/Formats";
 import { FrameImg, FrameNumb, FramePickerWrapper } from "./FramePickerStyles";
@@ -15,8 +16,6 @@ interface MyFramePickerProps {
     setCurrentFrameIndex: Function;
     
     globalColorTable: colorTableType;
-
-    getEmptyFrame: Function;
 }
 
 export function FramePicker(props: MyFramePickerProps) {
@@ -26,23 +25,13 @@ export function FramePicker(props: MyFramePickerProps) {
     }
     
     function saveFramePreviewUrl(data: Uint8Array, index: number) {
-        let saveArr = Array.from(data);
-        let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
-        let blobUrl  = URL.createObjectURL(encodedBlob);
+        let arrData = Array.from(data);
+        let blob = new Blob([data.buffer], { type: 'image/gif' })
+        let url  = URL.createObjectURL(blob);
     
         const newFrames = props.frames.map((frame, i) => {
           if (i == index) {
-              return {
-                  key: frame.key,
-                  disposalMethod: frame.disposalMethod,
-                  delayTime: frame.delayTime,
-                  useLocalColorTable: frame.useLocalColorTable,
-                  localColorTable: frame.localColorTable,
-                  indexStream: frame.indexStream,
-                  previewData: saveArr,
-                  previewBlob: encodedBlob,
-                  previewUrl: blobUrl,
-              }
+            return getFrameUpdatedEncode(frame, arrData, blob, url);
           } else {
               return frame;
           }
@@ -65,7 +54,7 @@ export function FramePicker(props: MyFramePickerProps) {
         props.setFrames((frames: Array<frameType>) => {
             return [
                 ...frames,
-                props.getEmptyFrame(props.canvas.width, props.canvas.height),
+                getEmptyFrame(props.canvas.width, props.canvas.height),
             ]
         });
     }
@@ -82,7 +71,7 @@ export function FramePicker(props: MyFramePickerProps) {
         if (props.frames[i].previewUrl != null) {
             return <FrameImg $widthratio={props.canvas.width} $heightratio={props.canvas.height} src={props.frames[i].previewUrl}></FrameImg>
         } else {
-            //return <FrameNumb $text={i} />
+            // return <FrameNumb $text={i} />
         }
     }
 

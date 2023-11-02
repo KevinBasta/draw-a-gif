@@ -2,6 +2,7 @@ import { colorTableType, toolData, toolType } from "../shared/Formats";
 import { getColorString } from "../shared/SharedUtilities";
 import { PaletteColorsWrapper } from "./PaletteColorsStyles";
 import { ButtonColor } from "../shared-styles/Button";
+import { getUpdatedTool } from "../core/ToolsCore";
 
 
 interface MyColorTableColorsProps {
@@ -22,12 +23,8 @@ export function PaletteColors(props: MyColorTableColorsProps) {
         
         // Set tool to brush if it's currently an eraser
         if (props.currentTool.tool == toolType.eraser) {
-            props.setCurrentTool((object: toolData) => {
-                return {
-                    key: object.key,
-                    tool: toolType.brush,
-                    size: object.size,
-                }
+            props.setCurrentTool((toolObject: toolData) => {
+                return getUpdatedTool(toolObject, toolType.brush);
             });
         }
     }
