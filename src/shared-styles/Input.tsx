@@ -1,5 +1,18 @@
 import styled from "styled-components";
 
+export const InputStandard = styled.input`
+    width: 100%;
+    background-color: var(--tertiary-color);
+    font-family: 'DotGothic16', sans-serif;
+
+    place-self: center;
+    text-align: center;
+    cursor: text;
+    margin: 0px;
+    padding: 0px;
+    font-size: var(--font-size-sm);
+`;
+
 export const InputToolSize = styled.input`
     aspect-ratio: 1 / 1;
     width: var(--tool-item-width);
@@ -28,7 +41,7 @@ export const InputToolSize = styled.input`
     }
 `;
 
-export const SelectTransition = styled.select`
+export const SelectTransitionType = styled.select`
     width: 100%;
     height: max(2vh, var(--font-size-large));
     font-size: var(--font-size-sm);
@@ -36,7 +49,8 @@ export const SelectTransition = styled.select`
     margin: 0px;
 `;
 
-export const OptionTransition = styled.option`
+export const OptionTransitionType = styled.option`
     font-family: 'DotGothic16', sans-serif;
     font-size: var(--font-size-sm);
 `;
+

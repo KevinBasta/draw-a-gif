@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
 import { FrameOptionsWrapper } from "./FrameOptionsStyles"
-import { Input, Label, Title } from "../shared/SharedStyledComponents";
+import { Label, Title } from "../shared-styles/Text";
 import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier, widthFrameOptions } from "../shared/Constants";
 import { ButtonFrameTab, ButtonLarge } from "../shared-styles/Button";
-import { OptionTransition, SelectTransition } from "../shared-styles/Input";
+import { InputStandard, OptionTransitionType, SelectTransitionType } from "../shared-styles/Input";
 import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
 import { getFrameUpdatedDelayTime, getFrameUpdatedDisposalMethod } from "../core/FramesCore";
 
@@ -164,15 +164,15 @@ export function FrameOptions(props: FrameOptionsProps) {
 
                     <OptionsInputLabelWrapper>
                         <Label>Transition:</Label>
-                        <SelectTransition value={props.frames[props.currentFrameIndex].disposalMethod}
+                        <SelectTransitionType value={props.frames[props.currentFrameIndex].disposalMethod}
                                         onChange={e => updateDisposalMethod(parseInt(e.target.value))}>
-                            <OptionTransition value={disposalMethodType.restoreToBackgroundColor}> Normal </OptionTransition>
-                            <OptionTransition value={disposalMethodType.keep}>                     Keep </OptionTransition>
-                            <OptionTransition value={disposalMethodType.restoreToPreviousState}>   Previous State </OptionTransition>
-                        </SelectTransition>
+                            <OptionTransitionType value={disposalMethodType.restoreToBackgroundColor}> Normal </OptionTransitionType>
+                            <OptionTransitionType value={disposalMethodType.keep}>                     Keep </OptionTransitionType>
+                            <OptionTransitionType value={disposalMethodType.restoreToPreviousState}>   Previous State </OptionTransitionType>
+                        </SelectTransitionType>
 
                         <Label>Duration:</Label>
-                        <Input key={keys[1]} 
+                        <InputStandard key={keys[1]} 
                             type="number"
                             min={minDelayTime.toString()}
                             max={maxDelayTime.toString()}

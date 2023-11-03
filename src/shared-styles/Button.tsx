@@ -258,3 +258,40 @@ export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
         content: "${props => props.$icon}";
     }
 `;
+
+export const ButtonGIFStorageItem = styled.button<{ $disabled?: boolean; }>`
+    background-color: #638796;
+    height: 100%;
+    aspect-ratio: 1/1;
+    color: black;
+    border: 2px solid #555555;
+    border: none;
+    
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: var(--font-size-medium);
+    
+    box-shadow: var(--button-shadow-small);
+    transform: var(--button-transform-small);
+    
+    ${props => props.$disabled ? 
+        `
+        opacity: 0.6;
+        cursor: not-allowed;
+        `
+        :
+        `
+        cursor: pointer;
+        transition: 0.01s;
+        
+        &:hover {
+            background-color: #4F6D7A;
+        }
+
+        &:active {
+            box-shadow: var(--button-shadow-active);
+            transform: var(--button-transform-active);
+        }
+    `};
+`;

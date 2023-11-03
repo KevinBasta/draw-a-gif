@@ -30,7 +30,7 @@ const GlobalStyles = createGlobalStyle`
     --tertiary-color: #E0E2DB; 
     --tertiary-color-active: #cacbc5; 
     --quaternary-color: #000000;
-    --quinary-color: ;
+    --quinary-color: #4795d4;
     --senary-color: ;
     
     --scroll-background-color: #E0E2DB;

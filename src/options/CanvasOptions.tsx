@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { canvasType, frameType } from "../shared/Formats";
 import { CanvasOptionsWrapper } from "./CanvasOptionsStyles";
-import { Input, Label, Title } from "../shared/SharedStyledComponents";
+import { Label, Title } from "../shared-styles/Text";
 import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplier, widthCanvasOptions } from "../shared/Constants";
 import { returnInput } from "../shared/SharedUtilities";
 import { ButtonCanvasTab, ButtonLarge } from "../shared-styles/Button";
 import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
 import { getCanvasUpdatedQualityMultiplier } from "../core/CanvasCore";
+import { InputStandard } from "../shared-styles/Input";
 
 interface CanvasOptionsProps {
     canvas: canvasType,
@@ -69,7 +70,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                     <OptionsSection>
                         <OptionsInputLabelWrapper>
                             <Label>Quality Multiplier</Label>
-                            <Input key={keys[0]}
+                            <InputStandard key={keys[0]}
                                 type="number"
                                 min={minQualityMultiplier.toString()}
                                 max={maxQualityMultiplier.toString()}
@@ -77,7 +78,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                                 onChange={e => updateQualityMultiplier(e)} />
 
                             <Label>Width</Label>
-                            <Input key={keys[1]}
+                            <InputStandard key={keys[1]}
                                 type="number"
                                 min={minCanvasSize.toString()}
                                 max={maxCanvasSize.toString()}
@@ -86,7 +87,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                                 /* onChange={e => updateCanvasWidth(e)} */ />
 
                             <Label>Height</Label>
-                            <Input key={keys[2]}
+                            <InputStandard key={keys[2]}
                                 type="number"
                                 min={minCanvasSize.toString()}
                                 max={maxCanvasSize.toString()}

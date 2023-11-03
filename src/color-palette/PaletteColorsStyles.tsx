@@ -13,4 +13,4 @@ export const PaletteColorsWrapper = styled.div`
     justify-content: flex-start;
     align-content: flex-start;
     flex-wrap: wrap;
-`
+`;
