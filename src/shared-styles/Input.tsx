@@ -47,7 +47,7 @@ export const InputToolSize = styled.input`
 
 export const SelectTransitionType = styled.select`
     width: 100%;
-    height: max(2vh, var(--font-size-large));
+    height: max(2vh, var(--font-size-l));
     font-size: var(--font-size-sm);
     font-family: 'DotGothic16', sans-serif;
     margin: 0px;

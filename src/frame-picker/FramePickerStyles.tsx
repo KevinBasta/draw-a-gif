@@ -26,7 +26,7 @@ export const FrameImg = styled.img<{ $widthratio: number; $heightratio: number; 
 export const FrameNumb = styled.p<{ $text: number }>`
     max-width: 90%;
     max-height: 90%;
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
 
     &:after {
         content:  "${props => props.$text + 1}";

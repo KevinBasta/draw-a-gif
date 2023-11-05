@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
 export const CreateCanvasWrapper = styled.div`
-    width: min(70vw, 70vh);
-    padding: max(4vw, 4vh);
+    width: 65vw;
+    padding: 0 5vw;
     gap: 3vh;
+    height: inherit;
 
     display: flex;
     flex-direction: column;

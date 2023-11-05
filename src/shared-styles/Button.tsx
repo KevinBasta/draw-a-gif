@@ -11,7 +11,7 @@ export const ButtonLarge = styled.div<{ $disabled?: boolean }>`
     
     width: 100%;
     padding: min(1vw, 1vh);
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
     text-wrap: nowrap;
 
     box-shadow: var(--button-shadow);
@@ -50,7 +50,7 @@ export const ButtonPaletteOption = styled.button<{ $disabled?: boolean; }>`
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
     
     box-shadow: var(--button-shadow-small);
     transform: var(--button-transform-small);
@@ -104,7 +104,7 @@ export const ButtonTool = styled.div<{ $icon?: string; $selected?: boolean; }>`
 
     &:after {
         content: "${props => props.$icon}";
-        font-size: var(--font-size-small);
+        font-size: var(--font-size-s);
     }
 `;
 
@@ -187,7 +187,7 @@ export const ButtonFrameAdder = styled.div`
     
     &:after {
         content: "add";
-        font-size: var(--font-size-medium);
+        font-size: var(--font-size-m);
     }
 `;
 
@@ -206,7 +206,7 @@ export const ButtonPreviewClose = styled.div<{ $icon: string; }>`
     display: flex;
     
     //background-color: var(--primary-color);
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
 
     &:after {
         content: "${props => props.$icon}";
@@ -229,7 +229,7 @@ export const ButtonFrameTab = styled.div<{ $icon: string; }>`
     display: flex;
     
     //background-color: var(--primary-color);
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
 
     &:after {
         content: "${props => props.$icon}";
@@ -252,7 +252,7 @@ export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
     display: flex;
     
     //background-color: var(--primary-color);
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
 
     &:after {
         content: "${props => props.$icon}";
@@ -270,7 +270,7 @@ export const ButtonGIFStorageItem = styled.button<{ $disabled?: boolean; }>`
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-m);
     
     box-shadow: var(--button-shadow-small);
     transform: var(--button-transform-small);

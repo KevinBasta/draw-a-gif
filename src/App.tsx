@@ -46,12 +46,12 @@ const GlobalStyles = createGlobalStyle`
     --color-table-item-width: min(4vw, 30px);
     --tool-item-width: min(3vw, 3vh);
 
-    --font-size-small: min(1.5vw, 1.5vh);
+    --font-size-s: min(1.5vw, 1.5vh);
     --font-size-sm: min(2vw, 2vh);
-    --font-size-medium: min(2.5vw, 2.5vh);
+    --font-size-m: min(2.5vw, 2.5vh);
     --font-size-ml: min(3vw, 3vh);
-    --font-size-large: min(3.5vw, 3.5vh);
-    --font-size-extra-large: min(4.5vw, 4.5vh);
+    --font-size-l: min(3.5vw, 3.5vh);
+    --font-size-xl: min(4.5vw, 4.5vh);
 
     user-drag: none;
     -webkit-user-drag: none;

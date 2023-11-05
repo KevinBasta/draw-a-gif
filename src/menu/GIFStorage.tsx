@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { GIFStorageItemWrapper, GIFStorageWrapper, GIFStorageItemPreviewWrapper, GIFStorageItemTitle } from "./GIFStorageStyles";
+import { GIFStorageItemWrapper, GIFStorageWrapper, GIFStorageItemPreviewWrapper, GIFStorageItemTitle, GIFStorageItemsWrapper } from "./GIFStorageStyles";
 import { gifRecord } from "../shared/Formats";
 import { ButtonGIFStorageItem } from "../shared-styles/Button";
 import { ImgGIFStorageItemPreview } from "../shared-styles/Image";
 import { InputJsonFile } from "../shared-styles/Input";
+import { Title } from "../shared-styles/Text";
 
 interface GifStorageItemsProps {
     initCanvasFromSave: Function;
@@ -128,22 +129,25 @@ export function GIFStorage(props: GifStorageItemsProps) {
     return (
         <>
             <GIFStorageWrapper>
-                {
-                    getSavedGIFs()
-                }
-                <GIFStorageItemWrapper key={crypto.randomUUID()}>
-                    <GIFStorageItemTitle>Upload a json file</GIFStorageItemTitle>
-                    <InputJsonFile type="file" id="jsonFile" name="filename" />
-                    { 
-                    // make button the file input type submit on upload
+                <Title>Saved GIFs</Title>
+                <GIFStorageItemsWrapper>
+                    {
+                        getSavedGIFs()
                     }
-                    <ButtonGIFStorageItem 
-                        title="upload json save file"
-                        className="material-symbols-outlined" 
-                        onClick={(e) => {
-                            uploadJsonGIF()
-                        }}>upload</ButtonGIFStorageItem>
-                </GIFStorageItemWrapper>
+                    <GIFStorageItemWrapper key={crypto.randomUUID()}>
+                        <GIFStorageItemTitle>Upload a json file</GIFStorageItemTitle>
+                        <InputJsonFile type="file" id="jsonFile" name="filename" />
+                        { 
+                        // make button the file input type submit on upload
+                        }
+                        <ButtonGIFStorageItem 
+                            title="upload json save file"
+                            className="material-symbols-outlined" 
+                            onClick={(e) => {
+                                uploadJsonGIF()
+                            }}>upload</ButtonGIFStorageItem>
+                    </GIFStorageItemWrapper>
+                </GIFStorageItemsWrapper>
             </GIFStorageWrapper>
         </>
     );

@@ -1,9 +1,9 @@
 import styled from "styled-components";
 
 export const GIFStorageWrapper = styled.div`
-    width: min(70vw, 70vh);
-    height: 20vh;
-    padding: max(4vw, 4vh);
+    width: 65vw;
+    padding: 0 5vw;
+    height: inherit;
 
     gap: 3vh;
     overflow-y: scroll;
@@ -12,6 +12,16 @@ export const GIFStorageWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    background-color: var(--secondary-color);
+`;
+
+export const GIFStorageItemsWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3vh;
+    
     background-color: var(--secondary-color);
 `;
 

@@ -19,3 +19,10 @@ export const MenuWrapper = styled.div`
     justify-content: flex-start;
     gap: 1vh;
 `;
+
+export const MenuOptionsWrapper = styled.div`
+    background-color: black;
+    width: 80vw;
+    height: 40vh;
+    display: flex;
+`;
