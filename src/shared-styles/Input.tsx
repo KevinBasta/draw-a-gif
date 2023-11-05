@@ -13,6 +13,10 @@ export const InputStandard = styled.input`
     font-size: var(--font-size-sm);
 `;
 
+export const InputJsonFile = styled.input`
+
+`;
+
 export const InputToolSize = styled.input`
     aspect-ratio: 1 / 1;
     width: var(--tool-item-width);

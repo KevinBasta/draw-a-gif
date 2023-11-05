@@ -51,10 +51,14 @@ export interface frameType {
 export interface canvasType {
     key: string,
     canvasName: string,
+
     canvasElement: CanvasObject,
-    width: number, 
-    height: number,
-    qualityMultiplier: any,
+    transparentBackground: frameType,
+    
+    width: number,          // in pixels
+    height: number,         // in pixels
+    qualityMultiplier: any, // gif output multiplier
+
     encodedData: Uint8Array,
     blob: Blob,
     url: string,

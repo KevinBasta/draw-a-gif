@@ -3,6 +3,7 @@ import { GIFStorageItemWrapper, GIFStorageWrapper, GIFStorageItemPreviewWrapper,
 import { gifRecord } from "../shared/Formats";
 import { ButtonGIFStorageItem } from "../shared-styles/Button";
 import { ImgGIFStorageItemPreview } from "../shared-styles/Image";
+import { InputJsonFile } from "../shared-styles/Input";
 
 interface GifStorageItemsProps {
     initCanvasFromSave: Function;
@@ -132,7 +133,10 @@ export function GIFStorage(props: GifStorageItemsProps) {
                 }
                 <GIFStorageItemWrapper key={crypto.randomUUID()}>
                     <GIFStorageItemTitle>Upload a json file</GIFStorageItemTitle>
-                    <input type="file" id="jsonFile" name="filename"></input>
+                    <InputJsonFile type="file" id="jsonFile" name="filename" />
+                    { 
+                    // make button the file input type submit on upload
+                    }
                     <ButtonGIFStorageItem 
                         title="upload json save file"
                         className="material-symbols-outlined" 

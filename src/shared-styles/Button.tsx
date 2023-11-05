@@ -261,7 +261,7 @@ export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
 
 export const ButtonGIFStorageItem = styled.button<{ $disabled?: boolean; }>`
     background-color: #638796;
-    height: 100%;
+    height: var(--font-size-xl);
     aspect-ratio: 1/1;
     color: black;
     border: 2px solid #555555;

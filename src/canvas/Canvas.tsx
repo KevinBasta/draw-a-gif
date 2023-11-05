@@ -27,7 +27,6 @@ document.body.ontouchend = function() {
 
 interface CanvasProps {
     canvas: canvasType;
-    transparentBackground: frameType;
 
     frames: Array<frameType>;
     setFrames: Function;
@@ -89,8 +88,8 @@ export function Canvas(props: CanvasProps) {
         
         if (colorTableIndex < props.globalColorTable.items.length) {
             if (colorTableIndex == props.globalColorTable.transparentColorIndex) {
-                let transparentColorTableIndex: number = props.transparentBackground.indexStream[indexStreamIndex];
-                colorObject = props.transparentBackground.localColorTable.items[transparentColorTableIndex];
+                let transparentColorTableIndex: number = props.canvas.transparentBackground.indexStream[indexStreamIndex];
+                colorObject = props.canvas.transparentBackground.localColorTable.items[transparentColorTableIndex];
             } else {
                 colorObject = props.globalColorTable.items[colorTableIndex];
             }

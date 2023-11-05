@@ -2,6 +2,7 @@ import { CanvasObject } from "../canvas/CanvasObject";
 import { minQualityMultiplier } from "../shared/Constants";
 import { canvasType } from "../shared/Formats";
 import { validateAndConvertInput } from "../shared/SharedUtilities";
+import { getTransparentFrame } from "./FramesCore";
 
 
 export function getNewCanvas(canvasName: string, width: number, height: number) {
@@ -9,9 +10,12 @@ export function getNewCanvas(canvasName: string, width: number, height: number) 
         key: crypto.randomUUID(),
         canvasName: canvasName,
         canvasElement: new CanvasObject(width, height),
+        transparentBackground: getTransparentFrame(width, height),
+        
         width: width,
         height: height,
         qualityMultiplier: 10,
+        
         encodedData: null,
         blob: null,
         url: null,
@@ -23,9 +27,12 @@ export function getSavedCanvas(canvas: canvasType) {
         key: canvas.key,
         canvasName: canvas.canvasName,
         canvasElement: new CanvasObject(canvas.width, canvas.height),
+        transparentBackground: getTransparentFrame(canvas.width, canvas.height),
+
         width: canvas.width,
         height: canvas.height,
         qualityMultiplier: canvas.qualityMultiplier,
+        
         encodedData: null,
         blob: null,
         url: null,
@@ -37,9 +44,12 @@ export function getValidatedCanvas(canvas: canvasType): canvasType {
         key: canvas.key,
         canvasName: canvas.canvasName,
         canvasElement: canvas.canvasElement,
+        transparentBackground: canvas.transparentBackground,
+
         width: canvas.width,
         height: canvas.height,
         qualityMultiplier: validateAndConvertInput(canvas.qualityMultiplier, minQualityMultiplier),
+        
         encodedData: null,
         blob: null,
         url: null
@@ -54,9 +64,12 @@ export function getCanvasUpdatedEncode(canvas: canvasType, data: Uint8Array, blo
         key: canvas.key,
         canvasName: canvas.canvasName,
         canvasElement: canvas.canvasElement,
+        transparentBackground: canvas.transparentBackground,
+
         width: canvas.width,
         height: canvas.height,
         qualityMultiplier: canvas.qualityMultiplier,
+        
         encodedData: data,
         blob: blob,
         url: url
@@ -68,9 +81,12 @@ export function getCanvasUpdatedQualityMultiplier(canvas: canvasType, newQuality
         key: canvas.key,
         canvasName: canvas.canvasName,
         canvasElement: canvas.canvasElement,
+        transparentBackground: canvas.transparentBackground,
+
         width: canvas.width,
         height: canvas.height,
         qualityMultiplier: newQualityMultiplier,
+        
         encodedData: canvas.encodedData,
         blob: canvas.blob,
         url: canvas.url,
