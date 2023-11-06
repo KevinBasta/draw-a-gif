@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CreateCanvasWrapper, SizePickerContainer } from "./CreateCanvasStyles";
-import { Label, Title } from "../shared-styles/Text";
+import { Label, Title, TitlePadded } from "../shared-styles/Text";
 import { InputStandard } from "../shared-styles/Input";
 import { maxCanvasSize, minCanvasSize } from "../shared/Constants";
 import { updateInput, validateAndConvertInput } from "../shared/SharedUtilities";
@@ -19,7 +19,7 @@ export function CreateCanvas(props: CreateCanvasProps) {
     return (
         <>
             <CreateCanvasWrapper>
-                <Title>Canvas Options</Title>
+                <TitlePadded>Canvas Options</TitlePadded>
 
                 <SizePickerContainer>
                     <Label>GIF Name:</Label>

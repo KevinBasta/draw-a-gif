@@ -25,6 +25,9 @@ const GlobalStyles = createGlobalStyle`
     --quaternary-color: #000000;
     --quinary-color: #4795d4;
     --senary-color: ;
+
+    --snd-btn-clr: #638796;
+    --snd-btn-hvr-clr: #4F6D7A;
     
     --scroll-background-color: #E0E2DB;
     --scroll-handle-color: #686868;

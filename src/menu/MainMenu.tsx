@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LargeTitle } from "../shared-styles/Text";
+import { TitleLarge } from "../shared-styles/Text";
 import { MenuOptionsWrapper, MenuWrapper } from "./MainMenuStyles";
 import { GIFStorage } from "./GIFStorage";
 import { CreateCanvas } from "./CreateCanvas";
@@ -28,7 +28,7 @@ export function MainMenu(props: TitleScreenProps) {
     return (
         <>
             <MenuWrapper>
-                <LargeTitle>DRAW-A-GIF</LargeTitle>
+                <TitleLarge>DRAW-A-GIF</TitleLarge>
                 <MenuOptionsWrapper>
                     <MenuTabs currentTabIndex={currentTabIndex} 
                               setCurrentTabIndex={setCurrentTabIndex}/>

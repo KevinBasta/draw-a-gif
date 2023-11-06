@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const MenuTabsWrapper = styled.div`
-    min-width: 10vw;
+    min-width: min(10vw, 10vh);
     height: inherit;
 
     display: flex;
@@ -9,11 +9,11 @@ export const MenuTabsWrapper = styled.div`
     align-items: flex-start;
     justify-content: flex-start;
 
-    background-color: red;
+    background-color: var(--primary-color);
 `;
 
-export const MenuTab = styled.div`
-    background-color: #214021;
+export const MenuTab = styled.div<{ $active?: boolean; }>`
+    background-color: var(--snd-btn-clr);
     font-size: var(--font-size-xl);
     display: flex;
     align-items: center;
@@ -21,4 +21,15 @@ export const MenuTab = styled.div`
     width: 100%;
     aspect-ratio: 1/1;
     border: 1px solid black;
+    cursor: pointer;
+    
+    ${props => props.$active ? 
+        `background-color: var(--snd-btn-hvr-clr);`
+        :
+        `
+        &:hover {
+            background-color: var(--snd-btn-hvr-clr);
+        }
+        `
+    };
 `;

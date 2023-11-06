@@ -23,6 +23,6 @@ export const MenuWrapper = styled.div`
 export const MenuOptionsWrapper = styled.div`
     background-color: black;
     width: 80vw;
-    height: 40vh;
+    height: 60vh;
     display: flex;
 `;

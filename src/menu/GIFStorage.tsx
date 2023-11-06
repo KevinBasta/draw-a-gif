@@ -4,7 +4,7 @@ import { gifRecord } from "../shared/Formats";
 import { ButtonGIFStorageItem } from "../shared-styles/Button";
 import { ImgGIFStorageItemPreview } from "../shared-styles/Image";
 import { InputJsonFile } from "../shared-styles/Input";
-import { Title } from "../shared-styles/Text";
+import { Title, TitlePadded } from "../shared-styles/Text";
 
 interface GifStorageItemsProps {
     initCanvasFromSave: Function;
@@ -129,7 +129,7 @@ export function GIFStorage(props: GifStorageItemsProps) {
     return (
         <>
             <GIFStorageWrapper>
-                <Title>Saved GIFs</Title>
+                <TitlePadded>Saved GIFs</TitlePadded>
                 <GIFStorageItemsWrapper>
                     {
                         getSavedGIFs()

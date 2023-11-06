@@ -9,7 +9,7 @@ export const ButtonLarge = styled.div<{ $disabled?: boolean }>`
     justify-content: center;
     cursor: pointer;
     
-    width: 100%;
+    width: 95%;
     padding: min(1vw, 1vh);
     font-size: var(--font-size-m);
     text-wrap: nowrap;
@@ -260,7 +260,7 @@ export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
 `;
 
 export const ButtonGIFStorageItem = styled.button<{ $disabled?: boolean; }>`
-    background-color: #638796;
+    background-color: var(--snd-btn-clr);
     height: var(--font-size-xl);
     aspect-ratio: 1/1;
     color: black;
@@ -286,7 +286,7 @@ export const ButtonGIFStorageItem = styled.button<{ $disabled?: boolean; }>`
         transition: 0.01s;
         
         &:hover {
-            background-color: #4F6D7A;
+            background-color: var(--snd-btn-hvr-clr);
         }
 
         &:active {

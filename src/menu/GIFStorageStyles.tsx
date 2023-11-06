@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 export const GIFStorageWrapper = styled.div`
-    width: 65vw;
-    padding: 0 5vw;
+    width: 100%;
     height: inherit;
 
     gap: 3vh;
@@ -21,12 +20,14 @@ export const GIFStorageItemsWrapper = styled.div`
     align-items: center;
     justify-content: flex-start;
     gap: 3vh;
-    
+    width: 70%;
+    padding-bottom: 5vh;
+
     background-color: var(--secondary-color);
 `;
 
 export const GIFStorageItemWrapper = styled.div`
-    width: min(63vw, 63vh);
+    width: 100%;
     height: 75px;
     padding: max(1.5vw, 1.5vh);
     gap: 10px;
