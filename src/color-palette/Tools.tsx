@@ -6,7 +6,31 @@ import { ButtonTool } from "../shared-styles/Button";
 import { InputToolSize } from "../shared-styles/Input";
 import { getUpdatedTool, getUpdatedToolSize } from "../core/ToolsCore";
 
-let toolButtonKeys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
+let toolButtonKeys = [crypto.randomUUID()];
+
+interface toolEntry {
+    key: string,
+    toolType: toolType,
+    icon: string,
+};
+
+const tools: Array<toolEntry> = [
+    {
+        key: crypto.randomUUID(), 
+        toolType: toolType.brush,
+        icon: "brush"
+    }, 
+    {
+        key: crypto.randomUUID(),
+        toolType: toolType.bucket,
+        icon: "colors"
+    },
+    {
+        key: crypto.randomUUID(),
+        toolType: toolType.eraser,
+        icon: "ink_eraser"
+    }
+];
 
 interface MyColorTableToolsProps {
     currentTool: toolData;
@@ -29,31 +53,27 @@ export function Tools(props: MyColorTableToolsProps) {
         });
     }
 
+    const toolButtons = tools.map((obj: toolEntry, i: number) => {
+        return <ButtonTool key={obj.key} 
+                           className="material-symbols-outlined"
+                           $selected={props.currentTool.tool == obj.toolType}
+                           onClick={(e) => {updateTool(obj.toolType)}}>
+                    {obj.icon}
+                </ButtonTool>
+    });
+
     return (
         <ToolsWrapper>
-            <ButtonTool key={toolButtonKeys[0]}
-                  className="material-symbols-outlined"
-                  $selected={props.currentTool.tool == toolType.brush}
-                  onClick={(e) => {updateTool(toolType.brush)}}>brush</ButtonTool>
-                
-            <InputToolSize key={toolButtonKeys[1]} 
-                       type="number"
-                       min={minToolSize.toString()}
-                       max={maxToolSize.toString()}
-                       value={props.currentTool.size}
-                       onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
-                       /* onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}} */
-                       onChange={e => updateToolSize(e)}></InputToolSize>
+            {toolButtons}
 
-            <ButtonTool key={toolButtonKeys[2]}
-                  className="material-symbols-outlined"
-                  $selected={props.currentTool.tool == toolType.bucket}
-                  onClick={(e) => {updateTool(toolType.bucket)}}>colors</ButtonTool>
-                
-            <ButtonTool key={toolButtonKeys[3]}
-                  className="material-symbols-outlined"
-                  $selected={props.currentTool.tool == toolType.eraser}
-                  onClick={(e) => {updateTool(toolType.eraser)}}>ink_eraser</ButtonTool>
+            <InputToolSize key={toolButtonKeys[0]} 
+                           type="number"
+                           min={minToolSize.toString()}
+                           max={maxToolSize.toString()}
+                           value={props.currentTool.size}
+                           onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
+                           /* onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}} */
+                           onChange={e => updateToolSize(e)} />
         </ToolsWrapper>
     );
 }
