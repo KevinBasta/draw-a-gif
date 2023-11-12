@@ -29,17 +29,17 @@ let keys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypt
 
 export function CanvasOptions(props: CanvasOptionsProps) {
     const [canvasOptionsWidth, setCanvasOptionsWidth] = useState("0px");
-    const [canvasOptionsToggleIcon, setCanvasOptionsToggleIcon] = useState("arrow_forward");
+    const [canvasOptionsToggleIcon, setCanvasOptionsToggleIcon] = useState("arrow_back");
 
     function toggleCanvasOptions() {
         switch (canvasOptionsWidth) {
             case "0px":
                 setCanvasOptionsWidth(() => {return widthCanvasOptions});
-                setCanvasOptionsToggleIcon(() => {return "arrow_back"})
+                setCanvasOptionsToggleIcon(() => {return "arrow_forward"})
                 break;
             default:
                 setCanvasOptionsWidth(() => {return "0px"});
-                setCanvasOptionsToggleIcon(() => {return "arrow_forward"})
+                setCanvasOptionsToggleIcon(() => {return "arrow_back"})
         }
     }
 
@@ -60,8 +60,8 @@ export function CanvasOptions(props: CanvasOptionsProps) {
     return (
         <>
             <ButtonCanvasTab $icon={canvasOptionsToggleIcon} 
-                                 className="material-symbols-outlined"
-                                 onClick={() => {toggleCanvasOptions()}}/>
+                             className="material-symbols-outlined"
+                             onClick={() => {toggleCanvasOptions()}}/>
 
             <CanvasOptionsWrapper $width={canvasOptionsWidth}>
                 <OptionsWrapper>

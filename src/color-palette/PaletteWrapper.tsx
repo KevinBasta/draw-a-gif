@@ -24,9 +24,6 @@ interface MyColorTableProps {
 export function ColorTable(props: MyColorTableProps) {
     return (
         <PaletteWrapper>
-            <Tools  currentTool={props.currentTool} 
-                    setCurrentTool={props.setCurrentTool} />
-
             <PaletteColors  globalColorTable={props.globalColorTable}
                             currentColorIndex={props.currentColorIndex}
                             setCurrentColorIndex={props.setCurrentColorIndex}

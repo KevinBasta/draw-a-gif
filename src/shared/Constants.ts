@@ -17,6 +17,7 @@ export const maxToolSize = 3000;
 // Style options
 export const widthCanvasOptions = "50%";
 export const widthFrameOptions = "50%";
+export const widthTools = "10%";
 
 // Keyboard shortcuts
 export const leftArrow = '37';

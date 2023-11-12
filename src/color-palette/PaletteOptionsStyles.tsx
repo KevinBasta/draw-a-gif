@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const PaletteOptionsWrapper = styled.div`
-    width: 20%;
+    width: 30%;
     background-color: var(--secondary-color);
     padding: var(--standard-gap-size) 2vw;
 

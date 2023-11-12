@@ -5,7 +5,7 @@ export const CanvasOptionsWrapper = styled.div<{ $width?: string; }>`
     height: inherit;
     width: ${props => props.$width};
     z-index: 1;
-    left: 0;
+    right: 0;
     top: 0;
     text-wrap: nowrap;
     transition: 0.3s;

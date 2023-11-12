@@ -19,9 +19,12 @@ export const InputJsonFile = styled.input`
 
 export const InputToolSize = styled.input`
     aspect-ratio: 1 / 1;
-    width: var(--tool-item-width);
+    width: 100%;
     background-color: var(--tertiary-color);
     place-self: center;
+
+    text-align: center;
+    font-size: var(--font-size-m);
 
     display: flex;
     flex-direction: row;

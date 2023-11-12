@@ -79,13 +79,14 @@ export const ButtonPaletteOption = styled.button<{ $disabled?: boolean; }>`
 
 export const ButtonTool = styled.div<{ $icon?: string; $selected?: boolean; }>`
     aspect-ratio: 1 / 1;
-    width: var(--tool-item-width);
+    width: 100%;
     background-color: var(--tertiary-color);
     place-self: center;
 
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center;
 
     transition: 0.1s;
 
@@ -243,8 +244,31 @@ export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
     height: max-content;
     padding: 10px;
     z-index: 2;
+    right: 0;
+    top: 3vh;
+
+    /* font-family: 'DotGothic16', sans-serif; */
+    transition: 2s;
+
+    display: flex;
+    
+    //background-color: var(--primary-color);
+    font-size: var(--font-size-m);
+
+    &:after {
+        content: "${props => props.$icon}";
+    }
+`;
+
+export const ButtonToolsTab = styled.div<{ $icon: string; }>`
+    position: absolute; 
+    height: inherit;
+    width: max-content;
+    height: max-content;
+    padding: 10px;
+    z-index: 10;
     left: 0;
-    top: 0;
+    bottom: 0;
 
     /* font-family: 'DotGothic16', sans-serif; */
     transition: 2s;
