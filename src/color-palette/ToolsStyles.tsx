@@ -11,13 +11,12 @@ export const ToolsWrapper = styled.div<{ $width: string; $display: boolean }>`
 
     ${props => props.$display ?
         `
-        display: flex;
         `
         : 
         `
-        display: none;
+        transform: translateX(-5vw);
         `};
-    
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;

@@ -16,6 +16,7 @@ import { getNewCanvas, getCanvasUpdatedEncode, getSavedCanvas, getValidatedCanva
 import { getNewTool, getUpdatedTool } from "./core/ToolsCore";
 import "./styles.css"
 import { Tools } from "./color-palette/Tools";
+import { SelectionOptions } from "./options/SelectionOptions";
 
 let worker = new Worker("/encoderWorker.js");
 worker.postMessage(["load"]);
@@ -176,6 +177,8 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
 
                       currentColorIndex={currentColorIndex} />
             </div>
+
+            {/* <SelectionOptions></SelectionOptions> */}
 
             <CanvasOptions canvas={canvas}
                            setCanvas={setCanvas}
