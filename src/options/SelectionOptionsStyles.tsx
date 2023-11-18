@@ -10,6 +10,8 @@ export const SelectionOptionsWrapper = styled.div`
 
     display: flex;
     justify-content: center;
+
+    z-index: 10;
 `;
 
 export const SelectionTabsWrapper = styled.div`
