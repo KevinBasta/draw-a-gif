@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { canvasType, disposalMethodType, frameType } from "../shared/Formats";
-import { FrameOptionsWrapper } from "./FrameOptionsStyles"
 import { Label, Title } from "../shared-styles/Text";
 import { returnInput, validateAndConvertInput } from "../shared/SharedUtilities";
 import { maxCanvasSize, maxDelayTime, maxQualityMultiplier, minCanvasSize, minDelayTime, minQualityMultiplier, widthFrameOptions } from "../shared/Constants";
 import { ButtonFrameTab, ButtonLarge } from "../shared-styles/Button";
 import { InputStandard, OptionTransitionType, SelectTransitionType } from "../shared-styles/Input";
-import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
+import { OptionsInputLabelWrapper, OptionsSection, OptionsTabBodyWrapper, OptionsWrapper } from "./OptionsWrappers";
 import { getFrameUpdatedDelayTime, getFrameUpdatedDisposalMethod } from "../core/FramesCore";
 
 interface FrameOptionsProps {
@@ -137,7 +136,7 @@ export function FrameOptions(props: FrameOptionsProps) {
 
     return (
         <>
-        <FrameOptionsWrapper>
+        <OptionsTabBodyWrapper $width={widthFrameOptions}>
             <OptionsWrapper>
 
                 <OptionsSection>
@@ -169,7 +168,7 @@ export function FrameOptions(props: FrameOptionsProps) {
 
                 </OptionsSection>                
             </OptionsWrapper>
-        </FrameOptionsWrapper>
+        </OptionsTabBodyWrapper>
         </>
     );
 }

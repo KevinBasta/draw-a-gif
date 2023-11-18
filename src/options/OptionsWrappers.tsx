@@ -1,5 +1,16 @@
 import styled from "styled-components";
 
+export const OptionsTabBodyWrapper = styled.div<{ $width?: string; }>`
+    height: 100%;
+    width: ${props => props.$width};
+    text-wrap: nowrap;
+
+    display: flex;
+    justify-content: center;
+    
+    background-color: var(--primary-color);
+`;
+
 export const OptionsWrapper = styled.div`
     position: relative;
     width: 80%;

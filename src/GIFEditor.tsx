@@ -15,7 +15,7 @@ import { getEmptyFrame, getTransparentFrame, getValidatedFrames } from "./core/F
 import { getNewCanvas, getCanvasUpdatedEncode, getSavedCanvas, getValidatedCanvas } from "./core/CanvasCore";
 import { getNewTool, getUpdatedTool } from "./core/ToolsCore";
 import "./styles.css"
-import { Tools } from "./color-palette/Tools";
+import { Tools } from "./options/Tools";
 import { SelectionOptions } from "./options/SelectionOptions";
 
 let worker = new Worker("/encoderWorker.js");
@@ -158,9 +158,6 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
           </div>
           
           <div className="canvasMenueWrapper">
-            <Tools  currentTool={currentTool} 
-                    setCurrentTool={setCurrentTool} />
-
             <div className="mainContent">
               <Canvas canvas={canvas}
                       
@@ -183,6 +180,9 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
 
                               frames={frames}
                               setFrames={setFrames}
+
+                              currentTool={currentTool} 
+                              setCurrentTool={setCurrentTool}
 
                               currentFrameIndex={currentFrameIndex}
                               setCurrentFrameIndex={setCurrentFrameIndex}

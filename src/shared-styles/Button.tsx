@@ -260,29 +260,6 @@ export const ButtonCanvasTab = styled.div<{ $icon: string; }>`
     }
 `;
 
-export const ButtonToolsTab = styled.div<{ $icon: string; }>`
-    position: absolute; 
-    height: inherit;
-    width: max-content;
-    height: max-content;
-    padding: 10px;
-    z-index: 10;
-    left: 0;
-    bottom: 0;
-
-    /* font-family: 'DotGothic16', sans-serif; */
-    transition: 2s;
-
-    display: flex;
-    
-    //background-color: var(--primary-color);
-    font-size: var(--font-size-m);
-
-    &:after {
-        content: "${props => props.$icon}";
-    }
-`;
-
 export const ButtonGIFStorageItem = styled.button<{ $disabled?: boolean; }>`
     background-color: var(--snd-btn-clr);
     height: var(--font-size-xl);

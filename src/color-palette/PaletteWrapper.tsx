@@ -1,5 +1,5 @@
 import { canvasType, frameType, colorType, colorTableType, toolType, toolData } from "../shared/Formats"
-import { Tools } from "./Tools";
+import { Tools } from "../options/Tools";
 import { PaletteOptions } from "./PaletteOptions";
 import { getColorString } from "../shared/SharedUtilities";
 import { PaletteColors } from "./PaletteColors";

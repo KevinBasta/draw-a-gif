@@ -27,7 +27,7 @@ const GlobalStyles = createGlobalStyle`
     --senary-color: ;
 
     --snd-btn-clr: #638796;
-    --snd-btn-hvr-clr: #4F6D7A;
+    --snd-btn-hvr-clr: #547280;
     
     --scroll-background-color: #E0E2DB;
     --scroll-handle-color: #686868;

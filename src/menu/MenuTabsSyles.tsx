@@ -9,7 +9,7 @@ export const MenuTabsWrapper = styled.div`
     align-items: flex-start;
     justify-content: flex-start;
 
-    background-color: var(--primary-color);
+    background-color: var(--snd-btn-hvr-clr);
 `;
 
 export const MenuTab = styled.div<{ $active?: boolean; }>`
@@ -20,7 +20,7 @@ export const MenuTab = styled.div<{ $active?: boolean; }>`
     justify-content: center;
     width: 100%;
     aspect-ratio: 1/1;
-    border: 1px solid black;
+
     cursor: pointer;
     
     ${props => props.$active ? 

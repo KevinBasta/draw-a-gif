@@ -1,17 +1,22 @@
 import styled from "styled-components";
 
-export const SelectionOptionsWrapper = styled.div`
-    position: absolute; 
-    height: inherit;
+export const SelectionOptionsWrapper = styled.div<{ $collapsed?: boolean; }>`
+    height: 100%;
     width: fit-content;
-    z-index: 1;
-    right: 0;
+    
+    position: absolute; 
+    left: 0;
     top: 0;
 
-    display: flex;
-    justify-content: center;
-
-    z-index: 10;
+    ${props => props.$collapsed ? 
+    `
+        display: none;
+    ` 
+    :
+    `
+        display: flex;
+        justify-content: flex-start;
+    `};
 `;
 
 export const SelectionTabsWrapper = styled.div`
@@ -21,7 +26,7 @@ export const SelectionTabsWrapper = styled.div`
 
 export const ButtonSelectionTab = styled.div<{ $selected?: boolean; }>`
     height: max-content;
-    padding: 3vh 0px;
+    padding: 2vh 0px;
     width: 100%;
     writing-mode: vertical-lr;
     transform: rotate(180deg);
@@ -44,13 +49,84 @@ export const SelectedOptionContext = styled.div<{ $collapsed?: boolean; }>`
     width: 1vw;
     flex-grow: 1;
     transition: 0.2s;
+    
     ${props => props.$collapsed == true ?
     `
-        width: 0px;
+        display: none;
     ` 
     :
     `
-        width: 50vw;
+        display: block;
     `
     };
+`;
+
+export const OptionsControlWrapper = styled.div`
+    text-wrap: nowrap;
+    width: 70%;
+    height: 50%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    
+    padding-top: max(10px, 1vh);
+    gap: max(10px, 1vh);
+`;
+
+export const ButtonUncollapseOptions = styled.div<{ $icon: string; $displayed: boolean; }>`
+    height: max-content;
+    padding: 2vh 0px;
+    width: 100%;
+
+    font-size: var(--font-size-sm);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:after {
+        content: "${props => props.$icon}";
+    }
+`;
+
+export const ExpandOptionButtonsWrapper = styled.div<{ $width: string; $collapse: boolean }>`
+    height: fit-content;
+    width: min(${props => props.$width}, 100px);
+    z-index: 1;
+    position: absolute; 
+    left: 0;
+    bottom: 0;
+    
+    ${props => props.$collapse ? 
+        `
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        `
+        :
+        `
+        display: none;
+        `};
+`;
+
+export const OptionsAndToolsWrapper = styled.div<{ $width: string; $collapse: boolean }>`
+    height: 100%;
+    width: min(${props => props.$width}, 100px);
+
+    ${props => props.$collapse ?
+        `
+        display: none;
+        `
+        : 
+        `
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        `};
+
+    background-color: var(--secondary-color);
 `;

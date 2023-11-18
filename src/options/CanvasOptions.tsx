@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { canvasType, frameType } from "../shared/Formats";
-import { CanvasOptionsWrapper } from "./CanvasOptionsStyles";
 import { Label, Title } from "../shared-styles/Text";
 import { maxCanvasSize, maxQualityMultiplier, minCanvasSize, minQualityMultiplier, widthCanvasOptions } from "../shared/Constants";
 import { returnInput } from "../shared/SharedUtilities";
 import { ButtonCanvasTab, ButtonLarge } from "../shared-styles/Button";
-import { OptionsInputLabelWrapper, OptionsSection, OptionsWrapper } from "./OptionsWrappers";
+import { OptionsInputLabelWrapper, OptionsSection, OptionsTabBodyWrapper, OptionsWrapper } from "./OptionsWrappers";
 import { getCanvasUpdatedQualityMultiplier } from "../core/CanvasCore";
 import { InputStandard } from "../shared-styles/Input";
 
@@ -44,7 +43,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
 
     return (
         <>
-            <CanvasOptionsWrapper>
+            <OptionsTabBodyWrapper $width={widthCanvasOptions}>
                 <OptionsWrapper>
                     <OptionsSection>
                         <Title>Canvas</Title>
@@ -82,7 +81,7 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                         <ButtonLarge onClick={() => {props.saveGIF()}}>Save GIF</ButtonLarge>
                     </OptionsSection>
                 </OptionsWrapper>
-            </CanvasOptionsWrapper>
+            </OptionsTabBodyWrapper>
         </>
     );
 }

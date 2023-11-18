@@ -1,6 +1,6 @@
 import { toolData, toolType } from "../shared/Formats";
 import { returnInput, updateInput } from "../shared/SharedUtilities";
-import { ToolsSizeControlWrapper, ToolsWrapper } from "./ToolsStyles";
+import { ToolsSizeControlWrapper, OptionsAndToolsWrapper } from "./ToolsStyles";
 import { maxToolSize, minToolSize, widthTools } from "../shared/Constants";
 import { ButtonTool, ButtonToolsTab } from "../shared-styles/Button";
 import { InputToolSize } from "../shared-styles/Input";
@@ -39,21 +39,6 @@ interface MyColorTableToolsProps {
 }
 
 export function Tools(props: MyColorTableToolsProps) {
-    const [toolsWidth, setToolsWidth] = useState(widthTools);
-    const [toolsToggleIcon, setToolsToggleIcon] = useState("arrow_back");
-
-    function toggleToolsMenu() {
-        switch (toolsWidth) {
-            case "0px":
-                setToolsWidth(() => {return widthTools});
-                setToolsToggleIcon(() => {return "arrow_back"})
-                break;
-            default:
-                setToolsWidth(() => {return "0px"});
-                setToolsToggleIcon(() => {return "arrow_forward"})
-        }
-    }
-
     function updateTool(newTool: toolType) {
         props.setCurrentTool((toolObject: toolData) => {
             return getUpdatedTool(toolObject, newTool);
@@ -79,25 +64,18 @@ export function Tools(props: MyColorTableToolsProps) {
 
     return (
         <>
-            <ToolsWrapper $width={toolsWidth} $display={toolsWidth == widthTools}>
-                <ToolsSizeControlWrapper>
-                    {toolButtons}
+            <ToolsSizeControlWrapper>
+                {toolButtons}
+                <InputToolSize key={toolButtonKeys[0]} 
+                            type="number"
+                            min={minToolSize.toString()}
+                            max={maxToolSize.toString()}
+                            value={props.currentTool.size}
+                            onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
+                            /* onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}} */
+                            onChange={e => updateToolSize(e)} />
+            </ToolsSizeControlWrapper>
 
-                    <InputToolSize key={toolButtonKeys[0]} 
-                                type="number"
-                                min={minToolSize.toString()}
-                                max={maxToolSize.toString()}
-                                value={props.currentTool.size}
-                                onMouseOver={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.focus();}}
-                                /* onMouseLeave={(e) => {let element: HTMLInputElement = e.target as HTMLInputElement; element.blur();}} */
-                                onChange={e => updateToolSize(e)} />
-                </ToolsSizeControlWrapper>
-
-            </ToolsWrapper>
-
-            <ButtonToolsTab $icon={toolsToggleIcon}
-                            className="material-symbols-outlined"
-                            onClick={() => {toggleToolsMenu()}}></ButtonToolsTab>
         </>
     );
 }
