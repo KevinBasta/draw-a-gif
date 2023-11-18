@@ -1,14 +1,9 @@
 import styled from "styled-components";
 
-export const CanvasOptionsWrapper = styled.div<{ $width?: string; }>`
-    position: absolute; 
-    height: inherit;
-    width: ${props => props.$width};
-    z-index: 1;
-    right: 0;
-    top: 0;
+export const CanvasOptionsWrapper = styled.div`
+    height: 100%;
+    width: 100%;
     text-wrap: nowrap;
-    transition: 0.3s;
 
     display: flex;
     justify-content: center;

@@ -178,34 +178,19 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
                       currentColorIndex={currentColorIndex} />
             </div>
 
-            {/* <SelectionOptions></SelectionOptions> */}
+            <SelectionOptions canvas={canvas}
+                              setCanvas={setCanvas}
 
-            <CanvasOptions canvas={canvas}
-                           setCanvas={setCanvas}
+                              frames={frames}
+                              setFrames={setFrames}
 
-                           frames={frames}
-                           setFrames={setFrames}
+                              currentFrameIndex={currentFrameIndex}
+                              setCurrentFrameIndex={setCurrentFrameIndex}
 
-                            currentFrameIndex={currentFrameIndex}
-                            setCurrentFrameIndex={setCurrentFrameIndex}
+                              setPreviewGIF={setPreviewGIF}
 
-                            setPreviewGIF={setPreviewGIF}
-
-                            encodeGIF={encodeGIF}
-                            saveGIF={saveGIF}/>
-            
-            <FrameOptions canvas={canvas}
-                            setCanvas={setCanvas}
-
-                            frames={frames}
-                            setFrames={setFrames}
-
-                            currentFrameIndex={currentFrameIndex}
-                            setCurrentFrameIndex={setCurrentFrameIndex}
-                            
-                            setPreviewGIF={setPreviewGIF}
-
-                            encodeGIF={encodeGIF}/>
+                              encodeGIF={encodeGIF}
+                              saveGIF={saveGIF}></SelectionOptions>
           </div>
           
           <div className="footer">

@@ -27,21 +27,6 @@ interface FrameOptionsProps {
 let keys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()]
 
 export function FrameOptions(props: FrameOptionsProps) {
-    const [frameOptionsWidth, setFrameOptionsWidth] = useState("0px");
-    const [frameOptionsToggleIcon, setFrameOptionsToggleIcon] = useState("arrow_back");
-
-    function toggleFrameOptions() {
-        switch (frameOptionsWidth) {
-            case "0px":
-                setFrameOptionsWidth(() => {return widthFrameOptions});
-                setFrameOptionsToggleIcon(() => {return "arrow_forward"})
-                break;
-            default:
-                setFrameOptionsWidth(() => {return "0px"});
-                setFrameOptionsToggleIcon(() => {return "arrow_back"})
-        }
-    }
-
     function updateDelayTime(e: any) {
         let value = returnInput(e, minDelayTime, maxDelayTime);
         
@@ -152,11 +137,7 @@ export function FrameOptions(props: FrameOptionsProps) {
 
     return (
         <>
-        <ButtonFrameTab $icon={frameOptionsToggleIcon} 
-                        className="material-symbols-outlined"
-                        onClick={() => {toggleFrameOptions()}}/>
-        
-        <FrameOptionsWrapper $width={frameOptionsWidth}>
+        <FrameOptionsWrapper>
             <OptionsWrapper>
 
                 <OptionsSection>

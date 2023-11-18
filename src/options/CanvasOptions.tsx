@@ -28,21 +28,6 @@ interface CanvasOptionsProps {
 let keys = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()]
 
 export function CanvasOptions(props: CanvasOptionsProps) {
-    const [canvasOptionsWidth, setCanvasOptionsWidth] = useState("0px");
-    const [canvasOptionsToggleIcon, setCanvasOptionsToggleIcon] = useState("arrow_back");
-
-    function toggleCanvasOptions() {
-        switch (canvasOptionsWidth) {
-            case "0px":
-                setCanvasOptionsWidth(() => {return widthCanvasOptions});
-                setCanvasOptionsToggleIcon(() => {return "arrow_forward"})
-                break;
-            default:
-                setCanvasOptionsWidth(() => {return "0px"});
-                setCanvasOptionsToggleIcon(() => {return "arrow_back"})
-        }
-    }
-
     function updateQualityMultiplier(e: any) {
         let value = returnInput(e, minQualityMultiplier, maxQualityMultiplier);
         
@@ -59,15 +44,10 @@ export function CanvasOptions(props: CanvasOptionsProps) {
 
     return (
         <>
-            <ButtonCanvasTab $icon={canvasOptionsToggleIcon} 
-                             className="material-symbols-outlined"
-                             onClick={() => {toggleCanvasOptions()}}/>
-
-            <CanvasOptionsWrapper $width={canvasOptionsWidth}>
+            <CanvasOptionsWrapper>
                 <OptionsWrapper>
-                    <Title>Canvas</Title>
-
                     <OptionsSection>
+                        <Title>Canvas</Title>
                         <OptionsInputLabelWrapper>
                             <Label>Quality Multiplier</Label>
                             <InputStandard key={keys[0]}
