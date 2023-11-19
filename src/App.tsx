@@ -46,7 +46,7 @@ const GlobalStyles = createGlobalStyle`
     --button-transform-small-active: translate(0px, 0px);
 
     --standard-gap-size: min(1vw, 20px);
-    --color-table-item-width: min(4vw, 30px);
+    --color-table-item-width: min(5vw, 55px);
     --tool-item-width: min(3vw, 3vh);
 
     --font-size-s: min(1.5vw, 1.5vh);

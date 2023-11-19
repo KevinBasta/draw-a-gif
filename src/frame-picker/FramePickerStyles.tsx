@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const FramePickerWrapper = styled.div`
-    height: 10vh;
+    height: 100%;
 
     background-color: var(--secondary-color);
     display: flex;

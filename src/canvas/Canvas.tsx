@@ -47,13 +47,7 @@ export function Canvas(props: CanvasProps) {
     let canvasHeightInPixels = props.canvas.height;
     
     // Set width/height css property directly depending on width/height ratio
-    let canvasSizeControl = "max-height: inherit; max-width: 90%";
-    if (canvasWidthInPixels > canvasHeightInPixels) {
-        canvasSizeControl = "max-height: inherit; max-width: 90%";
-    } else {
-        canvasSizeControl = "max-height: inherit; max-width: 90%;";
-    }
-
+    let canvasSizeControl = "max-width: 90%; max-height: 90%;";
 
     // Prevent scrolling when drawing on mobile devices
     const canvasElem = useRef(null);

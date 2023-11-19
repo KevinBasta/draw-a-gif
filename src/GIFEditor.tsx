@@ -158,7 +158,25 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
           </div>
           
           <div className="canvasMenueWrapper">
+            <SelectionOptions canvas={canvas}
+                                setCanvas={setCanvas}
+
+                                frames={frames}
+                                setFrames={setFrames}
+
+                                currentTool={currentTool} 
+                                setCurrentTool={setCurrentTool}
+
+                                currentFrameIndex={currentFrameIndex}
+                                setCurrentFrameIndex={setCurrentFrameIndex}
+
+                                setPreviewGIF={setPreviewGIF}
+
+                                encodeGIF={encodeGIF}
+                                saveGIF={saveGIF}></SelectionOptions>
+
             <div className="mainContent">
+              <div className="smearWrapper">
               <Canvas canvas={canvas}
                       
                       frames={frames}
@@ -173,24 +191,8 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
                       setGlobalColorTable={setGlobalColorTable}
 
                       currentColorIndex={currentColorIndex} />
+              </div>
             </div>
-
-            <SelectionOptions canvas={canvas}
-                              setCanvas={setCanvas}
-
-                              frames={frames}
-                              setFrames={setFrames}
-
-                              currentTool={currentTool} 
-                              setCurrentTool={setCurrentTool}
-
-                              currentFrameIndex={currentFrameIndex}
-                              setCurrentFrameIndex={setCurrentFrameIndex}
-
-                              setPreviewGIF={setPreviewGIF}
-
-                              encodeGIF={encodeGIF}
-                              saveGIF={saveGIF}></SelectionOptions>
           </div>
           
           <div className="footer">

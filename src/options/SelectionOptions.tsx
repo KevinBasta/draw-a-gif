@@ -78,6 +78,7 @@ export function SelectionOptions(props: SelectionOptionsProps) {
         if (tab == tabTypes.none) {
             setCollapseLevel(() => {return sidebarState.notDisplayed;});
         } else {
+            setTab(() => {return tabTypes.none});
             setCollapseLevel(() => {return sidebarState.buttonsDisplayed;});
         }
     }

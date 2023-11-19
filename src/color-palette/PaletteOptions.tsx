@@ -20,6 +20,7 @@ export function PaletteOptions(props: MyColorTableOptionsProps) {
         let hexInputColor: string = colorPickerElement.value;
 
         let [r, g, b] = getColorPickerValues(hexInputColor);
+        let newIndex = props.currentColorTable.items.length;
 
         props.setCurrentColorTable((table: colorTableType) => {
             return {
@@ -30,6 +31,8 @@ export function PaletteOptions(props: MyColorTableOptionsProps) {
                 ]
             }
         });
+
+        props.setCurrentColorIndex(() => {return newIndex});
     }
 
     function setClr(e) {

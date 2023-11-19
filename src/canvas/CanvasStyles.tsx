@@ -11,6 +11,8 @@ export const CanvasWrapper = styled.canvas<CanvasWrapperProps>`
     border: 3px solid black;
     aspect-ratio: ${props => props.$ratiowidth} / ${props => props.$ratioheight};
     position: relative;
+    max-width: inherit;
+    max-height: inherit;
     ${props => props.size};
 
     user-drag: none;

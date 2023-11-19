@@ -9,7 +9,7 @@ export const ButtonLarge = styled.div<{ $disabled?: boolean }>`
     justify-content: center;
     cursor: pointer;
     
-    width: 95%;
+    width: 100%;
     padding: min(1vw, 1vh);
     font-size: var(--font-size-m);
     text-wrap: nowrap;

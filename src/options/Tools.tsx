@@ -1,8 +1,8 @@
 import { toolData, toolType } from "../shared/Formats";
 import { returnInput, updateInput } from "../shared/SharedUtilities";
-import { ToolsSizeControlWrapper, OptionsAndToolsWrapper } from "./ToolsStyles";
-import { maxToolSize, minToolSize, widthTools } from "../shared/Constants";
-import { ButtonTool, ButtonToolsTab } from "../shared-styles/Button";
+import { ToolsSizeControlWrapper } from "./ToolsStyles";
+import { maxToolSize, minToolSize } from "../shared/Constants";
+import { ButtonTool } from "../shared-styles/Button";
 import { InputToolSize } from "../shared-styles/Input";
 import { getUpdatedTool, getUpdatedToolSize } from "../core/ToolsCore";
 import { useState } from "react";

@@ -4,10 +4,6 @@ export const SelectionOptionsWrapper = styled.div<{ $collapsed?: boolean; }>`
     height: 100%;
     width: fit-content;
     
-    position: absolute; 
-    left: 0;
-    top: 0;
-
     ${props => props.$collapsed ? 
     `
         display: none;
@@ -46,9 +42,10 @@ export const ButtonSelectionTab = styled.div<{ $selected?: boolean; }>`
 export const SelectedOptionContext = styled.div<{ $collapsed?: boolean; }>`
     background-color: var(--primary-color);
 
-    width: 1vw;
+    width: 0px;
     flex-grow: 1;
     transition: 0.2s;
+    z-index: 10;
     
     ${props => props.$collapsed == true ?
     `
