@@ -5,7 +5,7 @@ export const BackgroundDimmer = styled.div`
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 5;
+    z-index: 20;
 
     display: flex;
     flex-direction: row;
@@ -18,7 +18,7 @@ export const PreviewCenterer = styled.div`
     position: absolute;
     width: 100vw;
     height: 100vh;
-    z-index: 6;
+    z-index: 21;
 
     display: flex;
     flex-direction: row;
@@ -33,7 +33,7 @@ export const PreviewWrapper = styled.div`
     width: fit-content;
     padding: min(5vw, 5vh);
     background-color: var(--primary-color);
-    z-index: 6;
+    z-index: 21;
 `;
 
 export const PreviewElem = styled.img<{ $widthratio: number; $heightratio: number; }>`
