@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react"
 import { createGlobalStyle } from "styled-components";
+
+import { canvasType, colorTableType, frameType } from "./shared/Formats";
+
+import { getNewCanvas, getSavedCanvas } from "./core/CanvasCore";
+import { getEmptyFrame } from "./core/FramesCore";
+
+import { GIFEditor } from "./GIFEditor";
+import { MainMenu } from "./menu/MainMenu";
+
 import "./styles.css"
-
-import { Canvas } from "./components/Canvas";
-import { ColorTable } from "./components/ColorTableContext";
-import { FramePicker } from "./components/FramePicker";
-
-import { canvasType, frameType, colorTableType, toolType, toolData, disposalMethodType } from "./common/Formats"
-import { CanvasObject } from "./common/canvasClass";
-import { CanvaseOptions } from "./components/FrameMenu";
-import { Preview } from "./components/Preview";
-import { MainMenu } from "./components/MainMenu";
-
-const leftArrow = '37';
-const aKey = '65';
-
-const rightArrow = '39';
-const dKey = '68';
-
-const eKey = '69';
-const pKey = '80';
-const bKey = '66';
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -34,8 +23,11 @@ const GlobalStyles = createGlobalStyle`
     --tertiary-color: #E0E2DB; 
     --tertiary-color-active: #cacbc5; 
     --quaternary-color: #000000;
-    --quinary-color: ;
+    --quinary-color: #4795d4;
     --senary-color: ;
+
+    --snd-btn-clr: #638796;
+    --snd-btn-hvr-clr: #547280;
     
     --scroll-background-color: #E0E2DB;
     --scroll-handle-color: #686868;
@@ -54,15 +46,15 @@ const GlobalStyles = createGlobalStyle`
     --button-transform-small-active: translate(0px, 0px);
 
     --standard-gap-size: min(1vw, 20px);
-    --color-table-item-width: min(4vw, 30px);
+    --color-table-item-width: min(5vw, 55px);
     --tool-item-width: min(3vw, 3vh);
 
-    --font-size-small: min(1.5vw, 1.5vh);
+    --font-size-s: min(1.5vw, 1.5vh);
     --font-size-sm: min(2vw, 2vh);
-    --font-size-medium: min(2.5vw, 2.5vh);
+    --font-size-m: min(2.5vw, 2.5vh);
     --font-size-ml: min(3vw, 3vh);
-    --font-size-large: min(3.5vw, 3.5vh);
-    --font-size-extra-large: min(4.5vw, 4.5vh);
+    --font-size-l: min(3.5vw, 3.5vh);
+    --font-size-xl: min(4.5vw, 4.5vh);
 
     user-drag: none;
     -webkit-user-drag: none;
@@ -73,136 +65,20 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-let worker = new Worker("/encoderWorker.js");
-worker.postMessage(["load"]);
-
 export default function App() {
   const [canvas, setCanvas] = useState<canvasType>();
   const [frames, setFrames] = useState<Array<frameType>>();
   const [globalColorTable, setGlobalColorTable] = useState<colorTableType>();
-  
-  const [currentFrameIndex, setCurrentFrameIndex]         = useState<number>(0);
-  const [currentColorIndex, setCurrentColorIndex]         = useState<number>(1);
-  const [currentTool, setCurrentTool]                     = useState<toolData>({key: crypto.randomUUID(), tool: toolType.brush, size: "1"});
-  
-  const [transparentBackground, setTransparentBackground] = useState<frameType>();
-  const [previewGIF, setPreviewGIF] = useState(false);
 
-
-  function getEmptyFrame(width: number, height: number): frameType {
-    return {
-      key: crypto.randomUUID(),
-      disposalMethod: disposalMethodType.restoreToBackgroundColor,
-      delayTime: 0,
-      useLocalColorTable: false,
-      localColorTable: null,
-      indexStream: Array.from(
-        {length: width * height},
-        (_, i) => 0
-      ),
-      previewUrl: null,
-    }
-  }
-
-  function encodeFramePreview() {
-    worker.postMessage(["framePreview", canvas, frames, currentFrameIndex, globalColorTable]);
-  }
-
-  function saveFramePreviewUrl(data: Uint8Array, index: number) {
-    let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
-    let blobUrl  = URL.createObjectURL(encodedBlob);
-
-    const newFrames = frames.map((frame, i) => {
-      if (i == index) {
-          return {
-              key: frame.key,
-              disposalMethod: frame.disposalMethod,
-              delayTime: frame.delayTime,
-              useLocalColorTable: frame.useLocalColorTable,
-              localColorTable: frame.localColorTable,
-              indexStream: frame.indexStream,
-              previewUrl: blobUrl,
-          }
-      } else {
-          return frame;
-      }
-    });
-
-    setFrames(() => newFrames);
-  }
-
-  function encodeGIF() {
-    setCanvas((currentCanvas) => {
-      return {
-        key: currentCanvas.key,
-        canvasElement: currentCanvas.canvasElement,
-        width: currentCanvas.width,
-        height: currentCanvas.height,
-        qualityMultiplier: currentCanvas.qualityMultiplier,
-        encodedData: null,
-        blob: null,
-        url: null
-      }
-    });
-
-    //setPreviewGIF(() => true)
-
-    worker.postMessage(["encode", canvas, frames, globalColorTable]);
-  }
-
-  function saveEncodedData(data: Uint8Array) {
-    let encodedBlob = new Blob([data.buffer], { type: 'image/gif' })
-    let blobUrl  = URL.createObjectURL(encodedBlob);
-
-    setCanvas((currentCanvas) => {
-      return {
-        key: currentCanvas.key,
-        canvasElement: currentCanvas.canvasElement,
-        width: currentCanvas.width,
-        height: currentCanvas.height,
-        qualityMultiplier: currentCanvas.qualityMultiplier,
-        encodedData: data,
-        blob: encodedBlob,
-        url: blobUrl
-      }
-    });
-  }
-  
-  worker.onmessage = (e) => {
-    if (e.data[0] == 'data') {
-      console.log(e.data)
-      saveEncodedData(e.data[1])
-    } else if (e.data[0] == 'frameData') {
-      saveFramePreviewUrl(e.data[1], e.data[2]);
-    } 
-    else if (e.data[0] == 'err') {
-      console.log("error")
-      console.log(e.data)
-    }
-  }
-
-
-  function initCanvas(width: number, height: number) {
+  function initCanvas(canvasName: string, width: number, height: number) {
     setCanvas(() => {
-      return { 
-        key: crypto.randomUUID(),
-        canvasElement: new CanvasObject(width, height),
-        width: width,
-        height: height,
-        qualityMultiplier: 10,
-        encodedData: null,
-        blob: null,
-        url: null,
-      }
+      return getNewCanvas(canvasName, width, height);
     });
 
     setFrames(() => {
       return [getEmptyFrame(width, height)];
     });
 
-    // Initializing color table with two colors
-    // First is for "erase" functionality
-    // Second is for the first user color
     setGlobalColorTable(() => {
       return {
         transparentColorIndex: 0,
@@ -212,189 +88,33 @@ export default function App() {
         ],
       }
     });
+  }
 
-    // create a checkered trasparent background
-    setTransparentBackground(() => {
-      return {
-        key: crypto.randomUUID(),
-        disposalMethod: disposalMethodType.restoreToBackgroundColor,
-        delayTime: 0,
-        useLocalColorTable: true,
-        localColorTable: {
-          transparentColorIndex: NaN,
-          items: [
-            {key: crypto.randomUUID(), red: 226, green: 226, blue: 226},
-            {key: crypto.randomUUID(), red: 255, green: 255, blue: 255}
-          ],
-        },
-        indexStream: Array.from(
-          {length: width * height},
-          (_, i) => {
-            if (width % 2 == 0) {
-              return Math.floor(i / width) % 2 == 0 ? ((i % 2 == 0) ? 1 : 0) : ((i % 2 == 0) ? 0 : 1);
-            } else {
-              return (i % 2 == 0) ? 1 : 0;
-            }
-          }
-        ),
-        previewUrl: null,
-      }
+  function initCanvasFromSave(savedCanvas: canvasType, savedFrames: Array<frameType>, savedGlobalColorTable: colorTableType) {
+    setCanvas(() => {
+      return getSavedCanvas(savedCanvas);
     });
-  }
 
+    setFrames(() => { return savedFrames });
 
-  function reactToKeyPress(e: any) {
-    if (canvas == null) {
-      return;
-    }
-
-    let key = e.keyCode;
-
-    if ((key == leftArrow || key == aKey) && 
-        (currentFrameIndex - 1 >= 0))
-    {
-      setCurrentFrameIndex((current) => {return current - 1;})
-    }
-    else if ((key == rightArrow || key == dKey) &&
-             (frames.length - 1) >= (currentFrameIndex + 1)) 
-    {
-      setCurrentFrameIndex((current) => {return current + 1;})
-    }
-
-
-    if (key == eKey) {
-      setCurrentTool((current) => {
-        return {
-          key: current.key,
-          tool: toolType.eraser,
-          size: current.size,
-        }
-      })
-    }
-
-    if (key == pKey) {
-      setCurrentTool((current) => {
-        return {
-          key: current.key,
-          tool: toolType.brush,
-          size: current.size,
-        }
-      })
-    }
-
-    if (key == bKey) {
-      setCurrentTool((current) => {
-        return {
-          key: current.key,
-          tool: toolType.bucket,
-          size: current.size,
-        }
-      })
-    }
-    
-  }
-  
-  // Set initial states
-  useEffect(() => {      
-    window.addEventListener('keydown', reactToKeyPress);
-    
-    return () => {
-      // remove on dismount
-      window.removeEventListener('keydown', reactToKeyPress);
-    }
-    //addFrame();
-    //displayFrame(frames[0]);
-  }, [reactToKeyPress]);
-
-
-  function titleOrApp() {
-    if (canvas == null)
-    {
-      return <>
-        <GlobalStyles />
-        <MainMenu initCanvas={initCanvas}/>;
-      </>
-    }
-    else
-    {
-      return <>
-      <GlobalStyles />
-        {previewGIF && <Preview canvas={canvas} setCanvas={setCanvas} setPreviewGIF={setPreviewGIF} />}
-
-        <div className="tempflex">
-          <div className="header">
-            <FramePicker canvas={canvas}
-
-                          frames={frames}
-                          setFrames={setFrames}
-
-                          currentFrameIndex={currentFrameIndex}
-                          setCurrentFrameIndex={setCurrentFrameIndex}
-
-                          encodeFramePreview={encodeFramePreview}
-
-                          getEmptyFrame={getEmptyFrame}/>
-          </div>
-          
-          <div className="canvasMenueWrapper">
-            <div className="mainContent">
-              <Canvas canvas={canvas}
-                      transparentBackground={transparentBackground}
-                      
-                      frames={frames}
-                      setFrames={setFrames}
-                      
-                      currentFrameIndex={currentFrameIndex}
-                      setCurrentFrameIndex={setCurrentFrameIndex}
-                      
-                      currentTool={currentTool} 
-                      
-                      globalColorTable={globalColorTable}
-                      setGlobalColorTable={setGlobalColorTable}
-
-                      currentColorIndex={currentColorIndex} />
-            </div>
-            
-            <CanvaseOptions canvas={canvas}
-                            setCanvas={setCanvas}
-
-                            frames={frames}
-                            setFrames={setFrames}
-
-                            currentFrameIndex={currentFrameIndex}
-                            setCurrentFrameIndex={setCurrentFrameIndex}
-                            
-                            setPreviewGIF={setPreviewGIF}
-
-                            encodeGIF={encodeGIF}/>
-          </div>
-          
-          <div className="footer">
-            <ColorTable frames={frames}
-                        setFrames={setFrames}
-                        
-                        globalColorTable={globalColorTable}
-                        setGlobalColorTable={setGlobalColorTable}
-
-                        currentFrameIndex={currentFrameIndex}
-
-                        currentColorIndex={currentColorIndex} 
-                        setCurrentColorIndex={setCurrentColorIndex} 
-                        
-                        currentTool={currentTool} 
-                        setCurrentTool={setCurrentTool} />
-          </div>
-          
-        </div>
-      </>
-    }
+    setGlobalColorTable(() => { return savedGlobalColorTable });
   }
 
   return (
     <>
-    {
-      titleOrApp()
-    }
+      <GlobalStyles />
+      { 
+      (canvas == null) ? 
+          <MainMenu initCanvas={initCanvas}
+                    initCanvasFromSave={initCanvasFromSave}/> 
+          :
+          <GIFEditor canvas={canvas}
+                     setCanvas={setCanvas}
+                     frames={frames}
+                     setFrames={setFrames}
+                     globalColorTable={globalColorTable}
+                     setGlobalColorTable={setGlobalColorTable} />
+      }
     </>
   );
 }
