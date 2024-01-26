@@ -14,7 +14,7 @@ export function getNewCanvas(canvasName: string, width: number, height: number) 
         
         width: width,
         height: height,
-        qualityMultiplier: 10,
+        qualityMultiplier: ((width >= 100 || height >= 100) ? 1 : 10),
         
         encodedData: null,
         blob: null,
