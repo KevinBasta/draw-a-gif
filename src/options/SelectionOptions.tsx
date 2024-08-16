@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ButtonSelectionTab, ButtonUncollapseOptions, ExpandOptionButtonsWrapper, OptionsAndToolsWrapper, OptionsControlWrapper, SelectedOptionContext, SelectionOptionsWrapper, SelectionTabsWrapper } from "./SelectionOptionsStyles";
+import { ButtonSelectionTab, ButtonHomeTab, ButtonUncollapseOptions, ExpandOptionButtonsWrapper, OptionsAndToolsWrapper, OptionsControlWrapper, SelectedOptionContext, SelectionOptionsWrapper, SelectionTabsWrapper } from "./SelectionOptionsStyles";
 import { useState } from "react";
 import { CanvasOptions } from "./CanvasOptions";
 import { canvasType, frameType, toolData } from "../shared/Formats";
@@ -13,6 +13,7 @@ enum tabTypes {
     layers,
     frame,
     canvas,
+    home,
 }
 
 enum sidebarState {
@@ -50,6 +51,13 @@ const collapseButton: tabType = {
     type: null,
 };
 
+const homeButton: tabType = {
+    key: crypto.randomUUID(),
+    name: "home",
+    icon: true,
+    type: null,
+}
+
 interface SelectionOptionsProps {
     canvas: canvasType,
     setCanvas: Function,
@@ -67,6 +75,8 @@ interface SelectionOptionsProps {
 
     encodeGIF: Function,
     saveGIF: Function,
+
+    setMainMenu: Function,
 }
 
 export function SelectionOptions(props: SelectionOptionsProps) {
@@ -119,42 +129,50 @@ export function SelectionOptions(props: SelectionOptionsProps) {
 
 
     function currentTab() {
-        console.log(collapseLevel);
-      if (tab == tabTypes.canvas) {
+        //console.log(collapseLevel);
+        if (tab == tabTypes.canvas) {
 
-        return <CanvasOptions   canvas={props.canvas}
-                                setCanvas={props.setCanvas}
+            return <CanvasOptions   canvas={props.canvas}
+                                    setCanvas={props.setCanvas}
 
-                                frames={props.frames}
-                                setFrames={props.setFrames}
+                                    frames={props.frames}
+                                    setFrames={props.setFrames}
 
-                                currentFrameIndex={props.currentFrameIndex}
-                                setCurrentFrameIndex={props.setCurrentFrameIndex}
+                                    currentFrameIndex={props.currentFrameIndex}
+                                    setCurrentFrameIndex={props.setCurrentFrameIndex}
 
-                                setPreviewGIF={props.setPreviewGIF}
+                                    setPreviewGIF={props.setPreviewGIF}
 
-                                encodeGIF={props.encodeGIF}
-                                saveGIF={props.saveGIF}/>
+                                    encodeGIF={props.encodeGIF}
+                                    saveGIF={props.saveGIF}/>
 
-      } else if (tab == tabTypes.frame) {
+        } else if (tab == tabTypes.frame) {
 
-        return <FrameOptions    canvas={props.canvas}
-                                setCanvas={props.setCanvas}
+            return <FrameOptions    canvas={props.canvas}
+                                    setCanvas={props.setCanvas}
 
-                                frames={props.frames}
-                                setFrames={props.setFrames}
+                                    frames={props.frames}
+                                    setFrames={props.setFrames}
 
-                                currentFrameIndex={props.currentFrameIndex}
-                                setCurrentFrameIndex={props.setCurrentFrameIndex}
-                                
-                                setPreviewGIF={props.setPreviewGIF}
+                                    currentFrameIndex={props.currentFrameIndex}
+                                    setCurrentFrameIndex={props.setCurrentFrameIndex}
+                                    
+                                    setPreviewGIF={props.setPreviewGIF}
 
-                                encodeGIF={props.encodeGIF}/>
-        
-      } else {
-        return;
-      }
+                                    encodeGIF={props.encodeGIF}/>
+            
+        } else {
+            return;
+        }
     };
+
+    function askSave() {
+        if (window.confirm("Return to menu? Unsaved progress will be lost.")) {
+            props.setMainMenu(() => {
+                return true;
+            });
+        }
+    }
 
     return (
         <>
@@ -171,6 +189,14 @@ export function SelectionOptions(props: SelectionOptionsProps) {
                            setCurrentTool={props.setCurrentTool}/>
                     <OptionsControlWrapper>
                         {tabs}
+                        
+                        <ButtonHomeTab 
+                                key={homeButton.key}
+                                className="material-symbols-outlined"
+                                onClick={() => {askSave()}}>
+                            {homeButton.name}
+                        </ButtonHomeTab>
+
 
                         <ButtonSelectionTab
                                 key={collapseButton.key} 
@@ -178,6 +204,7 @@ export function SelectionOptions(props: SelectionOptionsProps) {
                                 onClick={e => collapseAction()}>
                             {collapseButton.name}
                         </ButtonSelectionTab>
+
                     </OptionsControlWrapper>
                 </OptionsAndToolsWrapper>
                 

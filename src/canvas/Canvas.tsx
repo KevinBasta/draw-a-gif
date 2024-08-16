@@ -56,8 +56,10 @@ export function Canvas(props: CanvasProps) {
         canvasElem.current.addEventListener('touchmove', touchHandler, { passive: false });
 
         return () => {
-            canvasElem.current.removeEventListener('touchstart', touchHandler);
-            canvasElem.current.removeEventListener('touchmove', touchHandler);
+            if (canvasElem.current != null) {
+                canvasElem.current.removeEventListener('touchstart', touchHandler, { passive: false });
+                canvasElem.current.removeEventListener('touchmove', touchHandler, { passive: false });
+            }
         };
     }, []);
 

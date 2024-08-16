@@ -22,10 +22,27 @@ export const SelectionTabsWrapper = styled.div`
 
 export const ButtonSelectionTab = styled.div<{ $selected?: boolean; }>`
     height: max-content;
-    padding: 2vh 0px;
+    padding: 1.75vh 0px;
     width: 100%;
     writing-mode: vertical-lr;
     transform: rotate(180deg);
+
+    font-size: var(--font-size-sm);
+
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--secondary-color);
+`;
+
+export const ButtonHomeTab = styled.div`
+    height: max-content;
+    padding: 1.5vh 0px;
+    width: 100%;
 
     font-size: var(--font-size-sm);
 

@@ -66,9 +66,17 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 export default function App() {
+  const [mainMenu, setMainMenu] = useState<boolean>(true);
   const [canvas, setCanvas] = useState<canvasType>();
   const [frames, setFrames] = useState<Array<frameType>>();
   const [globalColorTable, setGlobalColorTable] = useState<colorTableType>();
+
+  function goToMainMenu() {
+    setCanvas(() => {return null;});
+    setFrames(() => {return null;});
+    setGlobalColorTable(() => {return null;});
+    setMainMenu(() => {return true;});
+  }
 
   function initCanvas(canvasName: string, width: number, height: number) {
     setCanvas(() => {
@@ -88,6 +96,8 @@ export default function App() {
         ],
       }
     });
+
+    setMainMenu(() => { return false; });
   }
 
   function initCanvasFromSave(savedCanvas: canvasType, savedFrames: Array<frameType>, savedGlobalColorTable: colorTableType) {
@@ -98,13 +108,15 @@ export default function App() {
     setFrames(() => { return savedFrames });
 
     setGlobalColorTable(() => { return savedGlobalColorTable });
+
+    setMainMenu(() => { return false; });
   }
 
   return (
     <>
       <GlobalStyles />
       { 
-      (canvas == null) ? 
+      (mainMenu == true) ? 
           <MainMenu initCanvas={initCanvas}
                     initCanvasFromSave={initCanvasFromSave}/> 
           :
@@ -113,7 +125,8 @@ export default function App() {
                      frames={frames}
                      setFrames={setFrames}
                      globalColorTable={globalColorTable}
-                     setGlobalColorTable={setGlobalColorTable} />
+                     setGlobalColorTable={setGlobalColorTable}
+                     setMainMenu={goToMainMenu} />
       }
     </>
   );

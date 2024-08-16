@@ -32,9 +32,11 @@ interface GIFEditorProps {
   
   globalColorTable: colorTableType;
   setGlobalColorTable: Function;
+
+  setMainMenu: Function;
 }
 
-export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTable, setGlobalColorTable }: GIFEditorProps) {
+export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTable, setGlobalColorTable, setMainMenu }: GIFEditorProps) {
   const [currentFrameIndex, setCurrentFrameIndex] = useState<number>(0);
   const [currentColorIndex, setCurrentColorIndex] = useState<number>(1);
   const [currentTool, setCurrentTool]             = useState<toolData>(getNewTool());
@@ -173,7 +175,9 @@ export function GIFEditor({ canvas, setCanvas, frames, setFrames, globalColorTab
                                 setPreviewGIF={setPreviewGIF}
 
                                 encodeGIF={encodeGIF}
-                                saveGIF={saveGIF}></SelectionOptions>
+                                saveGIF={saveGIF}
+                                
+                                setMainMenu={setMainMenu}></SelectionOptions>
 
             <div className="mainContent">
               <div className="smearWrapper">

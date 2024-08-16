@@ -75,10 +75,12 @@ export function CanvasOptions(props: CanvasOptionsProps) {
                                 /* onChange={e => updateCanvasHeight(e)} */ />
                         </OptionsInputLabelWrapper>
 
-                        <ButtonLarge onClick={() => {props.encodeGIF()}}>Create GIF</ButtonLarge>
+                        <ButtonLarge onClick={() => {props.encodeGIF()}}>Encode GIF</ButtonLarge>
                         <ButtonLarge $disabled={props.canvas.encodedData == null} 
-                                     onClick={() => {togglePreview()}}>Show GIF</ButtonLarge>
-                        <ButtonLarge onClick={() => {props.saveGIF()}}>Save GIF</ButtonLarge>
+                                     title="Display the last encoding. Can right click the preview to save the GIF. "
+                                     onClick={() => {togglePreview()}}>Display GIF</ButtonLarge>
+                        <ButtonLarge title="Save the project to local storage. Can be reloaded from main menu."
+                                     onClick={() => {props.saveGIF()}}>Save Project</ButtonLarge>
                     </OptionsSection>
                 </OptionsWrapper>
             </OptionsTabBodyWrapper>
